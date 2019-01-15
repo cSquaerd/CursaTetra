@@ -146,6 +146,24 @@ def changeTexture(yi, xi, yf, xf, characterA, characterB, window):
 				or type(characterB) is int and window.inch(j, i) == characterB:
 				window.addch(j, i, characterA)
 
+def numDigits(n):
+	if n == 0:
+		return 1
+	m = 0;
+	while n >= 10 ** m:
+		m += 1
+	return m
+
+def writeScore(score, scoreType):
+	scoreLabels = ('', "SCORE", "LINES", "STATC", "STATS", "STATZ", \
+		"STATL", "STATR", "STATI", "STATT", '', "STAT1", "STAT2", \
+		"STAT3", "STAT4")
+	scoreIndex = scoreLabels.index(scoreType)
+	if scoreIndex < 3:
+		wScore.addstr(scoreIndex, 16 - numDigits(score), str(score))
+	else:
+		wStats.addstr(scoreIndex, 18 - numDigits(score), str(score))
+
 #SECTION: MAIN
 #Initialize screen
 screen = crs.initscr()
@@ -201,6 +219,20 @@ wStats.addstr(11, 1, "SINGLES :")
 wStats.addstr(12, 1, "DOUBLES :")
 wStats.addstr(13, 1, "TRIPLES :")
 wStats.addstr(14, 1, "TETRI   :")
+
+writeScore(100, "SCORE")
+writeScore(200, "LINES")
+writeScore(300, "STATC")
+writeScore(400, "STATS")
+writeScore(500, "STATZ")
+writeScore(600, "STATL")
+writeScore(700, "STATR")
+writeScore(800, "STATI")
+writeScore(900, "STATT")
+writeScore(1000, "STAT1")
+writeScore(1100, "STAT2")
+writeScore(1200, "STAT3")
+writeScore(1300, "STAT4")
 
 drawPiece(1, 1, '', 'C', wBoard, crs.ACS_CKBOARD)
 drawPiece(1, 15, 'H', 'I', wBoard, crs.ACS_CKBOARD)
