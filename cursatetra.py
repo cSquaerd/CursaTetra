@@ -14,7 +14,6 @@ def drawGrid():
 # Block designations
 
 * C : Square
-
 * S : S-piece
 * Z : Z-piece
 * L : L-piece
@@ -24,7 +23,7 @@ def drawGrid():
 
 # Orientations
 
-* H : horizontal
+* H : horizontal (default)
 * V : vertical
 * HP : horizontal, pi radians around (180 deg)
 * VP : vertical, pi radians around (180 deg)
@@ -37,9 +36,9 @@ def drawPiece(y, x, orient, piece, window):
 	elif piece == 'S':
 		if orient == 'H':
 			for i in range(x + 2, x + 6):
-				window.addch(y, i, crs.ACS_CKBOARD)
-			for i in range(x, x + 4):
 				window.addch(y + 1, i, crs.ACS_CKBOARD)
+			for i in range(x, x + 4):
+				window.addch(y + 2, i, crs.ACS_CKBOARD)
 		else:
 			for i in range(x, x + 2):
 				for j in range(y, y + 2):
@@ -50,9 +49,9 @@ def drawPiece(y, x, orient, piece, window):
 	elif piece == 'Z':
 		if orient == 'H':
 			for i in range(x, x + 4):
-				window.addch(y, i, crs.ACS_CKBOARD)
-			for i in range(x + 2, x + 6):
 				window.addch(y + 1, i, crs.ACS_CKBOARD)
+			for i in range(x + 2, x + 6):
+				window.addch(y + 2, i, crs.ACS_CKBOARD)
 		else:
 			for i in range(x, x + 2):
 				for j in range(y + 1, y + 3):
@@ -60,6 +59,60 @@ def drawPiece(y, x, orient, piece, window):
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 2):
 					window.addch(j, i, crs.ACS_CKBOARD)
+	elif piece == 'L':
+		if orient == 'H':
+			for i in range(x + 2, x + 4):
+				for j in range(y, y + 3):
+					window.addch(j, i, crs.ACS_CKBOARD)
+			for i in range(x + 4, x + 6):
+				window.addch(y + 2, i, crs.ACS_CKBOARD)
+		elif orient == 'V':
+			for i in range(x, x + 6):
+				window.addch(y + 1, i, crs.ACS_CKBOARD)
+			for i in range(x, x + 2):
+				window.addch(y + 2, i, crs.ACS_CKBOARD)
+		elif orient == 'HP':
+			for i in range(x + 2, x + 4):
+				for j in range(y, y + 3):
+					window.addch(j, i, crs.ACS_CKBOARD)
+			for i in range(x, x + 2):
+				window.addch(y, i, crs.ACS_CKBOARD)
+		elif orient == 'VP':
+			for i in range(x, x + 6):
+				window.addch(y + 1, i, crs.ACS_CKBOARD)
+			for i in range(x + 4, x + 6):
+				window.addch(y, i, crs.ACS_CKBOARD)
+	elif piece == 'R':
+		if orient == 'H':
+			for i in range(x + 2, x + 4):
+				for j in range(y, y + 3):
+					window.addch(j, i, crs.ACS_CKBOARD)
+			for i in range(x, x + 2):
+				window.addch(y + 2, i, crs.ACS_CKBOARD)
+		elif orient == 'V':
+			for i in range(x, x + 6):
+				window.addch(y + 1, i, crs.ACS_CKBOARD)
+			for i in range(x, x + 2):
+				window.addch(y, i, crs.ACS_CKBOARD)
+		elif orient == 'HP':
+			for i in range(x + 2, x + 4):
+				for j in range(y, y + 3):
+					window.addch(j, i, crs.ACS_CKBOARD)
+			for i in range(x + 4, x + 6):
+				window.addch(y, i, crs.ACS_CKBOARD)
+		elif orient == 'VP':
+			for i in range(x, x + 6):
+				window.addch(y + 1, i, crs.ACS_CKBOARD)
+			for i in range(x + 4, x + 6):
+				window.addch(y + 2, i, crs.ACS_CKBOARD)
+	elif piece == 'I':
+		if orient == 'H':
+			for i in range(x + 2, x + 4):
+				for j in range(y, y + 4):
+					window.addch(j, i, crs.ACS_CKBOARD)
+		else:
+			for i in range(x, x + 8):
+				window.addch(y + 2, i, crs.ACS_CKBOARD)
 
 #SECTION: MAIN
 #Initialize screen
@@ -75,7 +128,7 @@ wTitle = crs.newwin(6, 19, 0, 4)
 wScore = crs.newwin(4, 17, 8, 5)
 wCntrl = crs.newwin(10, 23, 12, 2)
 wBoard = crs.newwin(24, 22, 0, 28)
-wNextP = crs.newwin(6, 13, 4, 52)
+wNextP = crs.newwin(7, 15, 4, 52)
 #Draw boarders of windows
 wTitle.border()
 wScore.border()
@@ -88,13 +141,20 @@ wTitle.addstr(2, 1, 17 * '-')
 wTitle.addstr(3, 2, "By Charlie Cook")
 wScore.addstr(1, 1, "SCORE:")
 drawGrid()
-wNextP.addstr(1, 1, "NEXT PIECE:")
-drawPiece(2, 3, 'V', 'Z', wNextP)
+wNextP.addstr(1, 2, "NEXT PIECE:")
+drawPiece(2, 3, 'H', 'I', wNextP)
 #Make windows visible
 wTitle.refresh()
 wScore.refresh()
 wCntrl.refresh()
 wBoard.refresh()
+wNextP.refresh()
+
+crs.delay_output(1000)
+wNextP.clear()
+wNextP.border()
+wNextP.addstr(1, 2, "NEXT PIECE:")
+drawPiece(2, 3, 'V', 'I', wNextP)
 wNextP.refresh()
 
 #Wait
