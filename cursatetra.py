@@ -9,7 +9,6 @@ def drawGrid():
 	for x in range(1, 21):
 		for y in range(1, 23):
 			wBoard.addch(y, x, '.')
-
 """
 # Block designations
 
@@ -136,7 +135,14 @@ def drawPiece(y, x, orient, piece, window, character):
 					window.addch(j, i, character)
 			for i in range(x + 4, x + 6):
 				window.addch(y + 1, i, character)
+"""
+Redraws characters in a window.
 
+Given a target character (B), and a region from
+(xi, yi) to (xf, yf) where xi < xf and yi < yf,
+any instances of the target char. in the window
+will be overwritten with the result character (A)
+"""
 def changeTexture(yi, xi, yf, xf, characterA, characterB, window):
 	if not (xi < xf and yi < yf):
 		return None
@@ -145,7 +151,9 @@ def changeTexture(yi, xi, yf, xf, characterA, characterB, window):
 			if type(characterB) is str and window.inch(j, i) == ord(characterB) \
 				or type(characterB) is int and window.inch(j, i) == characterB:
 				window.addch(j, i, characterA)
-
+"""
+Returns the number of base-10 digits in a number (n)
+"""
 def numDigits(n):
 	if n == 0:
 		return 1
@@ -153,7 +161,9 @@ def numDigits(n):
 	while n >= 10 ** m:
 		m += 1
 	return m
-
+"""
+Writes a score value to a score label, listed below
+"""
 def writeScore(score, scoreType):
 	scoreLabels = ('', "SCORE", "LINES", "STATC", "STATS", "STATZ", \
 		"STATL", "STATR", "STATI", "STATT", '', "STAT1", "STAT2", \
@@ -220,19 +230,19 @@ wStats.addstr(12, 1, "DOUBLES :")
 wStats.addstr(13, 1, "TRIPLES :")
 wStats.addstr(14, 1, "TETRI   :")
 
-writeScore(100, "SCORE")
-writeScore(200, "LINES")
-writeScore(300, "STATC")
-writeScore(400, "STATS")
-writeScore(500, "STATZ")
-writeScore(600, "STATL")
-writeScore(700, "STATR")
-writeScore(800, "STATI")
-writeScore(900, "STATT")
-writeScore(1000, "STAT1")
-writeScore(1100, "STAT2")
-writeScore(1200, "STAT3")
-writeScore(1300, "STAT4")
+writeScore(0, "SCORE")
+writeScore(0, "LINES")
+writeScore(0, "STATC")
+writeScore(0, "STATS")
+writeScore(0, "STATZ")
+writeScore(0, "STATL")
+writeScore(0, "STATR")
+writeScore(0, "STATI")
+writeScore(0, "STATT")
+writeScore(0, "STAT1")
+writeScore(0, "STAT2")
+writeScore(0, "STAT3")
+writeScore(0, "STAT4")
 
 drawPiece(1, 1, '', 'C', wBoard, crs.ACS_CKBOARD)
 drawPiece(1, 15, 'H', 'I', wBoard, crs.ACS_CKBOARD)
