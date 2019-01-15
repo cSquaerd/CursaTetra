@@ -28,122 +28,123 @@ def drawGrid():
 * HP : horizontal, pi radians around (180 deg)
 * VP : vertical, pi radians around (180 deg)
 """
-def drawPiece(y, x, orient, piece, window):
+def drawPiece(y, x, orient, piece, window, character):
 	if piece == 'C':
 		for i in range(x, x + 4):
 			for j in range(y, y + 2):
-				window.addch(j, i, crs.ACS_CKBOARD)
+				window.addch(j, i, character)
 	elif piece == 'S':
 		if orient == 'H':
 			for i in range(x + 2, x + 6):
-				window.addch(y + 1, i, crs.ACS_CKBOARD)
+				window.addch(y + 1, i, character)
 			for i in range(x, x + 4):
-				window.addch(y + 2, i, crs.ACS_CKBOARD)
+				window.addch(y + 2, i, character)
 		else:
 			for i in range(x, x + 2):
 				for j in range(y, y + 2):
-					window.addch(j, i, crs.ACS_CKBOARD)
+					window.addch(j, i, character)
 			for i in range(x + 2, x + 4):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, crs.ACS_CKBOARD)
+					window.addch(j, i, character)
 	elif piece == 'Z':
 		if orient == 'H':
 			for i in range(x, x + 4):
-				window.addch(y + 1, i, crs.ACS_CKBOARD)
+				window.addch(y + 1, i, character)
 			for i in range(x + 2, x + 6):
-				window.addch(y + 2, i, crs.ACS_CKBOARD)
+				window.addch(y + 2, i, character)
 		else:
 			for i in range(x, x + 2):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, crs.ACS_CKBOARD)
+					window.addch(j, i, character)
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 2):
-					window.addch(j, i, crs.ACS_CKBOARD)
+					window.addch(j, i, character)
 	elif piece == 'L':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, crs.ACS_CKBOARD)
+					window.addch(j, i, character)
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, crs.ACS_CKBOARD)
+				window.addch(y + 2, i, character)
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, crs.ACS_CKBOARD)
+				window.addch(y + 1, i, character)
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, crs.ACS_CKBOARD)
+				window.addch(y + 2, i, character)
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, crs.ACS_CKBOARD)
+					window.addch(j, i, character)
 			for i in range(x, x + 2):
-				window.addch(y, i, crs.ACS_CKBOARD)
+				window.addch(y, i, character)
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, crs.ACS_CKBOARD)
+				window.addch(y + 1, i, character)
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, crs.ACS_CKBOARD)
+				window.addch(y, i, character)
 	elif piece == 'R':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, crs.ACS_CKBOARD)
+					window.addch(j, i, character)
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, crs.ACS_CKBOARD)
+				window.addch(y + 2, i, character)
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, crs.ACS_CKBOARD)
+				window.addch(y + 1, i, character)
 			for i in range(x, x + 2):
-				window.addch(y, i, crs.ACS_CKBOARD)
+				window.addch(y, i, character)
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, crs.ACS_CKBOARD)
+					window.addch(j, i, character)
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, crs.ACS_CKBOARD)
+				window.addch(y, i, character)
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, crs.ACS_CKBOARD)
+				window.addch(y + 1, i, character)
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, crs.ACS_CKBOARD)
+				window.addch(y + 2, i, character)
 	elif piece == 'I':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 4):
-					window.addch(j, i, crs.ACS_CKBOARD)
+					window.addch(j, i, character)
 		else:
 			for i in range(x, x + 8):
-				window.addch(y + 2, i, crs.ACS_CKBOARD)
+				window.addch(y + 2, i, character)
 	elif piece == 'T':
 		if orient == 'H':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, crs.ACS_CKBOARD)
+				window.addch(y + 1, i, character)
 			for i in range(x + 2, x + 4):
-				window.addch(y + 2, i, crs.ACS_CKBOARD)
+				window.addch(y + 2, i, character)
 		elif orient == 'V':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, crs.ACS_CKBOARD)
+					window.addch(j, i, character)
 			for i in range(x, x + 2):
-				window.addch(y + 1, i, crs.ACS_CKBOARD)
+				window.addch(y + 1, i, character)
 		elif orient == 'HP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, crs.ACS_CKBOARD)
+				window.addch(y + 1, i, character)
 			for i in range(x + 2, x + 4):
-				window.addch(y, i, crs.ACS_CKBOARD)
+				window.addch(y, i, character)
 		elif orient == 'VP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, crs.ACS_CKBOARD)
+					window.addch(j, i, character)
 			for i in range(x + 4, x + 6):
-				window.addch(y + 1, i, crs.ACS_CKBOARD)
+				window.addch(y + 1, i, character)
 
-def changeTexture(yi, xi, yf, xf, character, window):
+def changeTexture(yi, xi, yf, xf, characterA, characterB, window):
 	if not (xi < xf and yi < yf):
 		return None
 	for i in range(xi, xf + 1):
 		for j in range(yi, yf + 1):
-			if window.inch(j, i) == crs.ACS_CKBOARD:
-				window.addch(j, i, character)
+			if type(characterB) is str and window.inch(j, i) == ord(characterB) \
+				or type(characterB) is int and window.inch(j, i) == characterB:
+				window.addch(j, i, characterA)
 
 #SECTION: MAIN
 #Initialize screen
@@ -171,27 +172,28 @@ wStats.border()
 #Write titles and labels
 wTitle.addstr(1, 4, "Cursa Tetra")
 wTitle.addstr(2, 1, 17 * '-')
-wTitle.addstr(3, 2, "By Charlie Cook")
+wTitle.addstr(3, 4, "By C. Cook")
+wTitle.addstr(4, 2, "Ded. A. Pajitnov")
 wScore.addstr(1, 1, "SCORE:")
 wScore.addstr(2, 1, "LINES:")
 drawGrid()
 wNextP.addstr(1, 2, "NEXT PIECE:")
-drawPiece(1, 1, '', 'C', wBoard)
-drawPiece(1, 15, 'H', 'I', wBoard)
-drawPiece(0, 7, 'V', 'I', wBoard)
-drawPiece(4, 1, 'H', 'S', wBoard)
-drawPiece(4, 9, 'V', 'S', wBoard)
-drawPiece(8, 1, 'H', 'Z', wBoard)
-drawPiece(8, 9, 'V', 'Z', wBoard)
-drawPiece(12, 1, 'H', 'L', wBoard)
-drawPiece(12, 9, 'V', 'L', wBoard)
-drawPiece(12, 17, 'HP', 'L', wBoard)
-drawPiece(16, 1, 'H', 'R', wBoard)
-drawPiece(16, 9, 'V', 'R', wBoard)
-drawPiece(16, 15, 'HP', 'R', wBoard)
-drawPiece(20, 1, 'H', 'T', wBoard)
-drawPiece(20, 9, 'V', 'T', wBoard)
-drawPiece(20, 15, 'HP', 'T', wBoard)
+drawPiece(1, 1, '', 'C', wBoard, crs.ACS_CKBOARD)
+drawPiece(1, 15, 'H', 'I', wBoard, crs.ACS_CKBOARD)
+drawPiece(0, 7, 'V', 'I', wBoard, crs.ACS_CKBOARD)
+drawPiece(4, 1, 'H', 'S', wBoard, crs.ACS_CKBOARD)
+drawPiece(4, 9, 'V', 'S', wBoard, crs.ACS_CKBOARD)
+drawPiece(8, 1, 'H', 'Z', wBoard, crs.ACS_CKBOARD)
+drawPiece(8, 9, 'V', 'Z', wBoard, crs.ACS_CKBOARD)
+drawPiece(12, 1, 'H', 'L', wBoard, crs.ACS_CKBOARD)
+drawPiece(12, 9, 'V', 'L', wBoard, crs.ACS_CKBOARD)
+drawPiece(12, 17, 'HP', 'L', wBoard, crs.ACS_CKBOARD)
+drawPiece(16, 1, 'H', 'R', wBoard, crs.ACS_CKBOARD)
+drawPiece(16, 9, 'V', 'R', wBoard, crs.ACS_CKBOARD)
+drawPiece(16, 15, 'HP', 'R', wBoard, crs.ACS_CKBOARD)
+drawPiece(20, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
+drawPiece(20, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
+drawPiece(20, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
 #Make windows visible
 wTitle.refresh()
 wScore.refresh()
@@ -203,7 +205,7 @@ wStats.refresh()
 #Wait
 crs.delay_output(2000)
 
-changeTexture(1, 1, 23, 20, crs.ACS_BLOCK, wBoard)
+changeTexture(1, 1, 23, 20, crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard)
 wBoard.refresh()
 crs.delay_output(2000)
 
