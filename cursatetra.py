@@ -137,6 +137,14 @@ def drawPiece(y, x, orient, piece, window):
 			for i in range(x + 4, x + 6):
 				window.addch(y + 1, i, crs.ACS_CKBOARD)
 
+def changeTexture(yi, xi, yf, xf, character, window):
+	if not (xi < xf and yi < yf):
+		return None
+	for i in range(xi, xf + 1):
+		for j in range(yi, yf + 1):
+			if window.inch(j, i) == crs.ACS_CKBOARD:
+				window.addch(j, i, character)
+
 #SECTION: MAIN
 #Initialize screen
 screen = crs.initscr()
@@ -193,6 +201,10 @@ wNextP.refresh()
 wStats.refresh()
 
 #Wait
+crs.delay_output(2000)
+
+changeTexture(1, 1, 23, 20, crs.ACS_BLOCK, wBoard)
+wBoard.refresh()
 crs.delay_output(2000)
 
 #Unset proper key settings
