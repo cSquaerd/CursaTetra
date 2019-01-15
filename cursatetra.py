@@ -113,6 +113,29 @@ def drawPiece(y, x, orient, piece, window):
 		else:
 			for i in range(x, x + 8):
 				window.addch(y + 2, i, crs.ACS_CKBOARD)
+	elif piece == 'T':
+		if orient == 'H':
+			for i in range(x, x + 6):
+				window.addch(y + 1, i, crs.ACS_CKBOARD)
+			for i in range(x + 2, x + 4):
+				window.addch(y + 2, i, crs.ACS_CKBOARD)
+		elif orient == 'V':
+			for i in range(x + 2, x + 4):
+				for j in range(y, y + 3):
+					window.addch(j, i, crs.ACS_CKBOARD)
+			for i in range(x, x + 2):
+				window.addch(y + 1, i, crs.ACS_CKBOARD)
+		elif orient == 'HP':
+			for i in range(x, x + 6):
+				window.addch(y + 1, i, crs.ACS_CKBOARD)
+			for i in range(x + 2, x + 4):
+				window.addch(y, i, crs.ACS_CKBOARD)
+		elif orient == 'VP':
+			for i in range(x + 2, x + 4):
+				for j in range(y, y + 3):
+					window.addch(j, i, crs.ACS_CKBOARD)
+			for i in range(x + 4, x + 6):
+				window.addch(y + 1, i, crs.ACS_CKBOARD)
 
 #SECTION: MAIN
 #Initialize screen
@@ -142,19 +165,27 @@ wTitle.addstr(3, 2, "By Charlie Cook")
 wScore.addstr(1, 1, "SCORE:")
 drawGrid()
 wNextP.addstr(1, 2, "NEXT PIECE:")
-drawPiece(2, 3, 'H', 'I', wNextP)
+drawPiece(1, 1, '', 'C', wBoard)
+drawPiece(1, 15, 'H', 'I', wBoard)
+drawPiece(0, 7, 'V', 'I', wBoard)
+drawPiece(4, 1, 'H', 'S', wBoard)
+drawPiece(4, 9, 'V', 'S', wBoard)
+drawPiece(8, 1, 'H', 'Z', wBoard)
+drawPiece(8, 9, 'V', 'Z', wBoard)
+drawPiece(12, 1, 'H', 'L', wBoard)
+drawPiece(12, 9, 'V', 'L', wBoard)
+drawPiece(12, 17, 'HP', 'L', wBoard)
+drawPiece(16, 1, 'H', 'R', wBoard)
+drawPiece(16, 9, 'V', 'R', wBoard)
+drawPiece(16, 15, 'HP', 'R', wBoard)
+drawPiece(20, 1, 'H', 'T', wBoard)
+drawPiece(20, 9, 'V', 'T', wBoard)
+drawPiece(20, 15, 'HP', 'T', wBoard)
 #Make windows visible
 wTitle.refresh()
 wScore.refresh()
 wCntrl.refresh()
 wBoard.refresh()
-wNextP.refresh()
-
-crs.delay_output(1000)
-wNextP.clear()
-wNextP.border()
-wNextP.addstr(1, 2, "NEXT PIECE:")
-drawPiece(2, 3, 'V', 'I', wNextP)
 wNextP.refresh()
 
 #Wait
