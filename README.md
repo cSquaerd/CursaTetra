@@ -46,9 +46,9 @@ below the text character that identifies a piece
 		* Horizontal
 		```
 		  012345
-		0.[][]
-		1.  [][]
-		2.
+		0.
+		1.[][]
+		2.  [][]
 		```
 		* Vertical
 		```
