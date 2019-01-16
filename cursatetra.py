@@ -540,26 +540,6 @@ writeScore(0, "STAT1")
 writeScore(0, "STAT2")
 writeScore(0, "STAT3")
 writeScore(0, "STAT4")
-#Pieces demo
-#drawPiece(1, 1, '', 'C', wBoard, crs.ACS_CKBOARD)
-#drawPiece(1, 15, 'H', 'I', wBoard, crs.ACS_CKBOARD)
-#drawPiece(0, 7, 'V', 'I', wBoard, crs.ACS_CKBOARD)
-#drawPiece(3, 1, 'H', 'S', wBoard, crs.ACS_CKBOARD)
-#drawPiece(4, 9, 'V', 'S', wBoard, crs.ACS_CKBOARD)
-#drawPiece(7, 1, 'H', 'Z', wBoard, crs.ACS_CKBOARD)
-#drawPiece(8, 9, 'V', 'Z', wBoard, crs.ACS_CKBOARD)
-#drawPiece(11, 1, 'H', 'L', wBoard, crs.ACS_CKBOARD)
-#drawPiece(11, 9, 'V', 'L', wBoard, crs.ACS_CKBOARD)
-#drawPiece(10, 17, 'HP', 'L', wBoard, crs.ACS_CKBOARD)
-#drawPiece(15, 1, 'H', 'R', wBoard, crs.ACS_CKBOARD)
-#drawPiece(15, 9, 'V', 'R', wBoard, crs.ACS_CKBOARD)
-#drawPiece(14, 15, 'HP', 'R', wBoard, crs.ACS_CKBOARD)
-#drawPiece(18, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
-#drawPiece(18, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
-#drawPiece(18, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
-p = Piece(1, 1, 'T', 'H')
-clearBoardLabel()
-writeBoardLabel('L', str(getCellValue(1, 1)) + str(isCellEmpty(1, 1)))
 #Make windows visible
 wTitle.refresh()
 wScore.refresh()
@@ -571,38 +551,23 @@ wStats.refresh()
 #ctMain()
 #Wait
 crs.delay_output(1000)
-if p.canRotate('CW'):
-	writeBoardLabel('C', "ROTATED!!")
-	p.rotate('CW')
-wBoard.refresh()
-crs.delay_output(1000)
-if p.canRotate('CW'):
-	writeBoardLabel('L', "ROTATED AGAIN!!")
-	p.rotate('CW')
-wBoard.refresh()
-crs.delay_output(1000)
-if p.canRotate('CW'):
-	writeBoardLabel('L', "ROTATED THRICE!!")
-	p.rotate('CW')
-wBoard.refresh()
-crs.delay_output(1000)
-if p.canRotate('CW'):
-	writeBoardLabel('L', "ROTATED FRICE!!")
-	p.rotate('CW')
-wBoard.refresh()
-crs.delay_output(1000)
-#Label demo
-#changeTexture(1, 1, 23, 20, crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard)
-#clearBoardLabel()
-#writeBoardLabel('15', "PONTIFEX MX")
-#wBoard.refresh()
-#crs.delay_output(2000)
-#for n in range(41, 0, -1):
-#	clearBoardLabel()
-#	writeBoardLabel(str(n), "LOOK AT ME, MA!")
-#	wBoard.refresh()
-#	crs.delay_output(75)
-
+#Rotation demo
+for id in ('C', 'S', 'Z', 'L', 'R', 'I', 'T'):
+	p = Piece(1, 4, id, 'H')
+	clearBoardLabel()
+	wBoard.refresh()
+	crs.delay_output(500)
+	for i in range(8):
+		direction = ['CW', 'CCW'][int(i < 4)]
+		if p.canRotate(direction):
+			p.rotate(direction)
+			clearBoardLabel()
+			writeBoardLabel('L', "Rotated to " + p.orient)
+			wBoard.refresh()
+			crs.delay_output(250)
+	p.undraw()
+	del p
+	crs.delay_output(500)
 #Unset proper key settings
 screen.keypad(False)
 crs.nocbreak()
