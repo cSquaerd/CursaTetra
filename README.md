@@ -40,7 +40,7 @@ below the text character that identifies a piece
 		2.  []
 		```
 	* Observations:
-		* Rotates about (2:3, 1) Clockwise
+		* Rotates about (2:3, 1) Clockwise (???)
 * Z : Z-piece
 	* Diagrams:
 		* Horizontal
@@ -58,7 +58,7 @@ below the text character that identifies a piece
 		2.[]
 		```
 	* Observations:
-		* Rotates about (2:3, 1) Counter-Clockwise
+		* Rotates about (2:3, 1) Clockwise (???)
 * L : L-piece
 	* Diagrams:
 		* Horizontal
@@ -142,7 +142,7 @@ below the text character that identifies a piece
 		3.
 		```
 	* Observations:
-		* Rotates about (2:3, 2) Clockwise
+		* Rotates about (2:3, 2) Clockwise (???)
 * T : T-piece
 	* Diagrams:
 		* Horizontal

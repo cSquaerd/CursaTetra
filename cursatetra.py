@@ -268,6 +268,17 @@ def rotate(piece, newOrient):
 			setCellValue(piece.y + 1, piece.x, "EMPTY")
 			setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
 			setCellValue(piece.y + 2, piece.x, "ACTIVE")
+	elif piece.pID == 'Z':
+		if newOrient == 'V':
+			setCellValue(piece.y + 2, piece.x + 1, "EMPTY")
+			setCellValue(piece.y + 2, piece.x + 2, "EMPTY")
+			setCellValue(piece.y, piece.x + 1, "ACTIVE")
+			setCellValue(piece.y + 2, piece.x, "ACTIVE")
+		elif newOrient == 'H':
+			setCellValue(piece.y, piece.x + 1, "EMPTY")
+			setCellValue(piece.y + 2, piece.x , "EMPTY")
+			setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
+			setCellValue(piece.y + 2, piece.x + 2, "ACTIVE")
 
 	piece.orient = newOrient
 
@@ -277,11 +288,23 @@ def canRotate(piece, direction):
 	elif piece.pID == 'S':
 		if piece.orient == 'H' and isCellEmpty(piece.y, piece.x) and \
 			isCellEmpty(piece.y + 1, piece.x):
-				return True
+			return True
 		elif piece.orient == 'V' and isCellEmpty(piece.y + 1, piece.x + 2) and \
 			isCellEmpty(piece.y + 2, piece.x) and \
 			isCellInBounds(piece.y + 2, piece.x + 2):
-				return True
+			return True
+		else:
+			return False
+	elif piece.pID == 'Z':
+		if piece.orient == 'H' and isCellEmpty(piece.y, piece.x + 1) and \
+			isCellEmpty(piece.y + 2, piece.x):
+			return True
+		elif piece.orient == 'V' and isCellEmpty(piece.y + 2, piece.x + 1) and \
+			isCellEmpty(piece.y + 2, piece.x + 2) and \
+			isCellInBounds(piece.y + 2, piece.x + 2):
+			return True
+		else:
+			return False
 """
 Main function
 
@@ -394,7 +417,7 @@ writeScore(0, "STAT4")
 #drawPiece(18, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
 #drawPiece(18, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
 #drawPiece(18, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
-p = Piece(1, 3, 'S', 'V')
+p = Piece(1, 3, 'Z', 'H')
 clearBoardLabel()
 writeBoardLabel('L', str(getCellValue(1, 1)) + str(isCellEmpty(1, 1)))
 #Make windows visible
@@ -483,9 +506,9 @@ below the text character that identifies a piece
 		* Horizontal
 		```
 		  012345
-		0.[][]
-		1.  [][]
-		2.
+		0.
+		1.[][]
+		2.  [][]
 		```
 		* Vertical
 		```
