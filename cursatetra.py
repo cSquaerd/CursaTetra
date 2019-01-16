@@ -272,10 +272,6 @@ class Piece:
 		self.draw()
 	def draw(self):
 		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, [crs.ACS_CKBOARD])
-	def rotate(self, rotDir):
-		self.undraw()
-		self.orient = self.getNewOrient(rotDir)
-		self.draw()
 	def undraw(self):
 		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, ". ")
 	def getNewOrient(self, rotDir):
@@ -304,6 +300,17 @@ class Piece:
 					return 'H'
 				elif rotDir == 'CCW':
 					return 'HP'
+	def rotate(self, rotDir):
+		self.undraw()
+		self.orient = self.getNewOrient(rotDir)
+		self.draw()
+	def move(self, direction):
+		yShift = 1 if direction == 'D' else 0
+		xShift = 1 if direction == 'R' else -1 if direction == 'L' else 0
+		self.undraw()
+		self.y += yShift
+		self.x += xShift
+		self.draw()
 	def canRotate(self, direction):
 		if self.pID == 'C':
 			return False
@@ -445,6 +452,8 @@ class Piece:
 				return False
 		else:
 			return False
+	def canMove(self, direction):
+		pass
 """
 Main function
 
@@ -551,23 +560,39 @@ wStats.refresh()
 #ctMain()
 #Wait
 crs.delay_output(1000)
+#Move demo
+p = Piece(1, 4, 'I', '')
+wBoard.refresh()
+crs.delay_output(500)
+p.move('D')
+wBoard.refresh()
+crs.delay_output(500)
+p.move('L')
+wBoard.refresh()
+crs.delay_output(500)
+p.move('R')
+wBoard.refresh()
+crs.delay_output(500)
+p.move('R')
+wBoard.refresh()
+crs.delay_output(500)
 #Rotation demo
-for id in ('C', 'S', 'Z', 'L', 'R', 'I', 'T'):
-	p = Piece(1, 4, id, 'H')
-	clearBoardLabel()
-	wBoard.refresh()
-	crs.delay_output(500)
-	for i in range(8):
-		direction = ['CW', 'CCW'][int(i < 4)]
-		if p.canRotate(direction):
-			p.rotate(direction)
-			clearBoardLabel()
-			writeBoardLabel('L', "Rotated to " + p.orient)
-			wBoard.refresh()
-			crs.delay_output(250)
-	p.undraw()
-	del p
-	crs.delay_output(500)
+#for id in ('C', 'S', 'Z', 'L', 'R', 'I', 'T'):
+#	p = Piece(1, 4, id, 'H')
+#	clearBoardLabel()
+#	wBoard.refresh()
+#	crs.delay_output(500)
+#	for i in range(8):
+#		direction = ['CW', 'CCW'][int(i < 4)]
+#		if p.canRotate(direction):
+#			p.rotate(direction)
+#			clearBoardLabel()
+#			writeBoardLabel('L', "Rotated to " + p.orient)
+#			wBoard.refresh()
+#			crs.delay_output(250)
+#	p.undraw()
+#	del p
+#	crs.delay_output(500)
 #Unset proper key settings
 screen.keypad(False)
 crs.nocbreak()
