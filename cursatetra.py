@@ -210,6 +210,17 @@ or have an active block (two ACS_CKBOARD chars)
 def getCellValue(y, x):
 	return wBoard.inch(y, 2 * x)
 
+def setCellValue(y, x, val):
+	values = { \
+		"EMPTY": '. ', \
+		"OLD": (crs.ACS_BLOCK, crs.ACS_BLOCK), \
+		"ACTIVE": (crs.ACS_CKBOARD, crs.ACS_CKBOARD) \
+	}
+	i = 2 * x - 1
+	for c in values[val]:
+		wBoard.addch(y, i, c)
+		i += 1
+
 def isCellEmpty(y, x):
 	return getCellValue(y, x) == ord(' ')
 
@@ -219,28 +230,48 @@ def isCellInBounds(y, x):
 Method-less class a.k.a. struct for active block data
 
 Valid values:
-	* yCoord: [1, 19]
+	* y: [1, 19]
 		* Smallest block height-wise is Square, S, and Z; All take up two cells vertically
-	* xCoord: [1, 10]
+	* x: [1, 10]
 	* pID: {'C', 'S', 'Z', 'L', 'R', 'I', 'T'}
 	* orient: {'', 'H', 'V', 'HP', 'VP'}
 		* Null-orientation is only valid for the Square
 """
 class Piece:
 	def __init__(self, y, x, p, o):
-		self.yCoord = y
-		self.xCoord = x
+		self.y = y
+		self.x = x
 		self.pID = p
 		self.orient = o
 		self.hasLanded = False
-	def draw(self):
-		drawPiece(self.y, 2 * self.x)
+		drawPiece(self.y - 1, 2 * self.x - 1, self.orient, self.pID, wBoard, crs.ACS_CKBOARD)
+
+def rotate(piece, newOrient):
+	if piece.pID == 'S':
+		if newOrient == 'V':
+			setCellValue(piece.y, piece.x + 1, "EMPTY")
+			setCellValue(piece.y, piece.x + 2, "EMPTY")
+			setCellValue(piece.y, piece.x, "ACTIVE")
+			setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
+		elif newOrient == 'H':
+			setCellValue(piece.y, piece.x, "EMPTY")
+			setCellValue(piece.y + 2, piece.x + 1, "EMPTY")
+			setCellValue(piece.y, piece.x + 1, "ACTIVE")
+			setCellValue(piece.y, piece.x + 2, "ACTIVE")
+
+	piece.orient = newOrient
 
 def canRotate(piece, direction):
 	if piece.pID == 'C':
-		return True
+		return False
 	elif piece.pID == 'S':
-		pass
+		if piece.orient == 'H' and isCellEmpty(piece.y, piece.x) and \
+			isCellEmpty(piece.y + 2, piece.x + 1):
+				return True
+		elif piece.orient == 'V' and isCellEmpty(piece.y, piece.x + 1) and \
+			isCellEmpty(piece.y, piece.x + 2) and \
+			isCellInBounds(piece.y, piece.x + 2):
+				return True
 """
 Main function
 
@@ -336,23 +367,24 @@ writeScore(0, "STAT1")
 writeScore(0, "STAT2")
 writeScore(0, "STAT3")
 writeScore(0, "STAT4")
-#Pieces demo (comment out later)
-drawPiece(1, 1, '', 'C', wBoard, crs.ACS_CKBOARD)
-drawPiece(1, 15, 'H', 'I', wBoard, crs.ACS_CKBOARD)
-drawPiece(0, 7, 'V', 'I', wBoard, crs.ACS_CKBOARD)
-drawPiece(3, 1, 'H', 'S', wBoard, crs.ACS_CKBOARD)
-drawPiece(4, 9, 'V', 'S', wBoard, crs.ACS_CKBOARD)
-drawPiece(7, 1, 'H', 'Z', wBoard, crs.ACS_CKBOARD)
-drawPiece(8, 9, 'V', 'Z', wBoard, crs.ACS_CKBOARD)
-drawPiece(11, 1, 'H', 'L', wBoard, crs.ACS_CKBOARD)
-drawPiece(11, 9, 'V', 'L', wBoard, crs.ACS_CKBOARD)
-drawPiece(10, 17, 'HP', 'L', wBoard, crs.ACS_CKBOARD)
-drawPiece(15, 1, 'H', 'R', wBoard, crs.ACS_CKBOARD)
-drawPiece(15, 9, 'V', 'R', wBoard, crs.ACS_CKBOARD)
-drawPiece(14, 15, 'HP', 'R', wBoard, crs.ACS_CKBOARD)
-drawPiece(18, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
-drawPiece(18, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
-drawPiece(18, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
+#Pieces demo
+#drawPiece(1, 1, '', 'C', wBoard, crs.ACS_CKBOARD)
+#drawPiece(1, 15, 'H', 'I', wBoard, crs.ACS_CKBOARD)
+#drawPiece(0, 7, 'V', 'I', wBoard, crs.ACS_CKBOARD)
+#drawPiece(3, 1, 'H', 'S', wBoard, crs.ACS_CKBOARD)
+#drawPiece(4, 9, 'V', 'S', wBoard, crs.ACS_CKBOARD)
+#drawPiece(7, 1, 'H', 'Z', wBoard, crs.ACS_CKBOARD)
+#drawPiece(8, 9, 'V', 'Z', wBoard, crs.ACS_CKBOARD)
+#drawPiece(11, 1, 'H', 'L', wBoard, crs.ACS_CKBOARD)
+#drawPiece(11, 9, 'V', 'L', wBoard, crs.ACS_CKBOARD)
+#drawPiece(10, 17, 'HP', 'L', wBoard, crs.ACS_CKBOARD)
+#drawPiece(15, 1, 'H', 'R', wBoard, crs.ACS_CKBOARD)
+#drawPiece(15, 9, 'V', 'R', wBoard, crs.ACS_CKBOARD)
+#drawPiece(14, 15, 'HP', 'R', wBoard, crs.ACS_CKBOARD)
+#drawPiece(18, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
+#drawPiece(18, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
+#drawPiece(18, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
+p = Piece(1, 1, 'S', 'H')
 clearBoardLabel()
 writeBoardLabel('L', str(getCellValue(1, 1)) + str(isCellEmpty(1, 1)))
 #Make windows visible
@@ -365,6 +397,16 @@ wStats.refresh()
 #Main function call
 #ctMain()
 #Wait
+crs.delay_output(2000)
+if canRotate(p, ''):
+	writeBoardLabel('C', "ROTATED!!")
+	rotate(p, 'V')
+wBoard.refresh()
+crs.delay_output(2000)
+if canRotate(p, ''):
+	writeBoardLabel('L', "ROTATED AGAIN!!")
+	rotate(p, 'H')
+wBoard.refresh()
 crs.delay_output(2000)
 #Label demo
 #changeTexture(1, 1, 23, 20, crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard)
