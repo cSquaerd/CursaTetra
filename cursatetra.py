@@ -312,9 +312,7 @@ class Piece:
 		self.x += xShift
 		self.draw()
 	def canRotate(self, direction):
-		if self.pID == 'C':
-			return False
-		elif self.pID == 'S':
+		if self.pID == 'S':
 			if self.orient == 'H' and isCellEmpty(self.y, self.x) and \
 				isCellEmpty(self.y + 1, self.x):
 				return True
@@ -322,8 +320,6 @@ class Piece:
 				isCellEmpty(self.y + 2, self.x) and \
 				isCellInBounds(self.y + 2, self.x + 2):
 				return True
-			else:
-				return False
 		elif self.pID == 'Z':
 			if self.orient == 'H' and isCellEmpty(self.y, self.x + 1) and \
 				isCellEmpty(self.y + 2, self.x):
@@ -332,8 +328,6 @@ class Piece:
 				isCellEmpty(self.y + 2, self.x + 2) and \
 				isCellInBounds(self.y + 2, self.x + 2):
 				return True
-			else:
-				return False
 		elif self.pID == 'L':
 			if self.orient == 'H':
 				if direction == 'CW' and isCellInBounds(self.y + 2, self.x) and \
@@ -344,8 +338,6 @@ class Piece:
 					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y, self.x + 2) and \
 					isCellEmpty(self.y + 1, self.x + 2):
 					return True
-				else:
-					return False
 			elif self.orient == 'V':
 				if direction == 'CW' and isCellEmpty(self.y, self.x) and \
 					isCellEmpty(self.y, self.x + 1) and \
@@ -355,8 +347,6 @@ class Piece:
 					isCellEmpty(self.y + 2, self.x + 1) and \
 					isCellEmpty(self.y + 2, self.x + 2):
 					return True
-				else:
-					return False
 			elif self.orient == 'HP':
 				if direction == 'CW' and isCellInBounds(self.y + 2, self.x + 2) and \
 					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y, self.x + 2) and \
@@ -366,8 +356,6 @@ class Piece:
 					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y + 2, self.x) and \
 					isCellEmpty(self.y + 1, self.x + 2):
 					return True
-				else:
-					return False
 			elif self.orient == 'VP':
 				if direction == 'CW' and isCellEmpty(self.y, self.x + 1) and \
 					isCellEmpty(self.y + 2, self.x + 1) and \
@@ -377,8 +365,6 @@ class Piece:
 					isCellEmpty(self.y, self.x + 1) and \
 					isCellEmpty(self.y + 2, self.x + 1):
 					return True
-				else:
-					return False
 		elif self.pID == 'R':
 			if self.orient == 'H':
 				if direction == 'CW' and isCellInBounds(self.y + 2, self.x + 2) and \
@@ -389,8 +375,6 @@ class Piece:
 					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y + 2, self.x + 2) and \
 					isCellEmpty(self.y + 1, self.x + 2):
 					return True
-				else:
-					return False
 			elif self.orient == 'V':
 				if direction == 'CW' and isCellEmpty(self.y, self.x + 1) and \
 					isCellEmpty(self.y, self.x + 2) and \
@@ -400,8 +384,6 @@ class Piece:
 					isCellEmpty(self.y + 2, self.x + 1) and \
 					isCellEmpty(self.y + 2, self.x):
 					return True
-				else:
-					return False
 			elif self.orient == 'HP':
 				if direction == 'CW' and isCellInBounds(self.y + 2, self.x) and \
 					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y + 2, self.x + 2) and \
@@ -411,8 +393,6 @@ class Piece:
 					isCellEmpty(self.y, self.x) and isCellEmpty(self.y + 1, self.x) and \
 					isCellEmpty(self.y + 1, self.x + 2):
 					return True
-				else:
-					return False
 			elif self.orient == 'VP':
 				if direction == 'CW' and isCellEmpty(self.y, self.x + 1) and \
 					isCellEmpty(self.y + 2, self.x) and \
@@ -422,8 +402,6 @@ class Piece:
 					isCellEmpty(self.y, self.x + 2) and \
 					isCellEmpty(self.y + 2, self.x + 1):
 					return True
-				else:
-					return False
 		elif self.pID == 'I':
 			if self.orient == 'H' and isCellInBounds(self.y + 3, self.x + 3) and \
 				isCellEmpty(self.y + 1, self.x) and \
@@ -435,8 +413,6 @@ class Piece:
 				isCellEmpty(self.y + 1, self.x + 1) and \
 				isCellEmpty(self.y + 3, self.x + 1):
 				return True
-			else:
-				return False
 		elif self.pID == 'T':
 			if self.orient == 'H' and isCellEmpty(self.y, self.x + 1):
 				return True
@@ -448,10 +424,7 @@ class Piece:
 			elif self.orient == 'VP' and isCellEmpty(self.y + 1, self.x) and \
 				isCellInBounds(self.y + 2, self.x):
 				return True
-			else:
-				return False
-		else:
-			return False
+		return False
 	def canMove(self, direction):
 		if self.pID == 'C':
 			if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
@@ -513,6 +486,106 @@ class Piece:
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
 					isCellEmpty(self.y + 3, self.x):
+					return True
+		elif self.pID == 'L':
+			if self.orient == 'H':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x) and \
+					isCellEmpty(self.y, self.x) and \
+					isCellEmpty(self.y + 1, self.x) and \
+					isCellEmpty(self.y + 2, self.x):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
+					isCellEmpty(self.y + 2, self.x + 3):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 3, self.x + 2):
+					return True
+			elif self.orient == 'V':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y + 2, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
+					isCellEmpty(self.y + 1, self.x + 3):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x):
+					return True
+			if self.orient == 'HP':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x + 2):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 3, self.x + 1):
+					return True
+			elif self.orient == 'VP':
+				if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 1, self.x + 3) and \
+					isCellEmpty(self.y, self.x + 3) and \
+					isCellEmpty(self.y + 1, self.x + 3):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 2, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 2):
+					return True
+		elif self.pID == 'R':
+			if self.orient == 'H':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y + 2, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x + 2):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x + 1):
+					return True
+			elif self.orient == 'V':
+				if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 1, self.x + 3) and \
+					isCellEmpty(self.y + 1, self.x + 3):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 2, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 2):
+					return True
+			if self.orient == 'HP':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x) and \
+					isCellEmpty(self.y, self.x) and \
+					isCellEmpty(self.y + 1, self.x) and \
+					isCellEmpty(self.y + 2, self.x):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y, self.x + 3) and \
+					isCellEmpty(self.y, self.x + 3):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 3, self.x + 1):
+					return True
+			elif self.orient == 'VP':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
+					isCellEmpty(self.y + 1, self.x + 3) and \
+					isCellEmpty(self.y + 2, self.x + 3):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 2) and \
+					isCellEmpty(self.y + 3, self.x + 2):
 					return True
 		elif self.pID == 'I':
 			if self.orient == 'H':
@@ -591,6 +664,7 @@ class Piece:
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
 					isCellEmpty(self.y + 3, self.x + 1):
 					return True
+		return False
 """
 Main function
 
@@ -697,33 +771,37 @@ wStats.refresh()
 #ctMain()
 #Wait
 crs.delay_output(1000)
-#Move demo
-p = Piece(1, 4, 'T', 'VP')
-wBoard.refresh()
-crs.delay_output(100)
-for d in ('D', 'L', 'R'):
-	while p.canMove(d):
-		p.move(d)
+#Move & Rotation demo
+rotations = {'C': ['']}
+rotations.update(dict.fromkeys(['S', 'Z', 'I'], ['H', 'V']))
+rotations.update(dict.fromkeys(['L', 'R', 'T'], ['H', 'V', 'HP', 'VP']))
+for id in ('C', 'S', 'Z', 'L', 'R', 'I', 'T'):
+	for r in rotations[id]:
+		p = Piece(1, 4, id, r)
+		clearBoardLabel()
 		wBoard.refresh()
-		crs.delay_output(100)
-crs.delay_output(1000)
-#Rotation demo
-#for id in ('C', 'S', 'Z', 'L', 'R', 'I', 'T'):
-#	p = Piece(1, 4, id, 'H')
-#	clearBoardLabel()
-#	wBoard.refresh()
-#	crs.delay_output(500)
-#	for i in range(8):
-#		direction = ['CW', 'CCW'][int(i < 4)]
-#		if p.canRotate(direction):
-#			p.rotate(direction)
-#			clearBoardLabel()
-#			writeBoardLabel('L', "Rotated to " + p.orient)
-#			wBoard.refresh()
-#			crs.delay_output(250)
-#	p.undraw()
-#	del p
-#	crs.delay_output(500)
+		crs.delay_output(500)
+		for i in range(8):
+			direction = ['CW', 'CCW'][int(i < 4)]
+			if p.canRotate(direction):
+				p.rotate(direction)
+				clearBoardLabel()
+				writeBoardLabel('L', "Rotated to " + p.orient)
+				wBoard.refresh()
+				crs.delay_output(200)
+		clearBoardLabel()
+		wBoard.refresh()
+		crs.delay_output(500)
+		for d in ('D', 'R', 'L'):
+			writeBoardLabel('L', "Moving " + d)
+			wBoard.refresh()
+			while p.canMove(d):
+				p.move(d)
+				wBoard.refresh()
+				crs.delay_output(100)
+		p.undraw()
+		del p
+		crs.delay_output(500)
 #Unset proper key settings
 screen.keypad(False)
 crs.nocbreak()
