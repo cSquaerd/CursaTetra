@@ -245,7 +245,7 @@ def isCellEmpty(y, x):
 	return getCellValue(y, x) == ord(' ')
 
 def isCellInBounds(y, x):
-	return y > 0 and y < 20 and x > 0 and x < 11
+	return y > 0 and y < 21 and x > 0 and x < 11
 """
 Class for active block data
 
@@ -453,7 +453,144 @@ class Piece:
 		else:
 			return False
 	def canMove(self, direction):
-		pass
+		if self.pID == 'C':
+			if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
+				isCellEmpty(self.y, self.x - 1) and \
+				isCellEmpty(self.y + 1, self.x - 1):
+				return True
+			elif direction == 'R' and isCellInBounds(self.y + 1, self.x + 2) and \
+				isCellEmpty(self.y, self.x + 2) and \
+				isCellEmpty(self.y + 1, self.x + 2):
+				return True
+			elif direction == 'D' and isCellInBounds(self.y + 2, self.x) and \
+				isCellEmpty(self.y + 2, self.x) and \
+				isCellEmpty(self.y + 2, self.x + 1):
+				return True
+		elif self.pID == 'S':
+			if self.orient == 'H':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y + 2, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
+					isCellEmpty(self.y + 1, self.x + 3):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x + 1):
+					return True
+			elif self.orient == 'V':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x + 2):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 3, self.x + 1):
+					return True
+		elif self.pID == 'Z':
+			if self.orient == 'H':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
+					isCellEmpty(self.y + 2, self.x + 3):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 3, self.x + 2):
+					return True
+			elif self.orient == 'V':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y + 2, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x + 2):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x):
+					return True
+		elif self.pID == 'I':
+			if self.orient == 'H':
+				if direction == 'L' and isCellInBounds(self.y + 3, self.x) and \
+					isCellEmpty(self.y, self.x) and \
+					isCellEmpty(self.y + 1, self.x) and \
+					isCellEmpty(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 3, self.x):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 3, self.x + 2) and \
+					isCellEmpty(self.y, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y + 3, self.x + 2):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 4, self.x + 1) and \
+					isCellEmpty(self.y + 4, self.x + 1):
+					return True
+			elif self.orient == 'V':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y + 2, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 4) and \
+					isCellEmpty(self.y + 2, self.x + 4):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 3, self.x + 2) and \
+					isCellEmpty(self.y + 3, self.x + 3):
+					return True
+		elif self.pID == 'T':
+			if self.orient == 'H':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
+					isCellEmpty(self.y + 1, self.x + 3):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x + 1):
+					return True
+			elif self.orient == 'V':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x + 2):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x + 1):
+					return True
+			elif self.orient == 'HP':
+				if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x - 1):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 1, self.x + 3) and \
+					isCellEmpty(self.y + 1, self.x + 3):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 2, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 2):
+					return True
+			elif self.orient == 'VP':
+				if direction == 'L' and isCellInBounds(self.y + 2, self.x) and \
+					isCellEmpty(self.y, self.x) and \
+					isCellEmpty(self.y + 1, self.x) and \
+					isCellEmpty(self.y + 2, self.x):
+					return True
+				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
+					isCellEmpty(self.y + 1, self.x + 3):
+					return True
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 3, self.x + 1):
+					return True
 """
 Main function
 
@@ -561,21 +698,15 @@ wStats.refresh()
 #Wait
 crs.delay_output(1000)
 #Move demo
-p = Piece(1, 4, 'I', '')
+p = Piece(1, 4, 'T', 'VP')
 wBoard.refresh()
-crs.delay_output(500)
-p.move('D')
-wBoard.refresh()
-crs.delay_output(500)
-p.move('L')
-wBoard.refresh()
-crs.delay_output(500)
-p.move('R')
-wBoard.refresh()
-crs.delay_output(500)
-p.move('R')
-wBoard.refresh()
-crs.delay_output(500)
+crs.delay_output(100)
+for d in ('D', 'L', 'R'):
+	while p.canMove(d):
+		p.move(d)
+		wBoard.refresh()
+		crs.delay_output(100)
+crs.delay_output(1000)
 #Rotation demo
 #for id in ('C', 'S', 'Z', 'L', 'R', 'I', 'T'):
 #	p = Piece(1, 4, id, 'H')
