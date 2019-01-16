@@ -7,8 +7,16 @@ Draws an alignment grid in the board window
 """
 def drawGrid():
 	for x in range(1, 21, 2):
-		for y in range(1, 23):
+		for y in range(1, 21):
 			wBoard.addch(y, x, '.')
+"""
+Draws the bottom border in the board window
+"""
+def drawBoardBorder():
+	wBoard.addch(21, 0, crs.ACS_LTEE)
+	for x in range(1, 21):
+		wBoard.addch(21, x, crs.ACS_HLINE)
+	wBoard.addch(21, 21, crs.ACS_RTEE)
 """
 # Block designations
 
@@ -173,6 +181,35 @@ def writeScore(score, scoreType):
 		wScore.addstr(scoreIndex, 16 - numDigits(score), str(score))
 	else:
 		wStats.addstr(scoreIndex, 18 - numDigits(score), str(score))
+"""
+Writes a label to the lower section of the board;
+
+The label can be left, center, or right aligned;
+If the align argument is a string representation of
+an integer, then the label will be written starting at
+the numbered cell and will wrap around, allowing
+for scrolling labels with repeated calls
+"""
+def writeBoardLabel(align, label):
+	if align == 'L':
+		x = 1
+	elif align == 'C':
+		x = (20 - len(label)) // 2 + 1
+	elif align == 'R':
+		x = 21 - len(label)
+	else:
+		x = int(align) - 1
+		for c in label:
+			wBoard.addch(22, x % 20 + 1, c)
+			x += 1
+		return None
+
+	wBoard.addstr(22, x, label)
+"""
+Clears the lower section of the board
+"""
+def clearBoardLabel():
+	wBoard.addstr(22, 1, 20 * ' ')
 
 #SECTION: MAIN
 #Initialize screen
@@ -213,6 +250,8 @@ wCntrl.addstr(6, 1, "CTRL+SPACE: ROT. CCW")
 wCntrl.addstr(7, 1, "ESC       : PAUSE")
 wCntrl.addstr(8, 1, "Q         : QUIT")
 drawGrid()
+drawBoardBorder()
+writeBoardLabel('15', "FOOBAR")
 wNextP.addstr(1, 2, "NEXT PIECE:")
 wStats.addstr(1, 4, "STATISTICS:")
 wStats.addstr(2, 1, ":PIECES::")
@@ -257,9 +296,9 @@ drawPiece(12, 17, 'HP', 'L', wBoard, crs.ACS_CKBOARD)
 drawPiece(16, 1, 'H', 'R', wBoard, crs.ACS_CKBOARD)
 drawPiece(16, 9, 'V', 'R', wBoard, crs.ACS_CKBOARD)
 drawPiece(16, 15, 'HP', 'R', wBoard, crs.ACS_CKBOARD)
-drawPiece(20, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
-drawPiece(20, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
-drawPiece(20, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
+#drawPiece(20, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
+#drawPiece(20, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
+#drawPiece(20, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
 #Make windows visible
 wTitle.refresh()
 wScore.refresh()
@@ -272,8 +311,16 @@ wStats.refresh()
 crs.delay_output(2000)
 
 changeTexture(1, 1, 23, 20, crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard)
+clearBoardLabel()
+writeBoardLabel('15', "PONTIFEX MX")
 wBoard.refresh()
 crs.delay_output(2000)
+
+for n in range(40, 0, -1):
+	clearBoardLabel()
+	writeBoardLabel(str(n), "LOOK AT ME, MA!")
+	wBoard.refresh()
+	crs.delay_output(100)
 
 #Unset proper key settings
 screen.keypad(False)
