@@ -12,169 +12,167 @@
 ## Piece designations & diagrams
 ### Based on specification in Game Boy version
 
-* Note: The orientation of the pieces may seem backwards at first glance;
-Consider it in terms of the orientation of an underline
-below the text character that identifies a piece
+* Note: The orientation of the pieces may seem backwards at first glance; Consider it in terms of the orientation of an underline below the text character that identifies a piece
 
 * C : Square
-* Diagram:
+	* Diagram:
 ```
-012345
+  012345
 0.[][]
 1.[][]
 2.
 ```
-* Orientations:
-	* None
+	* Orientations:
+		* None
 * S : S-piece
-* Diagram:
+	* Diagram:
 ```
-012345
+  012345
 0.  [][]
 1.[][]
 2.
 ```
-* Orientations:
-	* Vertical
+	* Orientations:
+		* Vertical
 ```
-012345
+  012345
 0.[]
 1.[][]
 2.  []
 ```
-* Observations:
-	* Rotates about (2:3, 1) Clockwise
+	* Observations:
+		* Rotates about (2:3, 1) Clockwise
 * Z : Z-piece
-* Diagram:
+	* Diagram:
 ```
-012345
+  012345
 0.[][]
 1.  [][]
 2.
 ```
-* Orientations:
-	* Vertical
+	* Orientations:
+		* Vertical
 ```
-012345
+  012345
 0.  []
 1.[][]
 2.[]
 ```
-* Observations:
-	* Rotates about (2:3, 1) Counter-Clockwise
+	* Observations:
+		* Rotates about (2:3, 1) Counter-Clockwise
 * L : L-piece
-* Diagram:
+	* Diagram:
 ```
-012345
+  012345
 0.  []
 1.  []
 2.  [][]
 ```
-* Orientations:
-	* Vertical
+	* Orientations:
+		* Vertical
 ```
-012345
+  012345
 0.
 1.[][][]
 2.[]
 ```
-	* Horizontal-Pi
+		* Horizontal-Pi
 ```
-012345
+  012345
 0.[][]
 1.  []
 2.  []
 ```
-	* Vertical-Pi
+		* Vertical-Pi
 ```
-012345
+  012345
 0.    []
 1.[][][]
 2.
 ```
-* Observations:
-	* Rotates about (2:3, 1) Both Ways
+	* Observations:
+		* Rotates about (2:3, 1) Both Ways
 * R : Reversed L-piece
-* Diagram:
+	* Diagram:
 ```
-012345
+  012345
 0.  []
 1.  []
 2.[][]
 ```
-* Orientations:
-	* Vertical
+	* Orientations:
+		* Vertical
 ```
-012345
+  012345
 0.[]
 1.[][][]
 2.
 ```
-	* Horizontal-Pi
+		* Horizontal-Pi
 ```
-012345
+  012345
 0.  [][]
 1.  []
 2.  []
 ```
-	* Vertical-Pi
+		* Vertical-Pi
 ```
-012345
+  012345
 0.
 1.[][][]
 2.    []
 ```
-* Observations:
-	* Rotates about (2:3, 1) Both Ways
+	* Observations:
+		* Rotates about (2:3, 1) Both Ways
 * I : Line
-* Diagram:
+	* Diagram:
 ```
-01234567
+  01234567
 0.  []
 1.  []
 2.  []
 3.  []
 ```
-* Orientations:
-	* Vertical
+	* Orientations:
+		* Vertical
 ```
-01234567
+  01234567
 0.
 1.
 2.[][][][]
 3.
 ```
-* Observations:
-	* Rotates about (2:3, 2) Clockwise
+	* Observations:
+		* Rotates about (2:3, 2) Clockwise
 * T : T-piece
-* Diagram:
+	* Diagram:
 ```
-012345
+  012345
 0.
 1.[][][]
 2.  []
 ```
-* Orientations:
-	* Vertical
+	* Orientations:
+		* Vertical
 ```
-012345
+  012345
 0.  []
 1.[][]
 2.  []
 ```
-	* Horizontal-Pi
+		* Horizontal-Pi
 ```
-012345
+  012345
 0.  []
 1.[][][]
 2.
 ```
-	* Vertical-Pi
+		* Vertical-Pi
 ```
-012345
+  012345
 0.  []
 1.  [][]
 2.  []
 ```
-* Observations:
-	* Rotates about (2:3, 1) Both Ways
+	* Observations:
+		* Rotates about (2:3, 1) Both Ways
