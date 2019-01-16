@@ -227,15 +227,20 @@ def isCellEmpty(y, x):
 def isCellInBounds(y, x):
 	return y > 0 and y < 20 and x > 0 and x < 11
 """
-Method-less class a.k.a. struct for active block data
+Class for active block data
 
-Valid values:
+* Valid values:
 	* y: [1, 19]
 		* Smallest block height-wise is Square, S, and Z; All take up two cells vertically
 	* x: [1, 10]
 	* pID: {'C', 'S', 'Z', 'L', 'R', 'I', 'T'}
 	* orient: {'', 'H', 'V', 'HP', 'VP'}
 		* Null-orientation is only valid for the Square
+
+* method getNewOrient(self, rotDir):
+	* rotDir: {'CW', 'CCW'}
+		* Clockwise or Counter-Clockwise
+		* Only needed for L, R, and T pieces
 """
 class Piece:
 	def __init__(self, y, x, p, o):
@@ -244,20 +249,25 @@ class Piece:
 		self.pID = p
 		self.orient = o
 		self.hasLanded = False
-		drawPiece(self.y - 1, 2 * self.x - 1, self.orient, self.pID, wBoard, crs.ACS_CKBOARD)
+		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, crs.ACS_CKBOARD)
+	def getNewOrient(self, rotDir):
+		if self.pID == 'C':
+			return ''
+		elif self.pID in ('S', 'Z', 'I'):
+			return 'V' if self.orient == 'H' else 'H'
 
 def rotate(piece, newOrient):
 	if piece.pID == 'S':
 		if newOrient == 'V':
-			setCellValue(piece.y, piece.x + 1, "EMPTY")
-			setCellValue(piece.y, piece.x + 2, "EMPTY")
+			setCellValue(piece.y + 2, piece.x, "EMPTY")
+			setCellValue(piece.y + 1, piece.x + 2, "EMPTY")
 			setCellValue(piece.y, piece.x, "ACTIVE")
-			setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
+			setCellValue(piece.y + 1, piece.x, "ACTIVE")
 		elif newOrient == 'H':
 			setCellValue(piece.y, piece.x, "EMPTY")
-			setCellValue(piece.y + 2, piece.x + 1, "EMPTY")
-			setCellValue(piece.y, piece.x + 1, "ACTIVE")
-			setCellValue(piece.y, piece.x + 2, "ACTIVE")
+			setCellValue(piece.y + 1, piece.x, "EMPTY")
+			setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
+			setCellValue(piece.y + 2, piece.x, "ACTIVE")
 
 	piece.orient = newOrient
 
@@ -266,11 +276,11 @@ def canRotate(piece, direction):
 		return False
 	elif piece.pID == 'S':
 		if piece.orient == 'H' and isCellEmpty(piece.y, piece.x) and \
-			isCellEmpty(piece.y + 2, piece.x + 1):
+			isCellEmpty(piece.y + 1, piece.x):
 				return True
-		elif piece.orient == 'V' and isCellEmpty(piece.y, piece.x + 1) and \
-			isCellEmpty(piece.y, piece.x + 2) and \
-			isCellInBounds(piece.y, piece.x + 2):
+		elif piece.orient == 'V' and isCellEmpty(piece.y + 1, piece.x + 2) and \
+			isCellEmpty(piece.y + 2, piece.x) and \
+			isCellInBounds(piece.y + 2, piece.x + 2):
 				return True
 """
 Main function
@@ -295,7 +305,7 @@ def ctMain():
 		"STAT3": 0, \
 		"STAT4": 0 \
 	}
-	piece = Piece()
+	#piece = Piece()
 
 #SECTION: MAIN
 #Initialize screen
@@ -384,7 +394,7 @@ writeScore(0, "STAT4")
 #drawPiece(18, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
 #drawPiece(18, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
 #drawPiece(18, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
-p = Piece(1, 1, 'S', 'H')
+p = Piece(1, 3, 'S', 'V')
 clearBoardLabel()
 writeBoardLabel('L', str(getCellValue(1, 1)) + str(isCellEmpty(1, 1)))
 #Make windows visible
@@ -400,12 +410,12 @@ wStats.refresh()
 crs.delay_output(2000)
 if canRotate(p, ''):
 	writeBoardLabel('C', "ROTATED!!")
-	rotate(p, 'V')
+	rotate(p, p.getNewOrient(''))
 wBoard.refresh()
 crs.delay_output(2000)
 if canRotate(p, ''):
 	writeBoardLabel('L', "ROTATED AGAIN!!")
-	rotate(p, 'H')
+	rotate(p, p.getNewOrient(''))
 wBoard.refresh()
 crs.delay_output(2000)
 #Label demo
@@ -455,9 +465,9 @@ below the text character that identifies a piece
 		* Horizontal
 		```
 		  012345
-		0.  [][]
-		1.[][]
-		2.
+		0.
+		1.  [][]
+		2.[][]
 		```
 		* Vertical
 		```
