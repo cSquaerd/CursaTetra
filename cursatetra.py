@@ -210,6 +210,29 @@ Clears the lower section of the board
 """
 def clearBoardLabel():
 	wBoard.addstr(22, 1, 20 * ' ')
+"""
+Main function
+
+Contains event loop for handling keypresses,
+scoring and statistics variables, and other
+vital functionality
+"""
+def ctMain():
+	scoreData = { \
+		"SCORE": 0, \
+		"LINES": 0, \
+		"STATC": 0, \
+		"STATS": 0, \
+		"STATZ": 0, \
+		"STATL": 0, \
+		"STATR": 0, \
+		"STATI": 0, \
+		"STATT": 0, \
+		"STAT1": 0, \
+		"STAT2": 0, \
+		"STAT3": 0, \
+		"STAT4": 0 \
+	}
 
 #SECTION: MAIN
 #Initialize screen
@@ -219,7 +242,6 @@ crs.noecho()
 crs.cbreak()
 screen.keypad(True)
 crs.curs_set(0)
-
 #Initialize windows
 wTitle = crs.newwin(6, 19, 0, 4)
 wScore = crs.newwin(4, 17, 6, 5)
@@ -268,7 +290,7 @@ wStats.addstr(11, 1, "SINGLES :")
 wStats.addstr(12, 1, "DOUBLES :")
 wStats.addstr(13, 1, "TRIPLES :")
 wStats.addstr(14, 1, "TETRI   :")
-
+#Write initial scores and statistics
 writeScore(0, "SCORE")
 writeScore(0, "LINES")
 writeScore(0, "STATC")
@@ -282,23 +304,23 @@ writeScore(0, "STAT1")
 writeScore(0, "STAT2")
 writeScore(0, "STAT3")
 writeScore(0, "STAT4")
-
+#Pieces demo (comment out later)
 drawPiece(1, 1, '', 'C', wBoard, crs.ACS_CKBOARD)
 drawPiece(1, 15, 'H', 'I', wBoard, crs.ACS_CKBOARD)
 drawPiece(0, 7, 'V', 'I', wBoard, crs.ACS_CKBOARD)
-drawPiece(4, 1, 'H', 'S', wBoard, crs.ACS_CKBOARD)
+drawPiece(3, 1, 'H', 'S', wBoard, crs.ACS_CKBOARD)
 drawPiece(4, 9, 'V', 'S', wBoard, crs.ACS_CKBOARD)
-drawPiece(8, 1, 'H', 'Z', wBoard, crs.ACS_CKBOARD)
+drawPiece(7, 1, 'H', 'Z', wBoard, crs.ACS_CKBOARD)
 drawPiece(8, 9, 'V', 'Z', wBoard, crs.ACS_CKBOARD)
-drawPiece(12, 1, 'H', 'L', wBoard, crs.ACS_CKBOARD)
-drawPiece(12, 9, 'V', 'L', wBoard, crs.ACS_CKBOARD)
-drawPiece(12, 17, 'HP', 'L', wBoard, crs.ACS_CKBOARD)
-drawPiece(16, 1, 'H', 'R', wBoard, crs.ACS_CKBOARD)
-drawPiece(16, 9, 'V', 'R', wBoard, crs.ACS_CKBOARD)
-drawPiece(16, 15, 'HP', 'R', wBoard, crs.ACS_CKBOARD)
-#drawPiece(20, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
-#drawPiece(20, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
-#drawPiece(20, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
+drawPiece(11, 1, 'H', 'L', wBoard, crs.ACS_CKBOARD)
+drawPiece(11, 9, 'V', 'L', wBoard, crs.ACS_CKBOARD)
+drawPiece(10, 17, 'HP', 'L', wBoard, crs.ACS_CKBOARD)
+drawPiece(15, 1, 'H', 'R', wBoard, crs.ACS_CKBOARD)
+drawPiece(15, 9, 'V', 'R', wBoard, crs.ACS_CKBOARD)
+drawPiece(14, 15, 'HP', 'R', wBoard, crs.ACS_CKBOARD)
+drawPiece(18, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
+drawPiece(18, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
+drawPiece(18, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
 #Make windows visible
 wTitle.refresh()
 wScore.refresh()
@@ -306,21 +328,22 @@ wCntrl.refresh()
 wBoard.refresh()
 wNextP.refresh()
 wStats.refresh()
-
+#Main function call
+#ctMain()
 #Wait
 crs.delay_output(2000)
-
+#Label demo (comment out later)
 changeTexture(1, 1, 23, 20, crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard)
 clearBoardLabel()
 writeBoardLabel('15', "PONTIFEX MX")
 wBoard.refresh()
 crs.delay_output(2000)
 
-for n in range(40, 0, -1):
+for n in range(41, 0, -1):
 	clearBoardLabel()
 	writeBoardLabel(str(n), "LOOK AT ME, MA!")
 	wBoard.refresh()
-	crs.delay_output(100)
+	crs.delay_output(75)
 
 #Unset proper key settings
 screen.keypad(False)
