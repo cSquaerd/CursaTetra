@@ -255,6 +255,27 @@ class Piece:
 			return ''
 		elif self.pID in ('S', 'Z', 'I'):
 			return 'V' if self.orient == 'H' else 'H'
+		elif self.pID in ('L', 'R', 'T'):
+			if self.orient == 'H':
+				if rotDir == 'CW':
+					return 'V'
+				elif rotDir == 'CCW':
+					return 'VP'
+			elif self.orient == 'V':
+				if rotDir == 'CW':
+					return 'HP'
+				elif rotDir == 'CCW':
+					return 'H'
+			elif self.orient == 'HP':
+				if rotDir == 'CW':
+					return 'VP'
+				elif rotDir == 'CCW':
+					return 'V'
+			elif self.orient == 'VP':
+				if rotDir == 'CW':
+					return 'H'
+				elif rotDir == 'CCW':
+					return 'HP'
 
 def rotate(piece, newOrient):
 	if piece.pID == 'S':
@@ -279,6 +300,55 @@ def rotate(piece, newOrient):
 			setCellValue(piece.y + 2, piece.x , "EMPTY")
 			setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
 			setCellValue(piece.y + 2, piece.x + 2, "ACTIVE")
+	elif piece.pID == 'L':
+		if piece.orient == 'H':
+			setCellValue(piece.y, piece.x + 1, "EMPTY")
+			setCellValue(piece.y + 2, piece.x + 1, "EMPTY")
+			setCellValue(piece.y + 2, piece.x + 2, "EMPTY")
+			if newOrient == 'V':
+				setCellValue(piece.y + 1, piece.x, "ACTIVE")
+				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
+				setCellValue(piece.y + 2, piece.x, "ACTIVE")
+			elif newOrient == 'VP':
+				setCellValue(piece.y + 1, piece.x, "ACTIVE")
+				setCellValue(piece.y, piece.x + 2, "ACTIVE")
+				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
+		elif piece.orient == 'V':
+			setCellValue(piece.y + 1, piece.x, "EMPTY")
+			setCellValue(piece.y + 2, piece.x, "EMPTY")
+			setCellValue(piece.y + 1, piece.x + 2, "EMPTY")
+			if newOrient == 'H':
+				setCellValue(piece.y, piece.x + 1, "ACTIVE")
+				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
+				setCellValue(piece.y + 2, piece.x + 2, "ACTIVE")
+			elif newOrient == 'HP':
+				setCellValue(piece.y, piece.x, "ACTIVE")
+				setCellValue(piece.y, piece.x + 1, "ACTIVE")
+				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
+		elif piece.orient == 'HP':
+			setCellValue(piece.y, piece.x, "EMPTY")
+			setCellValue(piece.y, piece.x + 1, "EMPTY")
+			setCellValue(piece.y + 2, piece.x + 1, "EMPTY")
+			if newOrient == 'V':
+				setCellValue(piece.y + 1, piece.x, "ACTIVE")
+				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
+				setCellValue(piece.y + 2, piece.x, "ACTIVE")
+			elif newOrient == 'VP':
+				setCellValue(piece.y + 1, piece.x, "ACTIVE")
+				setCellValue(piece.y, piece.x + 2, "ACTIVE")
+				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
+		elif piece.orient == 'VP':
+			setCellValue(piece.y, piece.x + 2, "EMPTY")
+			setCellValue(piece.y + 1, piece.x, "EMPTY")
+			setCellValue(piece.y + 1, piece.x + 2, "EMPTY")
+			if newOrient == 'H':
+				setCellValue(piece.y, piece.x + 1, "ACTIVE")
+				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
+				setCellValue(piece.y + 2, piece.x + 2, "ACTIVE")
+			elif newOrient == 'HP':
+				setCellValue(piece.y, piece.x, "ACTIVE")
+				setCellValue(piece.y, piece.x + 1, "ACTIVE")
+				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
 
 	piece.orient = newOrient
 
@@ -305,6 +375,51 @@ def canRotate(piece, direction):
 			return True
 		else:
 			return False
+	elif piece.pID == 'L':
+		if piece.orient == 'H':
+			if direction == 'CW' and isCellInBounds(piece.y + 2, piece.x) and \
+				isCellEmpty(piece.y + 1, piece.x) and isCellEmpty(piece.y + 2, piece.x) and \
+				isCellEmpty(piece.y + 1, piece.x + 2):
+				return True
+			elif direction == 'CCW' and isCellInBounds(piece.y + 2, piece.x) and \
+				isCellEmpty(piece.y + 1, piece.x) and isCellEmpty(piece.y, piece.x + 2) and \
+				isCellEmpty(piece.y + 1, piece.x + 2):
+				return True
+			else:
+				return False
+		elif piece.orient == 'V':
+			if direction == 'CW' and isCellEmpty(piece.y, piece.x) and \
+				isCellEmpty(piece.y, piece.x + 1) and \
+				isCellEmpty(piece.y + 2, piece.x + 1):
+				return True
+			elif direction == 'CCW' and isCellEmpty(piece.y, piece.x + 1) and \
+				isCellEmpty(piece.y + 2, piece.x + 1) and \
+				isCellEmpty(piece.y + 2, piece.x + 2):
+				return True
+			else:
+				return False
+		elif piece.orient == 'HP':
+			if direction == 'CW' and isCellInBounds(piece.y + 2, piece.x + 2) and \
+				isCellEmpty(piece.y + 1, piece.x) and isCellEmpty(piece.y, piece.x + 2) and \
+				isCellEmpty(piece.y + 1, piece.x + 2):
+				return True
+			elif direction == 'CCW' and isCellInBounds(piece.y + 2, piece.x + 2) and \
+				isCellEmpty(piece.y + 1, piece.x) and isCellEmpty(piece.y + 2, piece.x) and \
+				isCellEmpty(piece.y + 1, piece.x + 2):
+				return True
+			else:
+				return False
+		elif piece.orient == 'VP':
+			if direction == 'CW' and isCellEmpty(piece.y, piece.x + 1) and \
+				isCellEmpty(piece.y + 2, piece.x + 1) and \
+				isCellEmpty(piece.y + 2, piece.x + 2):
+				return True
+			elif direction == 'CCW' and isCellEmpty(piece.y, piece.x) and \
+				isCellEmpty(piece.y, piece.x + 1) and \
+				isCellEmpty(piece.y + 2, piece.x + 1):
+				return True
+			else:
+				return False
 """
 Main function
 
@@ -417,7 +532,7 @@ writeScore(0, "STAT4")
 #drawPiece(18, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
 #drawPiece(18, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
 #drawPiece(18, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
-p = Piece(1, 3, 'Z', 'H')
+p = Piece(1, 4, 'L', 'HP')
 clearBoardLabel()
 writeBoardLabel('L', str(getCellValue(1, 1)) + str(isCellEmpty(1, 1)))
 #Make windows visible
@@ -431,14 +546,24 @@ wStats.refresh()
 #ctMain()
 #Wait
 crs.delay_output(2000)
-if canRotate(p, ''):
+if canRotate(p, 'CCW'):
 	writeBoardLabel('C', "ROTATED!!")
-	rotate(p, p.getNewOrient(''))
+	rotate(p, p.getNewOrient('CCW'))
 wBoard.refresh()
 crs.delay_output(2000)
-if canRotate(p, ''):
+if canRotate(p, 'CCW'):
 	writeBoardLabel('L', "ROTATED AGAIN!!")
-	rotate(p, p.getNewOrient(''))
+	rotate(p, p.getNewOrient('CCW'))
+wBoard.refresh()
+crs.delay_output(2000)
+if canRotate(p, 'CCW'):
+	writeBoardLabel('L', "ROTATED THRICE!!")
+	rotate(p, p.getNewOrient('CCW'))
+wBoard.refresh()
+crs.delay_output(2000)
+if canRotate(p, 'CCW'):
+	writeBoardLabel('L', "ROTATED FRICE!!")
+	rotate(p, p.getNewOrient('CCW'))
 wBoard.refresh()
 crs.delay_output(2000)
 #Label demo
