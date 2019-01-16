@@ -20,116 +20,136 @@ def drawBoardBorder():
 """
 Draws a piece to a window (use wBoard or wNextP only!)
 
+In order to allow for erasure a.k.a. undrawing of pieces,
+the characters argument must either be a string or list,
+and the character variable is actually a function;
+When undrawing, the grid pattern is ". ", which are
+two distinct characters, thus a two-member tuple
+with indices 0 and 1 (False and True) can be used and
+kept in sync with the x position of the cursor
+
+The check is equals 0, hence even, because the board
+starts at an x value of 1. Thus, if ['.', ' '] is passed
+in for characters arg. (or ". " since strings are subscriptable),
+the odd character cells will get a '.' from int(False)
+and even cells will get a ' ' from int(True)
+
 See README.md or check the bottom of this file for details on block behavoir
 """
-def drawPiece(y, x, orient, piece, window, character):
+def drawPiece(y, x, orient, piece, window, characters):
+	if len(characters) == 1:
+		character = lambda x : characters[0]
+	elif len(characters) == 2:
+		character = lambda x : characters[int(x % 2 == 0)]
+	else:
+		return None
 	if piece == 'C':
 		for i in range(x, x + 4):
 			for j in range(y, y + 2):
-				window.addch(j, i, character)
+				window.addch(j, i, character(i))
 	elif piece == 'S':
 		if orient == 'H':
 			for i in range(x + 2, x + 6):
-				window.addch(y + 1, i, character)
+				window.addch(y + 1, i, character(i))
 			for i in range(x, x + 4):
-				window.addch(y + 2, i, character)
+				window.addch(y + 2, i, character(i))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y, y + 2):
-					window.addch(j, i, character)
+					window.addch(j, i, character(i))
 			for i in range(x + 2, x + 4):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, character)
+					window.addch(j, i, character(i))
 	elif piece == 'Z':
 		if orient == 'H':
 			for i in range(x, x + 4):
-				window.addch(y + 1, i, character)
+				window.addch(y + 1, i, character(i))
 			for i in range(x + 2, x + 6):
-				window.addch(y + 2, i, character)
+				window.addch(y + 2, i, character(i))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, character)
+					window.addch(j, i, character(i))
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 2):
-					window.addch(j, i, character)
+					window.addch(j, i, character(i))
 	elif piece == 'L':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character)
+					window.addch(j, i, character(i))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, character)
+				window.addch(y + 2, i, character(i))
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character)
+				window.addch(y + 1, i, character(i))
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, character)
+				window.addch(y + 2, i, character(i))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character)
+					window.addch(j, i, character(i))
 			for i in range(x, x + 2):
-				window.addch(y, i, character)
+				window.addch(y, i, character(i))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character)
+				window.addch(y + 1, i, character(i))
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, character)
+				window.addch(y, i, character(i))
 	elif piece == 'R':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character)
+					window.addch(j, i, character(i))
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, character)
+				window.addch(y + 2, i, character(i))
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character)
+				window.addch(y + 1, i, character(i))
 			for i in range(x, x + 2):
-				window.addch(y, i, character)
+				window.addch(y, i, character(i))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character)
+					window.addch(j, i, character(i))
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, character)
+				window.addch(y, i, character(i))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character)
+				window.addch(y + 1, i, character(i))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, character)
+				window.addch(y + 2, i, character(i))
 	elif piece == 'I':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 4):
-					window.addch(j, i, character)
+					window.addch(j, i, character(i))
 		else:
 			for i in range(x, x + 8):
-				window.addch(y + 2, i, character)
+				window.addch(y + 2, i, character(i))
 	elif piece == 'T':
 		if orient == 'H':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character)
+				window.addch(y + 1, i, character(i))
 			for i in range(x + 2, x + 4):
-				window.addch(y + 2, i, character)
+				window.addch(y + 2, i, character(i))
 		elif orient == 'V':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character)
+					window.addch(j, i, character(i))
 			for i in range(x, x + 2):
-				window.addch(y + 1, i, character)
+				window.addch(y + 1, i, character(i))
 		elif orient == 'HP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character)
+				window.addch(y + 1, i, character(i))
 			for i in range(x + 2, x + 4):
-				window.addch(y, i, character)
+				window.addch(y, i, character(i))
 		elif orient == 'VP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character)
+					window.addch(j, i, character(i))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 1, i, character)
+				window.addch(y + 1, i, character(i))
 """
 Redraws characters in a window.
 
@@ -249,7 +269,12 @@ class Piece:
 		self.pID = p
 		self.orient = o
 		self.hasLanded = False
-		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, crs.ACS_CKBOARD)
+		self.draw()
+	def draw(self):
+		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, [crs.ACS_CKBOARD])
+	def undraw(self):
+		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, ". ")
+
 	def getNewOrient(self, rotDir):
 		if self.pID == 'C':
 			return ''
@@ -278,128 +303,9 @@ class Piece:
 					return 'HP'
 
 def rotate(piece, newOrient):
-	if piece.pID == 'S':
-		if newOrient == 'V':
-			setCellValue(piece.y + 2, piece.x, "EMPTY")
-			setCellValue(piece.y + 1, piece.x + 2, "EMPTY")
-			setCellValue(piece.y, piece.x, "ACTIVE")
-			setCellValue(piece.y + 1, piece.x, "ACTIVE")
-		elif newOrient == 'H':
-			setCellValue(piece.y, piece.x, "EMPTY")
-			setCellValue(piece.y + 1, piece.x, "EMPTY")
-			setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
-			setCellValue(piece.y + 2, piece.x, "ACTIVE")
-	elif piece.pID == 'Z':
-		if newOrient == 'V':
-			setCellValue(piece.y + 2, piece.x + 1, "EMPTY")
-			setCellValue(piece.y + 2, piece.x + 2, "EMPTY")
-			setCellValue(piece.y, piece.x + 1, "ACTIVE")
-			setCellValue(piece.y + 2, piece.x, "ACTIVE")
-		elif newOrient == 'H':
-			setCellValue(piece.y, piece.x + 1, "EMPTY")
-			setCellValue(piece.y + 2, piece.x , "EMPTY")
-			setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
-			setCellValue(piece.y + 2, piece.x + 2, "ACTIVE")
-	elif piece.pID == 'L':
-		if piece.orient == 'H':
-			setCellValue(piece.y, piece.x + 1, "EMPTY")
-			setCellValue(piece.y + 2, piece.x + 1, "EMPTY")
-			setCellValue(piece.y + 2, piece.x + 2, "EMPTY")
-			if newOrient == 'V':
-				setCellValue(piece.y + 1, piece.x, "ACTIVE")
-				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x, "ACTIVE")
-			elif newOrient == 'VP':
-				setCellValue(piece.y + 1, piece.x, "ACTIVE")
-				setCellValue(piece.y, piece.x + 2, "ACTIVE")
-				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
-		elif piece.orient == 'V':
-			setCellValue(piece.y + 1, piece.x, "EMPTY")
-			setCellValue(piece.y + 2, piece.x, "EMPTY")
-			setCellValue(piece.y + 1, piece.x + 2, "EMPTY")
-			if newOrient == 'H':
-				setCellValue(piece.y, piece.x + 1, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 2, "ACTIVE")
-			elif newOrient == 'HP':
-				setCellValue(piece.y, piece.x, "ACTIVE")
-				setCellValue(piece.y, piece.x + 1, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
-		elif piece.orient == 'HP':
-			setCellValue(piece.y, piece.x, "EMPTY")
-			setCellValue(piece.y, piece.x + 1, "EMPTY")
-			setCellValue(piece.y + 2, piece.x + 1, "EMPTY")
-			if newOrient == 'V':
-				setCellValue(piece.y + 1, piece.x, "ACTIVE")
-				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x, "ACTIVE")
-			elif newOrient == 'VP':
-				setCellValue(piece.y + 1, piece.x, "ACTIVE")
-				setCellValue(piece.y, piece.x + 2, "ACTIVE")
-				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
-		elif piece.orient == 'VP':
-			setCellValue(piece.y, piece.x + 2, "EMPTY")
-			setCellValue(piece.y + 1, piece.x, "EMPTY")
-			setCellValue(piece.y + 1, piece.x + 2, "EMPTY")
-			if newOrient == 'H':
-				setCellValue(piece.y, piece.x + 1, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 2, "ACTIVE")
-			elif newOrient == 'HP':
-				setCellValue(piece.y, piece.x, "ACTIVE")
-				setCellValue(piece.y, piece.x + 1, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
-	elif piece.pID == 'R':
-		if piece.orient == 'H':
-			setCellValue(piece.y, piece.x + 1, "EMPTY")
-			setCellValue(piece.y + 2, piece.x, "EMPTY")
-			setCellValue(piece.y + 2, piece.x + 1, "EMPTY")
-			if newOrient == 'V':
-				setCellValue(piece.y, piece.x, "ACTIVE")
-				setCellValue(piece.y + 1, piece.x, "ACTIVE")
-				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
-			elif newOrient == 'VP':
-				setCellValue(piece.y + 1, piece.x, "ACTIVE")
-				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 2, "ACTIVE")
-		elif piece.orient == 'V':
-			setCellValue(piece.y, piece.x, "EMPTY")
-			setCellValue(piece.y + 1, piece.x, "EMPTY")
-			setCellValue(piece.y + 1, piece.x + 2, "EMPTY")
-			if newOrient == 'H':
-				setCellValue(piece.y, piece.x + 1, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
-			elif newOrient == 'HP':
-				setCellValue(piece.y, piece.x + 1, "ACTIVE")
-				setCellValue(piece.y, piece.x + 2, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
-		elif piece.orient == 'HP':
-			setCellValue(piece.y, piece.x + 1, "EMPTY")
-			setCellValue(piece.y, piece.x + 2, "EMPTY")
-			setCellValue(piece.y + 2, piece.x + 1, "EMPTY")
-			if newOrient == 'V':
-				setCellValue(piece.y, piece.x, "ACTIVE")
-				setCellValue(piece.y + 1, piece.x, "ACTIVE")
-				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
-			elif newOrient == 'VP':
-				setCellValue(piece.y + 1, piece.x, "ACTIVE")
-				setCellValue(piece.y + 1, piece.x + 2, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 2, "ACTIVE")
-		elif piece.orient == 'VP':
-			setCellValue(piece.y + 1, piece.x, "EMPTY")
-			setCellValue(piece.y + 1, piece.x + 2, "EMPTY")
-			setCellValue(piece.y + 2, piece.x + 2, "EMPTY")
-			if newOrient == 'H':
-				setCellValue(piece.y, piece.x + 1, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
-			elif newOrient == 'HP':
-				setCellValue(piece.y, piece.x + 1, "ACTIVE")
-				setCellValue(piece.y, piece.x + 2, "ACTIVE")
-				setCellValue(piece.y + 2, piece.x + 1, "ACTIVE")
-
+	piece.undraw()
 	piece.orient = newOrient
+	piece.draw()
 
 def canRotate(piece, direction):
 	if piece.pID == 'C':
@@ -514,6 +420,34 @@ def canRotate(piece, direction):
 				return True
 			else:
 				return False
+	elif piece.pID == 'I':
+		if piece.orient == 'H' and isCellInBounds(piece.y + 3, piece.x + 3) and \
+			isCellEmpty(piece.y + 1, piece.x) and \
+			isCellEmpty(piece.y + 2, piece.x + 2) and \
+			isCellEmpty(piece.y + 2, piece.x + 3):
+			return True
+		elif piece.orient == 'V' and isCellInBounds(piece.y + 3, piece.x + 1) and \
+			isCellEmpty(piece.y, piece.x + 1) and \
+			isCellEmpty(piece.y + 1, piece.x + 1) and \
+			isCellEmpty(piece.y + 3, piece.x + 1):
+			return True
+		else:
+			return False
+	elif piece.pID == 'T':
+		if piece.orient == 'H' and isCellEmpty(piece.y, piece.x + 1):
+			return True
+		elif piece.orient == 'V' and isCellEmpty(piece.y + 1, piece.x + 2) and \
+			isCellInBounds(piece.y + 2, piece.x + 2):
+			return True
+		elif piece.orient == 'HP' and isCellEmpty(piece.y + 2, piece.x + 1):
+			return True
+		elif piece.orient == 'VP' and isCellEmpty(piece.y + 1, piece.x) and \
+			isCellInBounds(piece.y + 2, piece.x):
+			return True
+		else:
+			return False
+	else:
+		return False
 """
 Main function
 
@@ -626,7 +560,7 @@ writeScore(0, "STAT4")
 #drawPiece(18, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
 #drawPiece(18, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
 #drawPiece(18, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
-p = Piece(1, 4, 'R', 'V')
+p = Piece(1, 0, 'T', 'VP')
 clearBoardLabel()
 writeBoardLabel('L', str(getCellValue(1, 1)) + str(isCellEmpty(1, 1)))
 #Make windows visible
