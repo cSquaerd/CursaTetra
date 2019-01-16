@@ -22,8 +22,10 @@
 1.[][]
 2.
 ```
+
 	* Orientations:
 		* None
+
 * S : S-piece
 	* Diagram:
 ```
@@ -32,16 +34,20 @@
 1.[][]
 2.
 ```
+
 	* Orientations:
 		* Vertical
+
 ```
   012345
 0.[]
 1.[][]
 2.  []
 ```
+
 	* Observations:
 		* Rotates about (2:3, 1) Clockwise
+
 * Z : Z-piece
 	* Diagram:
 ```
@@ -50,16 +56,20 @@
 1.  [][]
 2.
 ```
+
 	* Orientations:
 		* Vertical
+
 ```
   012345
 0.  []
 1.[][]
 2.[]
 ```
+
 	* Observations:
 		* Rotates about (2:3, 1) Counter-Clockwise
+
 * L : L-piece
 	* Diagram:
 ```
@@ -68,28 +78,35 @@
 1.  []
 2.  [][]
 ```
+
 	* Orientations:
 		* Vertical
+
 ```
   012345
 0.
 1.[][][]
 2.[]
 ```
+
 		* Horizontal-Pi
+
 ```
   012345
 0.[][]
 1.  []
 2.  []
 ```
+
 		* Vertical-Pi
+
 ```
   012345
 0.    []
 1.[][][]
 2.
 ```
+
 	* Observations:
 		* Rotates about (2:3, 1) Both Ways
 * R : Reversed L-piece
@@ -100,28 +117,35 @@
 1.  []
 2.[][]
 ```
+
 	* Orientations:
 		* Vertical
+
 ```
   012345
 0.[]
 1.[][][]
 2.
 ```
+
 		* Horizontal-Pi
+
 ```
   012345
 0.  [][]
 1.  []
 2.  []
 ```
+
 		* Vertical-Pi
+
 ```
   012345
 0.
 1.[][][]
 2.    []
 ```
+
 	* Observations:
 		* Rotates about (2:3, 1) Both Ways
 * I : Line
@@ -133,8 +157,10 @@
 2.  []
 3.  []
 ```
+
 	* Orientations:
 		* Vertical
+
 ```
   01234567
 0.
@@ -142,6 +168,7 @@
 2.[][][][]
 3.
 ```
+
 	* Observations:
 		* Rotates about (2:3, 2) Clockwise
 * T : T-piece
@@ -152,27 +179,34 @@
 1.[][][]
 2.  []
 ```
+
 	* Orientations:
 		* Vertical
+
 ```
   012345
 0.  []
 1.[][]
 2.  []
 ```
+
 		* Horizontal-Pi
+
 ```
   012345
 0.  []
 1.[][][]
 2.
 ```
+
 		* Vertical-Pi
+
 ```
   012345
 0.  []
 1.  [][]
 2.  []
 ```
+
 	* Observations:
 		* Rotates about (2:3, 1) Both Ways
