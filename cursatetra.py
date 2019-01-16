@@ -354,7 +354,7 @@ drawPiece(18, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
 drawPiece(18, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
 drawPiece(18, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
 clearBoardLabel()
-writeBoardLabel('L', str(getCellValue(1, 1)) + str(isEmpty(1, 1)))
+writeBoardLabel('L', str(getCellValue(1, 1)) + str(isCellEmpty(1, 1)))
 #Make windows visible
 wTitle.refresh()
 wScore.refresh()
