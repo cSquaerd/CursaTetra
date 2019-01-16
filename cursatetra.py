@@ -272,9 +272,12 @@ class Piece:
 		self.draw()
 	def draw(self):
 		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, [crs.ACS_CKBOARD])
+	def rotate(self, rotDir):
+		self.undraw()
+		self.orient = self.getNewOrient(rotDir)
+		self.draw()
 	def undraw(self):
 		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, ". ")
-
 	def getNewOrient(self, rotDir):
 		if self.pID == 'C':
 			return ''
@@ -301,153 +304,147 @@ class Piece:
 					return 'H'
 				elif rotDir == 'CCW':
 					return 'HP'
-
-def rotate(piece, newOrient):
-	piece.undraw()
-	piece.orient = newOrient
-	piece.draw()
-
-def canRotate(piece, direction):
-	if piece.pID == 'C':
-		return False
-	elif piece.pID == 'S':
-		if piece.orient == 'H' and isCellEmpty(piece.y, piece.x) and \
-			isCellEmpty(piece.y + 1, piece.x):
-			return True
-		elif piece.orient == 'V' and isCellEmpty(piece.y + 1, piece.x + 2) and \
-			isCellEmpty(piece.y + 2, piece.x) and \
-			isCellInBounds(piece.y + 2, piece.x + 2):
-			return True
+	def canRotate(self, direction):
+		if self.pID == 'C':
+			return False
+		elif self.pID == 'S':
+			if self.orient == 'H' and isCellEmpty(self.y, self.x) and \
+				isCellEmpty(self.y + 1, self.x):
+				return True
+			elif self.orient == 'V' and isCellEmpty(self.y + 1, self.x + 2) and \
+				isCellEmpty(self.y + 2, self.x) and \
+				isCellInBounds(self.y + 2, self.x + 2):
+				return True
+			else:
+				return False
+		elif self.pID == 'Z':
+			if self.orient == 'H' and isCellEmpty(self.y, self.x + 1) and \
+				isCellEmpty(self.y + 2, self.x):
+				return True
+			elif self.orient == 'V' and isCellEmpty(self.y + 2, self.x + 1) and \
+				isCellEmpty(self.y + 2, self.x + 2) and \
+				isCellInBounds(self.y + 2, self.x + 2):
+				return True
+			else:
+				return False
+		elif self.pID == 'L':
+			if self.orient == 'H':
+				if direction == 'CW' and isCellInBounds(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 1, self.x + 2):
+					return True
+				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x + 2):
+					return True
+				else:
+					return False
+			elif self.orient == 'V':
+				if direction == 'CW' and isCellEmpty(self.y, self.x) and \
+					isCellEmpty(self.y, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 1):
+					return True
+				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 2):
+					return True
+				else:
+					return False
+			elif self.orient == 'HP':
+				if direction == 'CW' and isCellInBounds(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x + 2):
+					return True
+				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 1, self.x + 2):
+					return True
+				else:
+					return False
+			elif self.orient == 'VP':
+				if direction == 'CW' and isCellEmpty(self.y, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 2):
+					return True
+				elif direction == 'CCW' and isCellEmpty(self.y, self.x) and \
+					isCellEmpty(self.y, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 1):
+					return True
+				else:
+					return False
+		elif self.pID == 'R':
+			if self.orient == 'H':
+				if direction == 'CW' and isCellInBounds(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y, self.x) and \
+					isCellEmpty(self.y + 1, self.x + 2):
+					return True
+				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x + 2):
+					return True
+				else:
+					return False
+			elif self.orient == 'V':
+				if direction == 'CW' and isCellEmpty(self.y, self.x + 1) and \
+					isCellEmpty(self.y, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x + 1):
+					return True
+				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x):
+					return True
+				else:
+					return False
+			elif self.orient == 'HP':
+				if direction == 'CW' and isCellInBounds(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y + 1, self.x + 2):
+					return True
+				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x) and \
+					isCellEmpty(self.y, self.x) and isCellEmpty(self.y + 1, self.x) and \
+					isCellEmpty(self.y + 1, self.x + 2):
+					return True
+				else:
+					return False
+			elif self.orient == 'VP':
+				if direction == 'CW' and isCellEmpty(self.y, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x) and \
+					isCellEmpty(self.y + 2, self.x + 1):
+					return True
+				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1) and \
+					isCellEmpty(self.y, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x + 1):
+					return True
+				else:
+					return False
+		elif self.pID == 'I':
+			if self.orient == 'H' and isCellInBounds(self.y + 3, self.x + 3) and \
+				isCellEmpty(self.y + 1, self.x) and \
+				isCellEmpty(self.y + 2, self.x + 2) and \
+				isCellEmpty(self.y + 2, self.x + 3):
+				return True
+			elif self.orient == 'V' and isCellInBounds(self.y + 3, self.x + 1) and \
+				isCellEmpty(self.y, self.x + 1) and \
+				isCellEmpty(self.y + 1, self.x + 1) and \
+				isCellEmpty(self.y + 3, self.x + 1):
+				return True
+			else:
+				return False
+		elif self.pID == 'T':
+			if self.orient == 'H' and isCellEmpty(self.y, self.x + 1):
+				return True
+			elif self.orient == 'V' and isCellEmpty(self.y + 1, self.x + 2) and \
+				isCellInBounds(self.y + 2, self.x + 2):
+				return True
+			elif self.orient == 'HP' and isCellEmpty(self.y + 2, self.x + 1):
+				return True
+			elif self.orient == 'VP' and isCellEmpty(self.y + 1, self.x) and \
+				isCellInBounds(self.y + 2, self.x):
+				return True
+			else:
+				return False
 		else:
 			return False
-	elif piece.pID == 'Z':
-		if piece.orient == 'H' and isCellEmpty(piece.y, piece.x + 1) and \
-			isCellEmpty(piece.y + 2, piece.x):
-			return True
-		elif piece.orient == 'V' and isCellEmpty(piece.y + 2, piece.x + 1) and \
-			isCellEmpty(piece.y + 2, piece.x + 2) and \
-			isCellInBounds(piece.y + 2, piece.x + 2):
-			return True
-		else:
-			return False
-	elif piece.pID == 'L':
-		if piece.orient == 'H':
-			if direction == 'CW' and isCellInBounds(piece.y + 2, piece.x) and \
-				isCellEmpty(piece.y + 1, piece.x) and isCellEmpty(piece.y + 2, piece.x) and \
-				isCellEmpty(piece.y + 1, piece.x + 2):
-				return True
-			elif direction == 'CCW' and isCellInBounds(piece.y + 2, piece.x) and \
-				isCellEmpty(piece.y + 1, piece.x) and isCellEmpty(piece.y, piece.x + 2) and \
-				isCellEmpty(piece.y + 1, piece.x + 2):
-				return True
-			else:
-				return False
-		elif piece.orient == 'V':
-			if direction == 'CW' and isCellEmpty(piece.y, piece.x) and \
-				isCellEmpty(piece.y, piece.x + 1) and \
-				isCellEmpty(piece.y + 2, piece.x + 1):
-				return True
-			elif direction == 'CCW' and isCellEmpty(piece.y, piece.x + 1) and \
-				isCellEmpty(piece.y + 2, piece.x + 1) and \
-				isCellEmpty(piece.y + 2, piece.x + 2):
-				return True
-			else:
-				return False
-		elif piece.orient == 'HP':
-			if direction == 'CW' and isCellInBounds(piece.y + 2, piece.x + 2) and \
-				isCellEmpty(piece.y + 1, piece.x) and isCellEmpty(piece.y, piece.x + 2) and \
-				isCellEmpty(piece.y + 1, piece.x + 2):
-				return True
-			elif direction == 'CCW' and isCellInBounds(piece.y + 2, piece.x + 2) and \
-				isCellEmpty(piece.y + 1, piece.x) and isCellEmpty(piece.y + 2, piece.x) and \
-				isCellEmpty(piece.y + 1, piece.x + 2):
-				return True
-			else:
-				return False
-		elif piece.orient == 'VP':
-			if direction == 'CW' and isCellEmpty(piece.y, piece.x + 1) and \
-				isCellEmpty(piece.y + 2, piece.x + 1) and \
-				isCellEmpty(piece.y + 2, piece.x + 2):
-				return True
-			elif direction == 'CCW' and isCellEmpty(piece.y, piece.x) and \
-				isCellEmpty(piece.y, piece.x + 1) and \
-				isCellEmpty(piece.y + 2, piece.x + 1):
-				return True
-			else:
-				return False
-	elif piece.pID == 'R':
-		if piece.orient == 'H':
-			if direction == 'CW' and isCellInBounds(piece.y + 2, piece.x + 2) and \
-				isCellEmpty(piece.y + 1, piece.x) and isCellEmpty(piece.y, piece.x) and \
-				isCellEmpty(piece.y + 1, piece.x + 2):
-				return True
-			elif direction == 'CCW' and isCellInBounds(piece.y + 2, piece.x + 2) and \
-				isCellEmpty(piece.y + 1, piece.x) and isCellEmpty(piece.y + 2, piece.x + 2) and \
-				isCellEmpty(piece.y + 1, piece.x + 2):
-				return True
-			else:
-				return False
-		elif piece.orient == 'V':
-			if direction == 'CW' and isCellEmpty(piece.y, piece.x + 1) and \
-				isCellEmpty(piece.y, piece.x + 2) and \
-				isCellEmpty(piece.y + 2, piece.x + 1):
-				return True
-			elif direction == 'CCW' and isCellEmpty(piece.y, piece.x + 1) and \
-				isCellEmpty(piece.y + 2, piece.x + 1) and \
-				isCellEmpty(piece.y + 2, piece.x):
-				return True
-			else:
-				return False
-		elif piece.orient == 'HP':
-			if direction == 'CW' and isCellInBounds(piece.y + 2, piece.x) and \
-				isCellEmpty(piece.y + 1, piece.x) and isCellEmpty(piece.y + 2, piece.x + 2) and \
-				isCellEmpty(piece.y + 1, piece.x + 2):
-				return True
-			elif direction == 'CCW' and isCellInBounds(piece.y + 2, piece.x) and \
-				isCellEmpty(piece.y, piece.x) and isCellEmpty(piece.y + 1, piece.x) and \
-				isCellEmpty(piece.y + 1, piece.x + 2):
-				return True
-			else:
-				return False
-		elif piece.orient == 'VP':
-			if direction == 'CW' and isCellEmpty(piece.y, piece.x + 1) and \
-				isCellEmpty(piece.y + 2, piece.x) and \
-				isCellEmpty(piece.y + 2, piece.x + 1):
-				return True
-			elif direction == 'CCW' and isCellEmpty(piece.y, piece.x + 1) and \
-				isCellEmpty(piece.y, piece.x + 2) and \
-				isCellEmpty(piece.y + 2, piece.x + 1):
-				return True
-			else:
-				return False
-	elif piece.pID == 'I':
-		if piece.orient == 'H' and isCellInBounds(piece.y + 3, piece.x + 3) and \
-			isCellEmpty(piece.y + 1, piece.x) and \
-			isCellEmpty(piece.y + 2, piece.x + 2) and \
-			isCellEmpty(piece.y + 2, piece.x + 3):
-			return True
-		elif piece.orient == 'V' and isCellInBounds(piece.y + 3, piece.x + 1) and \
-			isCellEmpty(piece.y, piece.x + 1) and \
-			isCellEmpty(piece.y + 1, piece.x + 1) and \
-			isCellEmpty(piece.y + 3, piece.x + 1):
-			return True
-		else:
-			return False
-	elif piece.pID == 'T':
-		if piece.orient == 'H' and isCellEmpty(piece.y, piece.x + 1):
-			return True
-		elif piece.orient == 'V' and isCellEmpty(piece.y + 1, piece.x + 2) and \
-			isCellInBounds(piece.y + 2, piece.x + 2):
-			return True
-		elif piece.orient == 'HP' and isCellEmpty(piece.y + 2, piece.x + 1):
-			return True
-		elif piece.orient == 'VP' and isCellEmpty(piece.y + 1, piece.x) and \
-			isCellInBounds(piece.y + 2, piece.x):
-			return True
-		else:
-			return False
-	else:
-		return False
 """
 Main function
 
@@ -560,7 +557,7 @@ writeScore(0, "STAT4")
 #drawPiece(18, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
 #drawPiece(18, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
 #drawPiece(18, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
-p = Piece(1, 0, 'T', 'VP')
+p = Piece(1, 1, 'T', 'H')
 clearBoardLabel()
 writeBoardLabel('L', str(getCellValue(1, 1)) + str(isCellEmpty(1, 1)))
 #Make windows visible
@@ -573,27 +570,27 @@ wStats.refresh()
 #Main function call
 #ctMain()
 #Wait
-crs.delay_output(2000)
-if canRotate(p, 'CW'):
+crs.delay_output(1000)
+if p.canRotate('CW'):
 	writeBoardLabel('C', "ROTATED!!")
-	rotate(p, p.getNewOrient('CW'))
+	p.rotate('CW')
 wBoard.refresh()
-crs.delay_output(2000)
-if canRotate(p, 'CW'):
+crs.delay_output(1000)
+if p.canRotate('CW'):
 	writeBoardLabel('L', "ROTATED AGAIN!!")
-	rotate(p, p.getNewOrient('CW'))
+	p.rotate('CW')
 wBoard.refresh()
-crs.delay_output(2000)
-if canRotate(p, 'CW'):
+crs.delay_output(1000)
+if p.canRotate('CW'):
 	writeBoardLabel('L', "ROTATED THRICE!!")
-	rotate(p, p.getNewOrient('CW'))
+	p.rotate('CW')
 wBoard.refresh()
-crs.delay_output(2000)
-if canRotate(p, 'CW'):
+crs.delay_output(1000)
+if p.canRotate('CW'):
 	writeBoardLabel('L', "ROTATED FRICE!!")
-	rotate(p, p.getNewOrient('CW'))
+	p.rotate('CW')
 wBoard.refresh()
-crs.delay_output(2000)
+crs.delay_output(1000)
 #Label demo
 #changeTexture(1, 1, 23, 20, crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard)
 #clearBoardLabel()
