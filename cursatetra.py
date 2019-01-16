@@ -18,22 +18,9 @@ def drawBoardBorder():
 		wBoard.addch(21, x, crs.ACS_HLINE)
 	wBoard.addch(21, 21, crs.ACS_RTEE)
 """
-# Block designations
+Draws a piece to a window (use wBoard or wNextP only!)
 
-* C : Square
-* S : S-piece
-* Z : Z-piece
-* L : L-piece
-* R : Reversed L-piece
-* I : Line
-* T : T-piece
-
-# Orientations
-
-* H : horizontal (default)
-* V : vertical
-* HP : horizontal, pi radians around (180 deg)
-* VP : vertical, pi radians around (180 deg)
+See README.md or check the bottom of this file for details on block behavoir
 """
 def drawPiece(y, x, orient, piece, window, character):
 	if piece == 'C':
@@ -351,3 +338,182 @@ crs.nocbreak()
 crs.echo()
 #Close screen
 crs.endwin()
+
+"""
+# Piece orientations
+
+* H : horizontal (default)
+* V : vertical
+* HP : horizontal, pi radians around (180 deg)
+* VP : vertical, pi radians around (180 deg)
+
+# Piece designations & diagrams
+## Based on specification in Game Boy version
+
+* Note: The orientation of the pieces may seem backwards at first glance;
+Consider it in terms of the orientation of an underline
+below the text character that identifies a piece
+
+* C : Square
+	* Diagram:
+```
+  012345
+0.[][]
+1.[][]
+2.
+```
+	* Orientations:
+		* None
+* S : S-piece
+	* Diagram:
+```
+  012345
+0.  [][]
+1.[][]
+2.
+```
+	* Orientations:
+		* Vertical
+```
+  012345
+0.[]
+1.[][]
+2.  []
+```
+	* Observations:
+		* Rotates about (2:3, 1) Clockwise
+* Z : Z-piece
+	* Diagram:
+```
+  012345
+0.[][]
+1.  [][]
+2.
+```
+	* Orientations:
+		* Vertical
+```
+  012345
+0.  []
+1.[][]
+2.[]
+```
+	* Observations:
+		* Rotates about (2:3, 1) Counter-Clockwise
+* L : L-piece
+	* Diagram:
+```
+  012345
+0.  []
+1.  []
+2.  [][]
+```
+	* Orientations:
+		* Vertical
+```
+  012345
+0.
+1.[][][]
+2.[]
+```
+		* Horizontal-Pi
+```
+  012345
+0.[][]
+1.  []
+2.  []
+```
+		* Vertical-Pi
+```
+  012345
+0.    []
+1.[][][]
+2.
+```
+	* Observations:
+		* Rotates about (2:3, 1) Both Ways
+* R : Reversed L-piece
+	* Diagram:
+```
+  012345
+0.  []
+1.  []
+2.[][]
+```
+	* Orientations:
+		* Vertical
+```
+  012345
+0.[]
+1.[][][]
+2.
+```
+		* Horizontal-Pi
+```
+  012345
+0.  [][]
+1.  []
+2.  []
+```
+		* Vertical-Pi
+```
+  012345
+0.
+1.[][][]
+2.    []
+```
+	* Observations:
+		* Rotates about (2:3, 1) Both Ways
+* I : Line
+	* Diagram:
+```
+  01234567
+0.  []
+1.  []
+2.  []
+3.  []
+```
+	* Orientations:
+		* Vertical
+```
+  01234567
+0.
+1.
+2.[][][][]
+3.
+```
+	* Observations:
+		* Rotates about (2:3, 2) Clockwise
+* T : T-piece
+	* Diagram:
+```
+  012345
+0.
+1.[][][]
+2.  []
+```
+	* Orientations:
+		* Vertical
+```
+  012345
+0.  []
+1.[][]
+2.  []
+```
+		* Horizontal-Pi
+```
+  012345
+0.  []
+1.[][][]
+2.
+```
+		* Vertical-Pi
+```
+  012345
+0.  []
+1.  [][]
+2.  []
+```
+	* Observations:
+		* Rotates about (2:3, 1) Both Ways
+"""
