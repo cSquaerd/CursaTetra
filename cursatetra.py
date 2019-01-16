@@ -198,6 +198,50 @@ Clears the lower section of the board
 def clearBoardLabel():
 	wBoard.addstr(22, 1, 20 * ' ')
 """
+Gets the character value (as an int) of a cell in the board;
+
+As blocks take up two curses-coordinate spaces,
+a cell is defined as such, and its identifying
+symbol will be in the righthand space;
+In theory, the cell will either be empty (". "),
+have an old block (two ACS_BLOCK chars),
+or have an active block (two ACS_CKBOARD chars)
+"""
+def getCellValue(y, x):
+	return wBoard.inch(y, 2 * x)
+
+def isCellEmpty(y, x):
+	return getCellValue(y, x) == ord(' ')
+
+def isCellInBounds(y, x):
+	return y > 0 and y < 20 and x > 0 and x < 11
+"""
+Method-less class a.k.a. struct for active block data
+
+Valid values:
+	* yCoord: [1, 19]
+		* Smallest block height-wise is Square, S, and Z; All take up two cells vertically
+	* xCoord: [1, 10]
+	* pID: {'C', 'S', 'Z', 'L', 'R', 'I', 'T'}
+	* orient: {'', 'H', 'V', 'HP', 'VP'}
+		* Null-orientation is only valid for the Square
+"""
+class Piece:
+	def __init__(self, y, x, p, o):
+		self.yCoord = y
+		self.xCoord = x
+		self.pID = p
+		self.orient = o
+		self.hasLanded = False
+	def draw(self):
+		drawPiece(self.y, 2 * self.x)
+
+def canRotate(piece, direction):
+	if piece.pID == 'C':
+		return True
+	elif piece.pID == 'S':
+		pass
+"""
 Main function
 
 Contains event loop for handling keypresses,
@@ -220,6 +264,7 @@ def ctMain():
 		"STAT3": 0, \
 		"STAT4": 0 \
 	}
+	piece = Piece()
 
 #SECTION: MAIN
 #Initialize screen
@@ -260,7 +305,7 @@ wCntrl.addstr(7, 1, "ESC       : PAUSE")
 wCntrl.addstr(8, 1, "Q         : QUIT")
 drawGrid()
 drawBoardBorder()
-writeBoardLabel('15', "FOOBAR")
+writeBoardLabel('L', "PRESS SPACE TO START")
 wNextP.addstr(1, 2, "NEXT PIECE:")
 wStats.addstr(1, 4, "STATISTICS:")
 wStats.addstr(2, 1, ":PIECES::")
@@ -308,6 +353,8 @@ drawPiece(14, 15, 'HP', 'R', wBoard, crs.ACS_CKBOARD)
 drawPiece(18, 1, 'H', 'T', wBoard, crs.ACS_CKBOARD)
 drawPiece(18, 9, 'V', 'T', wBoard, crs.ACS_CKBOARD)
 drawPiece(18, 15, 'HP', 'T', wBoard, crs.ACS_CKBOARD)
+clearBoardLabel()
+writeBoardLabel('L', str(getCellValue(1, 1)) + str(isEmpty(1, 1)))
 #Make windows visible
 wTitle.refresh()
 wScore.refresh()
@@ -319,18 +366,17 @@ wStats.refresh()
 #ctMain()
 #Wait
 crs.delay_output(2000)
-#Label demo (comment out later)
-changeTexture(1, 1, 23, 20, crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard)
-clearBoardLabel()
-writeBoardLabel('15', "PONTIFEX MX")
-wBoard.refresh()
-crs.delay_output(2000)
-
-for n in range(41, 0, -1):
-	clearBoardLabel()
-	writeBoardLabel(str(n), "LOOK AT ME, MA!")
-	wBoard.refresh()
-	crs.delay_output(75)
+#Label demo
+#changeTexture(1, 1, 23, 20, crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard)
+#clearBoardLabel()
+#writeBoardLabel('15', "PONTIFEX MX")
+#wBoard.refresh()
+#crs.delay_output(2000)
+#for n in range(41, 0, -1):
+#	clearBoardLabel()
+#	writeBoardLabel(str(n), "LOOK AT ME, MA!")
+#	wBoard.refresh()
+#	crs.delay_output(75)
 
 #Unset proper key settings
 screen.keypad(False)
