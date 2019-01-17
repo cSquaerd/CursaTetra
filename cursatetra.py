@@ -769,6 +769,8 @@ def ctMain():
 	playing = False
 	paused = False
 	pieceInPlay = False
+	pieceToDrop = False
+	pieceDropped = False
 	gameOver = False
 	difficulty = -1
 	while active:
@@ -848,12 +850,13 @@ def ctMain():
 			pieceInPlay = True
 			pieceDropTime = time.time()
 			continue
-		if time.time() - pieceDropTime > dropTimes[difficulty]:
+		if time.time() - pieceDropTime > dropTimes[difficulty] or pieceDropped:
 			if piece.canMove('D'):
 				piece.move('D')
 				pieceDropTime = time.time()
 			else:
 				pieceInPlay = False
+				pieceDropped = False
 				distBottom = 21 - piece.y if piece.y > 17 else 4
 				distRight = 21 - (2 * piece.x - 1) if piece.x > 6 else 8
 				changeTexture( \
@@ -870,10 +873,19 @@ def ctMain():
 		writeBoardLabel('L', str(len(getFullLines())))
 		if keypress in arrowCodes and pieceInPlay:
 			if keypress != 'U':
+				pieceToDrop = False
 				if piece.canMove(keypress):
 					piece.move(keypress)
 					if keypress == 'D':
 						pieceDropTime = time.time()
+			else:
+				if not pieceToDrop:
+					pieceToDrop = True
+					continue
+				while piece.canMove('D'):
+					piece.move('D')
+				pieceToDrop = False
+				pieceDropped = True
 		elif keypress in rotateCodes and pieceInPlay:
 			rotDir = "CW" if keypress == "SPACE" else "CCW"
 			if piece.canRotate(rotDir):
@@ -935,7 +947,7 @@ wScore.addstr(2, 1, "LINES:")
 wCntrl.addstr(1, 6, "CONTROLS:")
 wCntrl.addstr(2, 1, "L/R ARROWS: MOVE")
 wCntrl.addstr(3, 1, "DOWN ARROW: DROP 1")
-wCntrl.addstr(4, 1, "UP ARROW  : DROP ALL")
+wCntrl.addstr(4, 1, "UP ARROWx2: DROP ALL")
 wCntrl.addstr(5, 1, "SPACE BAR : ROT. CW")
 wCntrl.addstr(6, 1, "CTRL+SPACE: ROT. CCW")
 wCntrl.addstr(7, 1, "ESC       : PAUSE OR")
