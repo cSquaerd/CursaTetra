@@ -5,7 +5,7 @@
 * V : vertical
 * HP : horizontal, pi radians around (180 deg)
 * VP : vertical, pi radians around (180 deg)
-### Piece: Class for active block data
+### class Piece: for active block data
 * Valid Constructor Values:
 	* y: [1, 19]
 		* Smallest block height-wise is Square, S, and Z; All take up two cells vertically
