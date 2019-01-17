@@ -1,6 +1,7 @@
 #SECTION: IMPORTS
 import curses as crs
 import os
+import time
 
 #SECTION: FUNCTIONS
 """
@@ -701,36 +702,19 @@ def ctMain():
 		ord('Q') : 'Q', \
 		ord('q') : 'Q' \
 	}
-	yesnoCodes = { \
-		ord('\n') : 'ENTER', \
-		ord('y') : 'y', \
-		ord('Y') : 'Y', \
-		ord('n') : 'n', \
-		ord('N') : 'N' \
-	}
-	yesCodes = { \
-		ord('\n') : 'ENTER', \
-		ord('y') : 'y', \
-		ord('Y') : 'Y' \
-	}
-	noCodes = { \
-		ord('n') : 'n', \
-		ord('N') : 'N' \
-	}
-	menuCodes = { \
-		27 : "ESC" , \
-		ord('q') : 'Q' , \
-		ord('Q') : 'Q' , \
-		ord(' ') : "SPACE", \
-		ord('\n') : "ENTER" \
-	}
-	startCodes = { \
-		ord('q') : 'Q' , \
-		ord('Q') : 'Q' , \
-		ord(' ') : "SPACE" \
-	}
+	arrowCodes = ('L', 'R', 'D', 'U')
+	yesnoCodes = {ord('\n') : 'ENTER', ord('y') : 'y', ord('Y') : 'Y', \
+		ord('n') : 'n', ord('N') : 'N'}
+	yesCodes = {ord('\n') : 'ENTER', ord('y') : 'y', ord('Y') : 'Y'}
+	noCodes = {ord('n') : 'n', ord('N') : 'N'}
+	menuCodes = {27 : "ESC" , ord('q') : 'Q' , ord('Q') : 'Q' , \
+		ord(' ') : "SPACE", ord('\n') : "ENTER"}
+	startCodes = {ord('q') : 'Q' , ord('Q') : 'Q' , ord(' ') : "SPACE"}
 	active = True
 	playing = False
+	paused = False
+	pieceInPlay = False
+	gameOver = False
 	difficulty = -1
 	while active:
 		if not playing:
@@ -775,9 +759,30 @@ def ctMain():
 				drawGrid()
 			clearBoardLabel()
 			writeBoardLabel('C', "BEGINNING GAME...")
+			crs.delay_output(750)
+			clearBoardLabel()
+			wBoard.refresh()
 			wBoard.nodelay(True)
-		else:
-			active = False
+			continue
+		if paused:
+			while keyCodes[wBoard.getch()] != "ESC":
+				pass
+			clearBoardLabel()
+			wBoard.refresh()
+			wBoard.nodelay(True)
+			continue
+		if not pieceInPlay:
+			piece = Piece(1, 4, 'C', '')
+			pieceInPlay = True
+			continue
+		k = wBoard.getch()
+		if k not in keyCodes:
+			continue
+		keypress = keyCodes[k]
+		if keypress in arrowCodes and pieceInPlay:
+			if keypress != 'U':
+				if piece.canMove(keypress):
+					piece.move(keypress)
 
 #	writeBoardLabel('C', str(crs.KEY_UP))
 #	k = 0
