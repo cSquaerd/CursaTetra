@@ -688,7 +688,19 @@ def ctMain():
 		"STAT3": 0, \
 		"STAT4": 0 \
 	}
-	#piece = Piece()
+	writeBoardLabel('C', str(crs.KEY_UP))
+	k = 0
+	while k != ord('Q'):
+		k = wBoard.getch()
+		if k >= 0:
+			clearBoardLabel()
+			writeBoardLabel('L', str(k))
+			wBoard.refresh()
+		else:
+			scoreData["SCORE"] += 1
+			writeScore(scoreData["SCORE"], "SCORE")
+			wScore.refresh()
+			crs.delay_output(100)
 
 #SECTION: MAIN
 #Initialize screen
@@ -696,13 +708,14 @@ screen = crs.initscr()
 #Set proper key settings
 crs.noecho()
 crs.cbreak()
-screen.keypad(True)
 crs.curs_set(0)
 #Initialize windows
 wTitle = crs.newwin(6, 19, 0, 4)
 wScore = crs.newwin(4, 17, 6, 5)
 wCntrl = crs.newwin(10, 23, 10, 2)
 wBoard = crs.newwin(24, 22, 0, 28)
+wBoard.keypad(True)
+wBoard.nodelay(True)
 wNextP = crs.newwin(7, 15, 0, 54)
 wStats = crs.newwin(16, 19, 7, 52)
 #Draw boarders of windows
@@ -768,40 +781,40 @@ wBoard.refresh()
 wNextP.refresh()
 wStats.refresh()
 #Main function call
-#ctMain()
+ctMain()
 #Wait
 crs.delay_output(1000)
 #Move & Rotation demo
-rotations = {'C': ['']}
-rotations.update(dict.fromkeys(['S', 'Z', 'I'], ['H', 'V']))
-rotations.update(dict.fromkeys(['L', 'R', 'T'], ['H', 'V', 'HP', 'VP']))
-for id in ('C', 'S', 'Z', 'L', 'R', 'I', 'T'):
-	for r in rotations[id]:
-		p = Piece(1, 4, id, r)
-		clearBoardLabel()
-		wBoard.refresh()
-		crs.delay_output(500)
-		for i in range(8):
-			direction = ['CW', 'CCW'][int(i < 4)]
-			if p.canRotate(direction):
-				p.rotate(direction)
-				clearBoardLabel()
-				writeBoardLabel('L', "Rotated to " + p.orient)
-				wBoard.refresh()
-				crs.delay_output(200)
-		clearBoardLabel()
-		wBoard.refresh()
-		crs.delay_output(500)
-		for d in ('D', 'R', 'L'):
-			writeBoardLabel('L', "Moving " + d)
-			wBoard.refresh()
-			while p.canMove(d):
-				p.move(d)
-				wBoard.refresh()
-				crs.delay_output(100)
-		p.undraw()
-		del p
-		crs.delay_output(500)
+#rotations = {'C': ['']}
+#rotations.update(dict.fromkeys(['S', 'Z', 'I'], ['H', 'V']))
+#rotations.update(dict.fromkeys(['L', 'R', 'T'], ['H', 'V', 'HP', 'VP']))
+#for id in ('C', 'S', 'Z', 'L', 'R', 'I', 'T'):
+#	for r in rotations[id]:
+#		p = Piece(1, 4, id, r)
+#		clearBoardLabel()
+#		wBoard.refresh()
+#		crs.delay_output(250)
+#		for i in range(8):
+#			direction = ['CW', 'CCW'][int(i < 4)]
+#			if p.canRotate(direction):
+#				p.rotate(direction)
+#				clearBoardLabel()
+#				writeBoardLabel('L', "Rotated to " + p.orient)
+#				wBoard.refresh()
+#				crs.delay_output(100)
+#		clearBoardLabel()
+#		wBoard.refresh()
+#		crs.delay_output(250)
+#		for d in ('D', 'R', 'L'):
+#			writeBoardLabel('L', "Moving " + d)
+#			wBoard.refresh()
+#			while p.canMove(d):
+#				p.move(d)
+#				wBoard.refresh()
+#				crs.delay_output(50)
+#		p.undraw()
+#		del p
+#		crs.delay_output(250)
 #Unset proper key settings
 screen.keypad(False)
 crs.nocbreak()
