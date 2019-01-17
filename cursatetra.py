@@ -457,50 +457,62 @@ class Piece:
 		elif self.pID == 'S':
 			if self.orient == 'H':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x - 1):
+					isCellEmpty(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3):
+					isCellEmpty(self.y + 1, self.x + 3) and \
+					isCellEmpty(self.y + 2, self.x + 2):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
 					isCellEmpty(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x + 1):
+					isCellEmpty(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 2):
 					return True
 			elif self.orient == 'V':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
 					isCellEmpty(self.y, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1):
+					isCellEmpty(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y + 2, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
 					isCellEmpty(self.y + 1, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y, self.x + 1):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 1):
+					isCellEmpty(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x):
 					return True
 		elif self.pID == 'Z':
 			if self.orient == 'H':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1):
+					isCellEmpty(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y + 2, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 2, self.x + 3):
+					isCellEmpty(self.y + 2, self.x + 3) and \
+					isCellEmpty(self.y + 1, self.x + 2):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
 					isCellEmpty(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 2):
+					isCellEmpty(self.y + 3, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x):
 					return True
 			elif self.orient == 'V':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
 					isCellEmpty(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x - 1):
+					isCellEmpty(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
 					isCellEmpty(self.y, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x + 2):
+					isCellEmpty(self.y + 1, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x + 1):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x):
+					isCellEmpty(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 2, self.x + 1):
 					return True
 		elif self.pID == 'L':
 			if self.orient == 'H':
@@ -510,7 +522,9 @@ class Piece:
 					isCellEmpty(self.y + 2, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 2, self.x + 3):
+					isCellEmpty(self.y + 2, self.x + 3) and \
+					isCellEmpty(self.y + 1, self.x + 2) and \
+					isCellEmpty(self.y, self.x + 2):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
 					isCellEmpty(self.y + 3, self.x + 1) and \
@@ -522,14 +536,19 @@ class Piece:
 					isCellEmpty(self.y + 2, self.x - 1):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3):
+					isCellEmpty(self.y + 1, self.x + 3) and \
+					isCellEmpty(self.y + 2, self.x + 1):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x):
+					isCellEmpty(self.y + 3, self.x) and \
+					isCellEmpty(self.y + 2, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 2):
 					return True
 			if self.orient == 'HP':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y, self.x - 1):
+					isCellEmpty(self.y, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x) and \
+					isCellEmpty(self.y + 2, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
 					isCellEmpty(self.y, self.x + 2) and \
@@ -537,11 +556,13 @@ class Piece:
 					isCellEmpty(self.y + 2, self.x + 2):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 1):
+					isCellEmpty(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 1, self.x):
 					return True
 			elif self.orient == 'VP':
 				if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1):
+					isCellEmpty(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y, self.x + 1):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 1, self.x + 3) and \
 					isCellEmpty(self.y, self.x + 3) and \
@@ -555,7 +576,9 @@ class Piece:
 		elif self.pID == 'R':
 			if self.orient == 'H':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x - 1):
+					isCellEmpty(self.y + 2, self.x - 1) and \
+					isCellEmpty(self.y + 1, self.x) and \
+					isCellEmpty(self.y, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
 					isCellEmpty(self.y, self.x + 2) and \
@@ -572,7 +595,8 @@ class Piece:
 					isCellEmpty(self.y + 1, self.x - 1):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3):
+					isCellEmpty(self.y + 1, self.x + 3) and \
+					isCellEmpty(self.y, self.x + 1):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 2, self.x) and \
 					isCellEmpty(self.y + 2, self.x) and \
@@ -586,21 +610,27 @@ class Piece:
 					isCellEmpty(self.y + 2, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y, self.x + 3) and \
-					isCellEmpty(self.y, self.x + 3):
+					isCellEmpty(self.y, self.x + 3) and \
+					isCellEmpty(self.y + 1, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x + 2):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 1):
+					isCellEmpty(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 1, self.x + 2):
 					return True
 			elif self.orient == 'VP':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1):
+					isCellEmpty(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y + 2, self.x + 1):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
 					isCellEmpty(self.y + 1, self.x + 3) and \
 					isCellEmpty(self.y + 2, self.x + 3):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 2) and \
-					isCellEmpty(self.y + 3, self.x + 2):
+					isCellEmpty(self.y + 3, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x):
 					return True
 		elif self.pID == 'I':
 			if self.orient == 'H':
@@ -635,17 +665,23 @@ class Piece:
 		elif self.pID == 'T':
 			if self.orient == 'H':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1):
+					isCellEmpty(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y + 2, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3):
+					isCellEmpty(self.y + 1, self.x + 3) and \
+					isCellEmpty(self.y + 2, self.x + 2):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x + 1):
+					isCellEmpty(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y + 2, self.x):
 					return True
 			elif self.orient == 'V':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1):
+					isCellEmpty(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y + 2, self.x) and \
+					isCellEmpty(self.y, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
 					isCellEmpty(self.y, self.x + 2) and \
@@ -653,14 +689,17 @@ class Piece:
 					isCellEmpty(self.y + 2, self.x + 2):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x + 1):
+					isCellEmpty(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x):
 					return True
 			elif self.orient == 'HP':
 				if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1):
+					isCellEmpty(self.y + 1, self.x - 1) and \
+					isCellEmpty(self.y, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3):
+					isCellEmpty(self.y + 1, self.x + 3) and \
+					isCellEmpty(self.y, self.x + 2):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 2, self.x) and \
 					isCellEmpty(self.y + 2, self.x) and \
@@ -674,10 +713,13 @@ class Piece:
 					isCellEmpty(self.y + 2, self.x):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3):
+					isCellEmpty(self.y + 1, self.x + 3) and \
+					isCellEmpty(self.y + 2, self.x + 2) and \
+					isCellEmpty(self.y, self.x + 2):
 					return True
-				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x + 1):
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 3, self.x + 1) and \
+					isCellEmpty(self.y + 2, self.x + 2):
 					return True
 		return False
 """
@@ -802,7 +844,7 @@ def ctMain():
 			paused = False
 			continue
 		if not pieceInPlay:
-			piece = Piece(1, 4, 'C', 'H')
+			piece = Piece(1, 4, 'T', 'H')
 			pieceInPlay = True
 			pieceDropTime = time.time()
 			continue
