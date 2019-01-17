@@ -249,6 +249,18 @@ def isCellEmpty(y, x):
 
 def isCellInBounds(y, x):
 	return y > 0 and y < 21 and x > 0 and x < 11
+
+def getFullLines():
+	fullLines = []
+	for y in range(20, 0, -1):
+		full = True
+		for x in range(1, 11):
+			if isCellEmpty(y, x):
+				full = False
+				break
+		if full:
+			fullLines.append(y)
+	return fullLines
 """
 Class for active block data
 
@@ -710,6 +722,7 @@ def ctMain():
 	noCodes = {ord('n') : 'n', ord('N') : 'N'}
 	menuCodes = {27 : "ESC", ord('q') : 'Q', ord('Q') : 'Q', ord('\n') : "ENTER"}
 	startCodes = {ord('q') : 'Q', ord('Q') : 'Q', ord(' ') : "SPACE"}
+	dropTimes = (0.75, 0.6, 0.5, 0.425, 0.35, 0.3, 0.25, 0.225, 0.2, 0.18)
 	active = True
 	playing = False
 	paused = False
@@ -761,7 +774,7 @@ def ctMain():
 			writeBoardLabel('C', "BEGINNING GAME...")
 			crs.delay_output(750)
 			clearBoardLabel()
-			wBoard.refresh()
+			writeBoardLabel('C', "LEVEL " + str(difficulty))
 			wBoard.nodelay(True)
 			continue
 		if paused:
@@ -784,22 +797,33 @@ def ctMain():
 			elif keypress == "ENTER":
 				continue
 			clearBoardLabel()
-			wBoard.refresh()
+			writeBoardLabel('C', "LEVEL " + str(difficulty))
 			wBoard.nodelay(True)
 			paused = False
 			continue
 		if not pieceInPlay:
-			piece = Piece(1, 4, 'T', 'H')
+			piece = Piece(1, 4, 'C', 'H')
 			pieceInPlay = True
+			pieceDropTime = time.time()
 			continue
+		if time.time() - pieceDropTime > dropTimes[difficulty]:
+			if piece.canMove('D'):
+				piece.move('D')
+				pieceDropTime = time.time()
+			else:
+				pieceInPlay = False
+				del piece
 		k = wBoard.getch()
 		if k not in keyCodes:
 			continue
 		keypress = keyCodes[k]
+		writeBoardLabel('L', str(len(getFullLines())))
 		if keypress in arrowCodes and pieceInPlay:
 			if keypress != 'U':
 				if piece.canMove(keypress):
 					piece.move(keypress)
+					if keypress == 'D':
+						pieceDropTime = time.time()
 		elif keypress in rotateCodes and pieceInPlay:
 			rotDir = "CW" if keypress == "SPACE" else "CCW"
 			if piece.canRotate(rotDir):
