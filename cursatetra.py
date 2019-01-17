@@ -844,7 +844,7 @@ def ctMain():
 			paused = False
 			continue
 		if not pieceInPlay:
-			piece = Piece(1, 4, 'T', 'H')
+			piece = Piece(1, 4, 'C', 'H')
 			pieceInPlay = True
 			pieceDropTime = time.time()
 			continue
@@ -854,6 +854,14 @@ def ctMain():
 				pieceDropTime = time.time()
 			else:
 				pieceInPlay = False
+				distBottom = 21 - piece.y if piece.y > 17 else 4
+				distRight = 21 - (2 * piece.x - 1) if piece.x > 6 else 8
+				changeTexture( \
+					piece.y, 2 * piece.x - 1, \
+					piece.y + distBottom, 2 * piece.x -1 + distRight, \
+					crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard \
+				)
+				wBoard.refresh()
 				del piece
 		k = wBoard.getch()
 		if k not in keyCodes:
