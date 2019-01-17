@@ -7,9 +7,9 @@ import os
 Draws an alignment grid in the board window
 """
 def drawGrid():
-	for x in range(1, 21, 2):
+	for x in range(1, 21):
 		for y in range(1, 21):
-			wBoard.addch(y, x, '.')
+			wBoard.addch(y, x, '.' if x % 2 != 0 else ' ')
 """
 Draws the bottom border in the board window
 """
@@ -689,7 +689,7 @@ def ctMain():
 		"STAT3": 0, \
 		"STAT4": 0 \
 	}
-	arrowCodes = { \
+	keyCodes = { \
 		crs.KEY_LEFT : 'L', \
 		crs.KEY_RIGHT : 'R', \
 		crs.KEY_UP : 'U', \
@@ -700,14 +700,71 @@ def ctMain():
 		ord('Q') : 'Q', \
 		ord('q') : 'Q' \
 	}
+	yesnoCodes = { \
+		ord('y') : 'y', \
+		ord('Y') : 'Y', \
+		ord('n') : 'n', \
+		ord('N') : 'N' \
+	}
+	yesCodes = { \
+		ord('y') : 'y', \
+		ord('Y') : 'Y' \
+	}
+	noCodes = { \
+		ord('n') : 'n', \
+		ord('N') : 'N' \
+	}
+	active = True
+	playing = False
+	difficulty = -1
+	while active:
+		if not playing:
+			wBoard.nodelay(False)
+			while wBoard.getch() != ord(' '):
+				pass
+			playing = True
+			clearBoardLabel()
+			writeBoardLabel('L', "DIFFICULTY SELECTION")
+			wBoard.refresh()
+			crs.delay_output(500)
+			sure = False
+			while not sure:
+				wBoard.addstr(1, 1, "PRESS A NUMBER 0-9")
+				wBoard.addstr(2, 1, "TO SET DIFFICULTY.")
+				wBoard.refresh()
+				k = 0
+				while k < 0x30 or k > 0x39:
+					k = wBoard.getch()
+				difficulty = k - 0x30
+				wBoard.addstr(3, 1, "YOU CHOSE DIFF. " + str(difficulty))
+				wBoard.addstr(4, 1, "ARE YOU SURE? [Y/N]")
+				wBoard.refresh()
+				k = 0
+				while k not in yesnoCodes:
+					k = wBoard.getch()
+				if k in yesCodes:
+					sure = True
+				else:
+					drawGrid()
+					wBoard.addstr(1, 1, "OKAY, CHOOSE AGAIN.")
+					wBoard.refresh()
+				crs.delay_output(1000)
+				drawGrid()
+			clearBoardLabel()
+			writeBoardLabel('C', "BEGINNING GAME...")
+			wBoard.refresh()
+			wBoard.nodelay(True)
+		else:
+			active = False
+
 #	writeBoardLabel('C', str(crs.KEY_UP))
 #	k = 0
 #	while k != ord('Q') and k != ord('q'):
 #		k = wBoard.getch()
 #		if k >= 0:
 #			clearBoardLabel()
-#			if k in arrowCodes.keys():
-#				writeBoardLabel('L', arrowCodes[k])
+#			if k in keyCodes.keys():
+#				writeBoardLabel('L', keyCodes[k])
 #			else:
 #				writeBoardLabel('C', str(hex(k)))
 #			wBoard.refresh()
@@ -833,6 +890,8 @@ crs.delay_output(1000)
 #		del p
 #		crs.delay_output(250)
 #Unset proper key settings
+wBoard.nodelay(False)
+wBoard.keypad(False)
 screen.keypad(False)
 crs.nocbreak()
 crs.echo()
