@@ -2,6 +2,7 @@
 import curses as crs
 import os
 import time
+import random as rnd
 
 #SECTION: FUNCTIONS
 """
@@ -161,7 +162,7 @@ any instances of the target char. in the window
 will be overwritten with the result character (A)
 """
 def changeTexture(yi, xi, yf, xf, characterA, characterB, window):
-	if not (xi < xf and yi < yf):
+	if not (xi <= xf and yi <= yf):
 		return None
 	for i in range(xi, xf + 1):
 		for j in range(yi, yf + 1):
@@ -236,7 +237,6 @@ def getCellValue(y, x):
 def setCellValue(y, x, val):
 	values = { \
 		"EMPTY": '. ', \
-		"OLD": (crs.ACS_BLOCK, crs.ACS_BLOCK), \
 		"ACTIVE": (crs.ACS_CKBOARD, crs.ACS_CKBOARD) \
 	}
 	i = 2 * x - 1
@@ -261,6 +261,15 @@ def getFullLines():
 		if full:
 			fullLines.append(y)
 	return fullLines
+
+def isLineEmpty(y):
+	for x in range(1, 11):
+		if isCellEmpty(y, x):
+			continue
+		else:
+			return False
+	return True
+
 """
 Class for active block data
 
@@ -526,7 +535,7 @@ class Piece:
 					isCellEmpty(self.y + 1, self.x + 2) and \
 					isCellEmpty(self.y, self.x + 2):
 					return True
-				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
+				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
 					isCellEmpty(self.y + 3, self.x + 1) and \
 					isCellEmpty(self.y + 3, self.x + 2):
 					return True
@@ -764,7 +773,18 @@ def ctMain():
 	noCodes = {ord('n') : 'n', ord('N') : 'N'}
 	menuCodes = {27 : "ESC", ord('q') : 'Q', ord('Q') : 'Q', ord('\n') : "ENTER"}
 	startCodes = {ord('q') : 'Q', ord('Q') : 'Q', ord(' ') : "SPACE"}
-	dropTimes = (0.75, 0.6, 0.5, 0.425, 0.35, 0.3, 0.25, 0.225, 0.2, 0.18)
+	dropTimes = (0.75, 0.6, 0.5, 0.425, 0.35, 0.3, 0.25, 0.200, 0.15, 0.1)
+	lineClearChars = (crs.ACS_S1, crs.ACS_S3, crs.ACS_S7, crs.ACS_S9)
+	pieceInfo = { \
+		'C': {'y': 1, 'x': 5, "orient" : ''}, \
+		'S': {'y': 1, 'x': 5, "orient" : 'V'}, \
+		'Z': {'y': 1, 'x': 5, "orient" : 'V'}, \
+		'L': {'y': 1, 'x': 5, "orient" : 'HP'}, \
+		'R': {'y': 1, 'x': 5, "orient" : 'HP'}, \
+		'I': {'y': 1, 'x': 4, "orient" : 'H'}, \
+		'T': {'y': 1, 'x': 4, "orient" : 'H'}, \
+	}
+	cellValues = {ord(' '): "EMPTY", crs.ACS_CKBOARD: "ACTIVE"}
 	active = True
 	playing = False
 	paused = False
@@ -773,6 +793,9 @@ def ctMain():
 	pieceDropped = False
 	gameOver = False
 	difficulty = -1
+	pieceBag = list(pieceInfo.keys())
+	rnd.shuffle(pieceBag)
+	bagIndex = 0
 	while active:
 		if not playing:
 			wBoard.nodelay(False)
@@ -846,7 +869,16 @@ def ctMain():
 			paused = False
 			continue
 		if not pieceInPlay:
-			piece = Piece(1, 4, 'C', 'H')
+			if bagIndex % 7 < (bagIndex - 1) % 7:
+				rnd.shuffle(pieceBag)
+			nextPID = pieceBag[bagIndex % 7]
+			bagIndex += 1
+			piece = Piece( \
+				pieceInfo[nextPID]['y'], \
+				pieceInfo[nextPID]['x'], \
+				nextPID, \
+				pieceInfo[nextPID]["orient"] \
+			)
 			pieceInPlay = True
 			pieceDropTime = time.time()
 			continue
@@ -859,18 +891,45 @@ def ctMain():
 				pieceDropped = False
 				distBottom = 21 - piece.y if piece.y > 17 else 4
 				distRight = 21 - (2 * piece.x - 1) if piece.x > 6 else 8
-				changeTexture( \
-					piece.y, 2 * piece.x - 1, \
-					piece.y + distBottom, 2 * piece.x -1 + distRight, \
-					crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard \
-				)
+			#	changeTexture( \
+			#		piece.y, 2 * piece.x - 1, \
+			#		piece.y + distBottom, 2 * piece.x -1 + distRight, \
+			#		crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard \
+			#	)
 				wBoard.refresh()
 				del piece
+				lines = getFullLines()
+				if len(lines) > 0:
+					for f in range(20):
+						for y in lines:
+							if f == 0:
+								changeTexture( \
+									y, 1, y, 21, lineClearChars[f % 4], \
+									crs.ACS_CKBOARD, wBoard \
+								)
+							else:
+								changeTexture( \
+									y, 1, y, 21, lineClearChars[f % 4], \
+									lineClearChars[(f - 1) % 4], wBoard \
+								)
+						wBoard.refresh()
+						crs.delay_output(50)
+					for y in lines:
+						for x in range(1, 11):
+							setCellValue(y, x, "EMPTY")
+					for y in reversed(lines):
+						j = y
+						while not isLineEmpty(j - 1):
+							for x in range(1, 11):
+								setCellValue(j, x, cellValues[getCellValue(j - 1, x)])
+								setCellValue(j - 1, x, "EMPTY")
+							j -= 1
+						wBoard.refresh()
+						crs.delay_output(50)
 		k = wBoard.getch()
 		if k not in keyCodes:
 			continue
 		keypress = keyCodes[k]
-		writeBoardLabel('L', str(len(getFullLines())))
 		if keypress in arrowCodes and pieceInPlay:
 			if keypress != 'U':
 				pieceToDrop = False
