@@ -1,5 +1,6 @@
 #SECTION: IMPORTS
 import curses as crs
+import os
 
 #SECTION: FUNCTIONS
 """
@@ -688,21 +689,37 @@ def ctMain():
 		"STAT3": 0, \
 		"STAT4": 0 \
 	}
-	writeBoardLabel('C', str(crs.KEY_UP))
-	k = 0
-	while k != ord('Q'):
-		k = wBoard.getch()
-		if k >= 0:
-			clearBoardLabel()
-			writeBoardLabel('L', str(k))
-			wBoard.refresh()
-		else:
-			scoreData["SCORE"] += 1
-			writeScore(scoreData["SCORE"], "SCORE")
-			wScore.refresh()
-			crs.delay_output(100)
+	arrowCodes = { \
+		crs.KEY_LEFT : 'L', \
+		crs.KEY_RIGHT : 'R', \
+		crs.KEY_UP : 'U', \
+		crs.KEY_DOWN : 'D', \
+		ord(' ') : 'S', \
+		ord('\0') : 'CS', \
+		27 : 'E', \
+		ord('Q') : 'Q', \
+		ord('q') : 'Q' \
+	}
+#	writeBoardLabel('C', str(crs.KEY_UP))
+#	k = 0
+#	while k != ord('Q') and k != ord('q'):
+#		k = wBoard.getch()
+#		if k >= 0:
+#			clearBoardLabel()
+#			if k in arrowCodes.keys():
+#				writeBoardLabel('L', arrowCodes[k])
+#			else:
+#				writeBoardLabel('C', str(hex(k)))
+#			wBoard.refresh()
+#		else:
+#			scoreData["SCORE"] += 1
+#			writeScore(scoreData["SCORE"], "SCORE")
+#			wScore.refresh()
+#			crs.delay_output(100)
 
 #SECTION: MAIN
+#Set ESC key delay time
+os.environ.setdefault('ESCDELAY', '25')
 #Initialize screen
 screen = crs.initscr()
 #Set proper key settings
