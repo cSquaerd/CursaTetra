@@ -179,18 +179,26 @@ def numDigits(n):
 	while n >= 10 ** m:
 		m += 1
 	return m
+scoreLabels = ('', "SCORE", "LINES", "STATC", "STATS", "STATZ", \
+	"STATL", "STATR", "STATI", "STATT", '', "STAT1", "STAT2", \
+	"STAT3", "STAT4")
 """
 Writes a score value to a score label, listed below
 """
 def writeScore(score, scoreType):
-	scoreLabels = ('', "SCORE", "LINES", "STATC", "STATS", "STATZ", \
-		"STATL", "STATR", "STATI", "STATT", '', "STAT1", "STAT2", \
-		"STAT3", "STAT4")
 	scoreIndex = scoreLabels.index(scoreType)
 	if scoreIndex < 3:
 		wScore.addstr(scoreIndex, 16 - numDigits(score), str(score))
 	else:
 		wStats.addstr(scoreIndex, 18 - numDigits(score), str(score))
+
+def clearScore(scoreType):
+	scoreIndex = scoreLabels.index(scoreType)
+	if scoreIndex < 3:
+		wScore.addstr(scoreIndex, 9, "      0")
+	else:
+		wStats.addstr(scoreIndex, 11, "      0")
+
 """
 Writes a label to the lower section of the board;
 
@@ -776,6 +784,7 @@ def ctMain():
 	dropTimes = (0.75, 0.6, 0.5, 0.425, 0.35, 0.3, 0.25, 0.200, 0.15, 0.1)
 	lineClearChars = (crs.ACS_S1, crs.ACS_S3, crs.ACS_S7, crs.ACS_S9)
 	lineClearScores = (0, 40, 100, 300, 1200)
+	lineClearDiffShifts = (10, 20, 30, 45, 60, 75, 95, 115, 140, 165)
 	pieceInfo = { \
 		'C': {'y': 1, 'x': 5, "orient" : '', "yn": 3}, \
 		'S': {'y': 1, 'x': 5, "orient" : 'V', "yn": 2}, \
@@ -843,6 +852,11 @@ def ctMain():
 			clearBoardLabel()
 			writeBoardLabel('C', "BEGINNING GAME...")
 			crs.delay_output(750)
+			for s in scoreData.keys():
+				scoreData[s] = 0
+				clearScore(s)
+			wScore.refresh()
+			wStats.refresh()
 			clearBoardLabel()
 			writeBoardLabel('C', "LEVEL " + str(difficulty))
 			wBoard.nodelay(True)
@@ -957,6 +971,12 @@ def ctMain():
 					scoreData["STAT" + str(len(lines))] += 1
 					writeScore(scoreData["STAT" + str(len(lines))], "STAT" + str(len(lines)))
 					wStats.refresh()
+					if lineClearDiffShifts[difficulty] <= scoreData["LINES"] and \
+						difficulty < 9:
+						difficulty += 1
+						clearBoardLabel()
+						writeBoardLabel('C', "LEVEL " + str(difficulty))
+				continue
 		k = wBoard.getch()
 		if k not in keyCodes:
 			continue
