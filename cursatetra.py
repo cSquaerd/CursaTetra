@@ -776,13 +776,13 @@ def ctMain():
 	dropTimes = (0.75, 0.6, 0.5, 0.425, 0.35, 0.3, 0.25, 0.200, 0.15, 0.1)
 	lineClearChars = (crs.ACS_S1, crs.ACS_S3, crs.ACS_S7, crs.ACS_S9)
 	pieceInfo = { \
-		'C': {'y': 1, 'x': 5, "orient" : ''}, \
-		'S': {'y': 1, 'x': 5, "orient" : 'V'}, \
-		'Z': {'y': 1, 'x': 5, "orient" : 'V'}, \
-		'L': {'y': 1, 'x': 5, "orient" : 'HP'}, \
-		'R': {'y': 1, 'x': 5, "orient" : 'HP'}, \
-		'I': {'y': 1, 'x': 4, "orient" : 'H'}, \
-		'T': {'y': 1, 'x': 4, "orient" : 'H'}, \
+		'C': {'y': 1, 'x': 5, "orient" : '', "yn": 3}, \
+		'S': {'y': 1, 'x': 5, "orient" : 'V', "yn": 2}, \
+		'Z': {'y': 1, 'x': 5, "orient" : 'V', "yn": 2}, \
+		'L': {'y': 1, 'x': 5, "orient" : 'HP', "yn": 2}, \
+		'R': {'y': 1, 'x': 5, "orient" : 'HP', "yn": 2}, \
+		'I': {'y': 1, 'x': 4, "orient" : 'H', "yn": 2}, \
+		'T': {'y': 1, 'x': 4, "orient" : 'H', "yn": 2}, \
 	}
 	cellValues = {ord(' '): "EMPTY", crs.ACS_CKBOARD: "ACTIVE"}
 	active = True
@@ -791,11 +791,12 @@ def ctMain():
 	pieceInPlay = False
 	pieceToDrop = False
 	pieceDropped = False
-	gameOver = False
+	pieceJustSpawned = False
 	difficulty = -1
 	pieceBag = list(pieceInfo.keys())
 	rnd.shuffle(pieceBag)
 	bagIndex = 0
+	nextPID = pieceBag[bagIndex % 7]
 	while active:
 		if not playing:
 			wBoard.nodelay(False)
@@ -869,16 +870,23 @@ def ctMain():
 			paused = False
 			continue
 		if not pieceInPlay:
-			if bagIndex % 7 < (bagIndex - 1) % 7:
-				rnd.shuffle(pieceBag)
-			nextPID = pieceBag[bagIndex % 7]
-			bagIndex += 1
 			piece = Piece( \
 				pieceInfo[nextPID]['y'], \
 				pieceInfo[nextPID]['x'], \
 				nextPID, \
 				pieceInfo[nextPID]["orient"] \
 			)
+			pieceJustSpawned = True
+			bagIndex += 1
+			if bagIndex % 7 < (bagIndex - 1) % 7:
+				rnd.shuffle(pieceBag)
+			nextPID = pieceBag[bagIndex % 7]
+			changeTexture(2, 1, 5, 12, ' ', crs.ACS_CKBOARD, wNextP)
+			drawPiece( \
+				pieceInfo[nextPID]["yn"], 5, pieceInfo[nextPID]["orient"], \
+				nextPID, wNextP, [crs.ACS_CKBOARD] \
+			)
+			wNextP.refresh()
 			pieceInPlay = True
 			pieceDropTime = time.time()
 			continue
@@ -886,9 +894,20 @@ def ctMain():
 			if piece.canMove('D'):
 				piece.move('D')
 				pieceDropTime = time.time()
+				pieceJustSpawned = False
 			else:
 				pieceInPlay = False
 				pieceDropped = False
+				if pieceJustSpawned:
+					for n in range(4):
+						crs.flash()
+						crs.delay_output(125)
+					clearBoardLabel()
+					writeBoardLabel('C', "GAME OVER!")
+					crs.delay_output(2000)
+					playing = False
+					continue
+				pieceJustSpawned = False
 				distBottom = 21 - piece.y if piece.y > 17 else 4
 				distRight = 21 - (2 * piece.x - 1) if piece.x > 6 else 8
 			#	changeTexture( \
@@ -941,6 +960,8 @@ def ctMain():
 				if not pieceToDrop:
 					pieceToDrop = True
 					continue
+				if piece.canMove('D') and pieceJustSpawned:
+					pieceJustSpawned = False
 				while piece.canMove('D'):
 					piece.move('D')
 				pieceToDrop = False
@@ -983,7 +1004,7 @@ crs.curs_set(0)
 #Initialize windows
 wTitle = crs.newwin(6, 19, 0, 4)
 wScore = crs.newwin(4, 17, 6, 5)
-wCntrl = crs.newwin(12, 23, 10, 2)
+wCntrl = crs.newwin(13, 23, 10, 2)
 wBoard = crs.newwin(24, 22, 0, 28)
 wBoard.keypad(True)
 wBoard.nodelay(True)
@@ -1008,11 +1029,12 @@ wCntrl.addstr(2, 1, "L/R ARROWS: MOVE")
 wCntrl.addstr(3, 1, "DOWN ARROW: DROP 1")
 wCntrl.addstr(4, 1, "UP ARROWx2: DROP ALL")
 wCntrl.addstr(5, 1, "SPACE BAR : ROT. CW")
-wCntrl.addstr(6, 1, "CTRL+SPACE: ROT. CCW")
-wCntrl.addstr(7, 1, "ESC       : PAUSE OR")
-wCntrl.addstr(8, 1, "          : RESUME")
-wCntrl.addstr(9, 1, "Q         : QUIT IF")
-wCntrl.addstr(10, 2, "         : PAUSED")
+wCntrl.addstr(6, 1, "          : OR START")
+wCntrl.addstr(7, 1, "CTRL+SPACE: ROT. CCW")
+wCntrl.addstr(8, 1, "ESC       : PAUSE OR")
+wCntrl.addstr(9, 1, "          : RESUME")
+wCntrl.addstr(10, 1, "Q         : QUIT IF")
+wCntrl.addstr(11, 1, "          : PAUSED")
 drawGrid()
 drawBoardBorder()
 writeBoardLabel('L', "PRESS SPACE TO START")
