@@ -775,6 +775,7 @@ def ctMain():
 	startCodes = {ord('q') : 'Q', ord('Q') : 'Q', ord(' ') : "SPACE"}
 	dropTimes = (0.75, 0.6, 0.5, 0.425, 0.35, 0.3, 0.25, 0.200, 0.15, 0.1)
 	lineClearChars = (crs.ACS_S1, crs.ACS_S3, crs.ACS_S7, crs.ACS_S9)
+	lineClearScores = (0, 40, 100, 300, 1200)
 	pieceInfo = { \
 		'C': {'y': 1, 'x': 5, "orient" : '', "yn": 3}, \
 		'S': {'y': 1, 'x': 5, "orient" : 'V', "yn": 2}, \
@@ -797,6 +798,7 @@ def ctMain():
 	rnd.shuffle(pieceBag)
 	bagIndex = 0
 	nextPID = pieceBag[bagIndex % 7]
+	softDrops = 0
 	while active:
 		if not playing:
 			wBoard.nodelay(False)
@@ -910,12 +912,14 @@ def ctMain():
 				pieceJustSpawned = False
 				distBottom = 21 - piece.y if piece.y > 17 else 4
 				distRight = 21 - (2 * piece.x - 1) if piece.x > 6 else 8
-			#	changeTexture( \
-			#		piece.y, 2 * piece.x - 1, \
-			#		piece.y + distBottom, 2 * piece.x -1 + distRight, \
-			#		crs.ACS_BLOCK, crs.ACS_CKBOARD, wBoard \
-			#	)
 				wBoard.refresh()
+				scoreData["SCORE"] += softDrops
+				softDrops = 0
+				writeScore(scoreData["SCORE"], "SCORE")
+				wScore.refresh()
+				scoreData["STAT" + piece.pID] += 1
+				writeScore(scoreData["STAT" + piece.pID], "STAT" + piece.pID)
+				wStats.refresh()
 				del piece
 				lines = getFullLines()
 				if len(lines) > 0:
@@ -945,6 +949,14 @@ def ctMain():
 							j -= 1
 						wBoard.refresh()
 						crs.delay_output(50)
+					scoreData["LINES"] += len(lines)
+					scoreData["SCORE"] += lineClearScores[len(lines)] * (difficulty + 1)
+					writeScore(scoreData["LINES"], "LINES")
+					writeScore(scoreData["SCORE"], "SCORE")
+					wScore.refresh()
+					scoreData["STAT" + str(len(lines))] += 1
+					writeScore(scoreData["STAT" + str(len(lines))], "STAT" + str(len(lines)))
+					wStats.refresh()
 		k = wBoard.getch()
 		if k not in keyCodes:
 			continue
@@ -956,6 +968,7 @@ def ctMain():
 					piece.move(keypress)
 					if keypress == 'D':
 						pieceDropTime = time.time()
+						softDrops += 1
 			else:
 				if not pieceToDrop:
 					pieceToDrop = True
@@ -964,6 +977,7 @@ def ctMain():
 					pieceJustSpawned = False
 				while piece.canMove('D'):
 					piece.move('D')
+					softDrops += 1
 				pieceToDrop = False
 				pieceDropped = True
 		elif keypress in rotateCodes and pieceInPlay:
