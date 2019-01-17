@@ -703,13 +703,13 @@ def ctMain():
 		ord('q') : 'Q' \
 	}
 	arrowCodes = ('L', 'R', 'D', 'U')
+	rotateCodes = ("SPACE", "NULL")
 	yesnoCodes = {ord('\n') : 'ENTER', ord('y') : 'y', ord('Y') : 'Y', \
 		ord('n') : 'n', ord('N') : 'N'}
 	yesCodes = {ord('\n') : 'ENTER', ord('y') : 'y', ord('Y') : 'Y'}
 	noCodes = {ord('n') : 'n', ord('N') : 'N'}
-	menuCodes = {27 : "ESC" , ord('q') : 'Q' , ord('Q') : 'Q' , \
-		ord(' ') : "SPACE", ord('\n') : "ENTER"}
-	startCodes = {ord('q') : 'Q' , ord('Q') : 'Q' , ord(' ') : "SPACE"}
+	menuCodes = {27 : "ESC", ord('q') : 'Q', ord('Q') : 'Q', ord('\n') : "ENTER"}
+	startCodes = {ord('q') : 'Q', ord('Q') : 'Q', ord(' ') : "SPACE"}
 	active = True
 	playing = False
 	paused = False
@@ -722,7 +722,7 @@ def ctMain():
 			k = -1
 			while k not in startCodes:
 				k = wBoard.getch()
-			if menuCodes[k] == 'Q':
+			if startCodes[k] == 'Q':
 				clearBoardLabel()
 				writeBoardLabel('C', "QUITTING...")
 				crs.delay_output(750)
@@ -765,14 +765,31 @@ def ctMain():
 			wBoard.nodelay(True)
 			continue
 		if paused:
-			while keyCodes[wBoard.getch()] != "ESC":
-				pass
+			wBoard.nodelay(False)
+			k = -1
+			while k not in menuCodes :
+				k = wBoard.getch()
+			keypress = menuCodes[k]
+			if keypress == 'Q':
+				clearBoardLabel()
+				writeBoardLabel('C', "PRESS ENTER TO QUIT")
+				if wBoard.getch() == ord('\n'):
+					clearBoardLabel()
+					writeBoardLabel('C', "QUITTING...")
+					crs.delay_output(750)
+					return None
+				clearBoardLabel()
+				writeBoardLabel('C', "PAUSED")
+				continue
+			elif keypress == "ENTER":
+				continue
 			clearBoardLabel()
 			wBoard.refresh()
 			wBoard.nodelay(True)
+			paused = False
 			continue
 		if not pieceInPlay:
-			piece = Piece(1, 4, 'C', '')
+			piece = Piece(1, 4, 'T', 'H')
 			pieceInPlay = True
 			continue
 		k = wBoard.getch()
@@ -783,6 +800,14 @@ def ctMain():
 			if keypress != 'U':
 				if piece.canMove(keypress):
 					piece.move(keypress)
+		elif keypress in rotateCodes and pieceInPlay:
+			rotDir = "CW" if keypress == "SPACE" else "CCW"
+			if piece.canRotate(rotDir):
+				piece.rotate(rotDir)
+		elif keypress == "ESC":
+			paused = True
+			clearBoardLabel()
+			writeBoardLabel('C', "PAUSED")
 
 #	writeBoardLabel('C', str(crs.KEY_UP))
 #	k = 0
@@ -813,7 +838,7 @@ crs.curs_set(0)
 #Initialize windows
 wTitle = crs.newwin(6, 19, 0, 4)
 wScore = crs.newwin(4, 17, 6, 5)
-wCntrl = crs.newwin(10, 23, 10, 2)
+wCntrl = crs.newwin(12, 23, 10, 2)
 wBoard = crs.newwin(24, 22, 0, 28)
 wBoard.keypad(True)
 wBoard.nodelay(True)
@@ -839,8 +864,10 @@ wCntrl.addstr(3, 1, "DOWN ARROW: DROP 1")
 wCntrl.addstr(4, 1, "UP ARROW  : DROP ALL")
 wCntrl.addstr(5, 1, "SPACE BAR : ROT. CW")
 wCntrl.addstr(6, 1, "CTRL+SPACE: ROT. CCW")
-wCntrl.addstr(7, 1, "ESC       : PAUSE")
-wCntrl.addstr(8, 1, "Q         : QUIT")
+wCntrl.addstr(7, 1, "ESC       : PAUSE OR")
+wCntrl.addstr(8, 1, "          : RESUME")
+wCntrl.addstr(9, 1, "Q         : QUIT IF")
+wCntrl.addstr(10, 2, "         : PAUSED")
 drawGrid()
 drawBoardBorder()
 writeBoardLabel('L', "PRESS SPACE TO START")
