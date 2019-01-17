@@ -213,6 +213,7 @@ def writeBoardLabel(align, label):
 		return None
 
 	wBoard.addstr(22, x, label)
+	wBoard.refresh()
 """
 Clears the lower section of the board
 """
@@ -694,19 +695,21 @@ def ctMain():
 		crs.KEY_RIGHT : 'R', \
 		crs.KEY_UP : 'U', \
 		crs.KEY_DOWN : 'D', \
-		ord(' ') : 'S', \
-		ord('\0') : 'CS', \
-		27 : 'E', \
+		ord(' ') : "SPACE", \
+		ord('\0') : "NULL", \
+		27 : "ESC", \
 		ord('Q') : 'Q', \
 		ord('q') : 'Q' \
 	}
 	yesnoCodes = { \
+		ord('\n') : 'ENTER', \
 		ord('y') : 'y', \
 		ord('Y') : 'Y', \
 		ord('n') : 'n', \
 		ord('N') : 'N' \
 	}
 	yesCodes = { \
+		ord('\n') : 'ENTER', \
 		ord('y') : 'y', \
 		ord('Y') : 'Y' \
 	}
@@ -714,18 +717,35 @@ def ctMain():
 		ord('n') : 'n', \
 		ord('N') : 'N' \
 	}
+	menuCodes = { \
+		27 : "ESC" , \
+		ord('q') : 'Q' , \
+		ord('Q') : 'Q' , \
+		ord(' ') : "SPACE", \
+		ord('\n') : "ENTER" \
+	}
+	startCodes = { \
+		ord('q') : 'Q' , \
+		ord('Q') : 'Q' , \
+		ord(' ') : "SPACE" \
+	}
 	active = True
 	playing = False
 	difficulty = -1
 	while active:
 		if not playing:
 			wBoard.nodelay(False)
-			while wBoard.getch() != ord(' '):
-				pass
+			k = -1
+			while k not in startCodes:
+				k = wBoard.getch()
+			if menuCodes[k] == 'Q':
+				clearBoardLabel()
+				writeBoardLabel('C', "QUITTING...")
+				crs.delay_output(750)
+				return None
 			playing = True
 			clearBoardLabel()
 			writeBoardLabel('L', "DIFFICULTY SELECTION")
-			wBoard.refresh()
 			crs.delay_output(500)
 			sure = False
 			while not sure:
@@ -744,6 +764,9 @@ def ctMain():
 					k = wBoard.getch()
 				if k in yesCodes:
 					sure = True
+					wBoard.addstr(5, 1, "OKAY, GET READY!")
+					wBoard.refresh()
+					crs.delay_output(500)
 				else:
 					drawGrid()
 					wBoard.addstr(1, 1, "OKAY, CHOOSE AGAIN.")
@@ -752,7 +775,6 @@ def ctMain():
 				drawGrid()
 			clearBoardLabel()
 			writeBoardLabel('C', "BEGINNING GAME...")
-			wBoard.refresh()
 			wBoard.nodelay(True)
 		else:
 			active = False
@@ -856,8 +878,6 @@ wNextP.refresh()
 wStats.refresh()
 #Main function call
 ctMain()
-#Wait
-crs.delay_output(1000)
 #Move & Rotation demo
 #rotations = {'C': ['']}
 #rotations.update(dict.fromkeys(['S', 'Z', 'I'], ['H', 'V']))
