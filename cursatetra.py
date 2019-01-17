@@ -1,10 +1,10 @@
-#SECTION: IMPORTS
+# SECTION: IMPORTS
 import curses as crs
 import os
 import time
 import random as rnd
 
-#SECTION: FUNCTIONS
+# SECTION: FUNCTIONS
 """
 Draws an alignment grid in the board window
 """
@@ -179,11 +179,12 @@ def numDigits(n):
 	while n >= 10 ** m:
 		m += 1
 	return m
+# Tuple containing score label IDs for score functions
 scoreLabels = ('', "SCORE", "LINES", "STATC", "STATS", "STATZ", \
 	"STATL", "STATR", "STATI", "STATT", '', "STAT1", "STAT2", \
 	"STAT3", "STAT4")
 """
-Writes a score value to a score label, listed below
+Writes a score value to a score label, listed above
 """
 def writeScore(score, scoreType):
 	scoreIndex = scoreLabels.index(scoreType)
@@ -191,7 +192,9 @@ def writeScore(score, scoreType):
 		wScore.addstr(scoreIndex, 16 - numDigits(score), str(score))
 	else:
 		wStats.addstr(scoreIndex, 18 - numDigits(score), str(score))
-
+"""
+Clears a score label
+"""
 def clearScore(scoreType):
 	scoreIndex = scoreLabels.index(scoreType)
 	if scoreIndex < 3:
@@ -241,7 +244,9 @@ or have an active block (two ACS_CKBOARD chars)
 """
 def getCellValue(y, x):
 	return wBoard.inch(y, 2 * x)
-
+"""
+Sets the character values of a cell in the board
+"""
 def setCellValue(y, x, val):
 	values = { \
 		"EMPTY": '. ', \
@@ -251,13 +256,19 @@ def setCellValue(y, x, val):
 	for c in values[val]:
 		wBoard.addch(y, i, c)
 		i += 1
-
+"""
+Returns True if the indicated cell is empty
+"""
 def isCellEmpty(y, x):
 	return getCellValue(y, x) == ord(' ')
-
+"""
+Returns True if the indicated cell is a valid board space
+"""
 def isCellInBounds(y, x):
 	return y > 0 and y < 21 and x > 0 and x < 11
-
+"""
+Return a list of y-addresses that are full of blocks
+"""
 def getFullLines():
 	fullLines = []
 	for y in range(20, 0, -1):
@@ -269,7 +280,9 @@ def getFullLines():
 		if full:
 			fullLines.append(y)
 	return fullLines
-
+"""
+Returns True if the indicated line has no blocks in it
+"""
 def isLineEmpty(y):
 	for x in range(1, 11):
 		if isCellEmpty(y, x):
@@ -277,11 +290,10 @@ def isLineEmpty(y):
 		else:
 			return False
 	return True
-
 """
 Class for active block data
 
-* Valid values:
+* Valid Constructor Values:
 	* y: [1, 19]
 		* Smallest block height-wise is Square, S, and Z; All take up two cells vertically
 	* x: [1, 10]
@@ -289,10 +301,22 @@ Class for active block data
 	* orient: {'', 'H', 'V', 'HP', 'VP'}
 		* Null-orientation is only valid for the Square
 
-* method getNewOrient(self, rotDir):
-	* rotDir: {'CW', 'CCW'}
-		* Clockwise or Counter-Clockwise
-		* Only needed for L, R, and T pieces
+* Methods & Valid Values:
+	* draw(): Draws the piece on the board
+	* undraw(): Erases the piece from the board
+	* getNewOrient(rotDir): Gets the new orientation for the piece based on rot. dir.
+		* rotDir: {'CW', 'CCW'}
+			* Clockwise or Counter-Clockwise
+			* Only needed for L, R, and T pieces
+	* rotate(rotDir): Rotates the piece in the indicated rot. dir.
+		* rotDir: See notes in getNewOrient
+	* move(direction): Moves the piece in the indicated direction
+		* direction: {'L', 'R', 'D'}
+			* Left, Right, or Down
+	* canRotate(rotDir): Returns True if the piece can rotate in the indicated rot. dir.
+		* rotDir: See notes in getNewOrient
+	* canMove(direction): Returns True if the piece can move in the indicated direction
+		* direction: See notes in move
 """
 class Piece:
 	def __init__(self, y, x, p, o):
@@ -747,6 +771,7 @@ scoring and statistics variables, and other
 vital functionality
 """
 def ctMain():
+	# SECTION: CONTORL DICTIONARIES AND TUPLES
 	scoreData = { \
 		"SCORE": 0, \
 		"LINES": 0, \
@@ -794,6 +819,7 @@ def ctMain():
 		'I': {'y': 1, 'x': 4, "orient" : 'H', "yn": 2}, \
 		'T': {'y': 1, 'x': 4, "orient" : 'H', "yn": 2}, \
 	}
+	# SECTION: CONTROL VARIABLES AND BOOLEANS
 	cellValues = {ord(' '): "EMPTY", crs.ACS_CKBOARD: "ACTIVE"}
 	active = True
 	playing = False
@@ -808,41 +834,52 @@ def ctMain():
 	bagIndex = 0
 	nextPID = pieceBag[bagIndex % 7]
 	softDrops = 0
+	# SECTION: ACTIVE LOOP
 	while active:
+		# SUBSECTION: STARTUP CONTROL
 		if not playing:
+			# Wait for a keypress
 			wBoard.nodelay(False)
 			k = -1
 			while k not in startCodes:
 				k = wBoard.getch()
+			# Quit the game
 			if startCodes[k] == 'Q':
 				clearBoardLabel()
 				writeBoardLabel('C', "QUITTING...")
 				crs.delay_output(750)
 				return None
+			# Start the game
 			playing = True
 			clearBoardLabel()
 			writeBoardLabel('L', "DIFFICULTY SELECTION")
 			crs.delay_output(500)
 			sure = False
+			# Select difficulty
 			while not sure:
 				wBoard.addstr(1, 1, "PRESS A NUMBER 0-9")
 				wBoard.addstr(2, 1, "TO SET DIFFICULTY.")
 				wBoard.refresh()
+				# The ASCII number-key codes in hexidecimal
+				# Have the number as the first digit
 				k = 0
 				while k < 0x30 or k > 0x39:
 					k = wBoard.getch()
 				difficulty = k - 0x30
+				# Confirm difficulty
 				wBoard.addstr(3, 1, "YOU CHOSE DIFF. " + str(difficulty))
 				wBoard.addstr(4, 1, "ARE YOU SURE? [Y/N]")
 				wBoard.refresh()
 				k = 0
 				while k not in yesnoCodes:
 					k = wBoard.getch()
+				# Proceed to game start
 				if k in yesCodes:
 					sure = True
 					wBoard.addstr(5, 1, "OKAY, GET READY!")
 					wBoard.refresh()
 					crs.delay_output(500)
+				# Retry difficulty selection
 				else:
 					drawGrid()
 					wBoard.addstr(1, 1, "OKAY, CHOOSE AGAIN.")
@@ -852,6 +889,7 @@ def ctMain():
 			clearBoardLabel()
 			writeBoardLabel('C', "BEGINNING GAME...")
 			crs.delay_output(750)
+			# Clear old scores
 			for s in scoreData.keys():
 				scoreData[s] = 0
 				clearScore(s)
@@ -861,15 +899,19 @@ def ctMain():
 			writeBoardLabel('C', "LEVEL " + str(difficulty))
 			wBoard.nodelay(True)
 			continue
+		# SUBSECTION: PAUSE MENU CONTROL
 		if paused:
+			# Get a key and either quit or continue
 			wBoard.nodelay(False)
 			k = -1
 			while k not in menuCodes :
 				k = wBoard.getch()
 			keypress = menuCodes[k]
+			# Quit the game
 			if keypress == 'Q':
 				clearBoardLabel()
 				writeBoardLabel('C', "PRESS ENTER TO QUIT")
+				# To avoid accidental quits, confirm with enter key
 				if wBoard.getch() == ord('\n'):
 					clearBoardLabel()
 					writeBoardLabel('C', "QUITTING...")
@@ -880,12 +922,16 @@ def ctMain():
 				continue
 			elif keypress == "ENTER":
 				continue
+			# If neither the enter nor q key are pressed, it must be ESC,
+			# Which means unpause
 			clearBoardLabel()
 			writeBoardLabel('C', "LEVEL " + str(difficulty))
 			wBoard.nodelay(True)
 			paused = False
 			continue
+		# SUBSECTION: PIECE GENERATION
 		if not pieceInPlay:
+			# Create new piece object
 			piece = Piece( \
 				pieceInfo[nextPID]['y'], \
 				pieceInfo[nextPID]['x'], \
@@ -893,10 +939,12 @@ def ctMain():
 				pieceInfo[nextPID]["orient"] \
 			)
 			pieceJustSpawned = True
+			# Go to the next piece and check if the bag needs shuffling
 			bagIndex += 1
 			if bagIndex % 7 < (bagIndex - 1) % 7:
 				rnd.shuffle(pieceBag)
 			nextPID = pieceBag[bagIndex % 7]
+			# Clear the next piece window and draw the next piece
 			changeTexture(2, 1, 5, 12, ' ', crs.ACS_CKBOARD, wNextP)
 			drawPiece( \
 				pieceInfo[nextPID]["yn"], 5, pieceInfo[nextPID]["orient"], \
@@ -904,16 +952,21 @@ def ctMain():
 			)
 			wNextP.refresh()
 			pieceInPlay = True
+			# Set the autodrop timer
 			pieceDropTime = time.time()
 			continue
+		# SUBSECTION: PIECE AUTODROP, GAME OVER, AND LINE CLEAR
 		if time.time() - pieceDropTime > dropTimes[difficulty] or pieceDropped:
+			# Under normal circumstances
 			if piece.canMove('D'):
 				piece.move('D')
 				pieceDropTime = time.time()
 				pieceJustSpawned = False
+			# When the piece it at the bottom
 			else:
 				pieceInPlay = False
 				pieceDropped = False
+				# Game over check
 				if pieceJustSpawned:
 					for n in range(4):
 						crs.flash()
@@ -924,9 +977,8 @@ def ctMain():
 					playing = False
 					continue
 				pieceJustSpawned = False
-				distBottom = 21 - piece.y if piece.y > 17 else 4
-				distRight = 21 - (2 * piece.x - 1) if piece.x > 6 else 8
 				wBoard.refresh()
+				# Add softDrops to score and update piece statistics
 				scoreData["SCORE"] += softDrops
 				softDrops = 0
 				writeScore(scoreData["SCORE"], "SCORE")
@@ -934,9 +986,12 @@ def ctMain():
 				scoreData["STAT" + piece.pID] += 1
 				writeScore(scoreData["STAT" + piece.pID], "STAT" + piece.pID)
 				wStats.refresh()
+				# Erase old piece object
 				del piece
+				# Check if lines can be cleared
 				lines = getFullLines()
 				if len(lines) > 0:
+					# Animate the lines to clear
 					for f in range(20):
 						for y in lines:
 							if f == 0:
@@ -951,9 +1006,11 @@ def ctMain():
 								)
 						wBoard.refresh()
 						crs.delay_output(50)
+					# Clear the lines
 					for y in lines:
 						for x in range(1, 11):
 							setCellValue(y, x, "EMPTY")
+					# From the topmost line, drop down the remaining blocks
 					for y in reversed(lines):
 						j = y
 						while not isLineEmpty(j - 1):
@@ -963,6 +1020,7 @@ def ctMain():
 							j -= 1
 						wBoard.refresh()
 						crs.delay_output(50)
+					# Update scoreData and score labels
 					scoreData["LINES"] += len(lines)
 					scoreData["SCORE"] += lineClearScores[len(lines)] * (difficulty + 1)
 					writeScore(scoreData["LINES"], "LINES")
@@ -971,16 +1029,19 @@ def ctMain():
 					scoreData["STAT" + str(len(lines))] += 1
 					writeScore(scoreData["STAT" + str(len(lines))], "STAT" + str(len(lines)))
 					wStats.refresh()
+					# Update difficulty check
 					if lineClearDiffShifts[difficulty] <= scoreData["LINES"] and \
 						difficulty < 9:
 						difficulty += 1
 						clearBoardLabel()
 						writeBoardLabel('C', "LEVEL " + str(difficulty))
 				continue
+		# SUBSECTION: KEY INPUT HANDLING
 		k = wBoard.getch()
 		if k not in keyCodes:
 			continue
 		keypress = keyCodes[k]
+		# SUBSECTION: KEY INPUT PROCESSING
 		if keypress in arrowCodes and pieceInPlay:
 			if keypress != 'U':
 				pieceToDrop = False
@@ -989,6 +1050,7 @@ def ctMain():
 					if keypress == 'D':
 						pieceDropTime = time.time()
 						softDrops += 1
+			# pieceToDrop Boolean is used to check for double press of up arrow key
 			else:
 				if not pieceToDrop:
 					pieceToDrop = True
@@ -1009,24 +1071,7 @@ def ctMain():
 			clearBoardLabel()
 			writeBoardLabel('C', "PAUSED")
 
-#	writeBoardLabel('C', str(crs.KEY_UP))
-#	k = 0
-#	while k != ord('Q') and k != ord('q'):
-#		k = wBoard.getch()
-#		if k >= 0:
-#			clearBoardLabel()
-#			if k in keyCodes.keys():
-#				writeBoardLabel('L', keyCodes[k])
-#			else:
-#				writeBoardLabel('C', str(hex(k)))
-#			wBoard.refresh()
-#		else:
-#			scoreData["SCORE"] += 1
-#			writeScore(scoreData["SCORE"], "SCORE")
-#			wScore.refresh()
-#			crs.delay_output(100)
-
-#SECTION: MAIN
+# SECTION: MAIN
 #Set ESC key delay time
 os.environ.setdefault('ESCDELAY', '25')
 #Initialize screen
