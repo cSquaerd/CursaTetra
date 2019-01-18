@@ -1125,6 +1125,12 @@ os.environ.setdefault('ESCDELAY', '25')
 screen = crs.initscr()
 crs.start_color()
 crs.use_default_colors()
+#Run screen checks
+if crs.LINES < 24 or crs.COLS < 80:
+	crs.endwin()
+	print("Your terminal must be at least 80x24 to run this game.")
+	print("Please adjust your terminal settings accordingly.")
+	exit()
 #Define colors
 crs.init_color(1, 1000, 1000, 0)
 crs.init_color(2, 0, 1000, 0)
