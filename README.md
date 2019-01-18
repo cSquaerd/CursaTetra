@@ -1,9 +1,9 @@
 # CursaTetra
 ## A terminal-bounded block-based puzzle game written in Python/Curses
-This game is dedicated to Alexey Pajitnov, original author of Tetris. This version features an 80x24 character resolution, Nintendo-style scoring, a 7-Bag piece randomizer algorithm, and the traditional 20-block high playing board. The goal is simple: rotate and move pieces as they fall, line up ten blocks in a row to clear a row, and keep going until the board tops out.
+This game is dedicated to Alexey Pajitnov, original author of Tetris. This version features an 80x24 character resolution, colored pieces, Nintendo-style scoring, a 7-Bag piece randomizer and "true" randomizer algorithm, and the traditional 20-block high playing board. The goal is simple: rotate and move pieces as they fall, line up ten blocks in a row to clear a row, and keep going until the board tops out.
 ## Featurs coming soon
-* Colored pieces
 * High score file `.ctHiScrs.txt`
+	* High score code after game over
 ## Piece development documentation
 ### Piece orientations
 * H : horizontal (default)
