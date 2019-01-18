@@ -56,110 +56,110 @@ def drawPiece(y, x, orient, piece, window, characters):
 	if piece == 'C':
 		for i in range(x, x + 4):
 			for j in range(y, y + 2):
-				window.addch(j, i, character(i)) #, crs.color_pair(COLOR_C))
+				window.addch(j, i, character(i) , crs.color_pair(COLOR_C))
 	elif piece == 'S':
 		if orient == 'H':
 			for i in range(x + 2, x + 6):
-				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_S))
+				window.addch(y + 1, i, character(i) , crs.color_pair(COLOR_S))
 			for i in range(x, x + 4):
-				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_S))
+				window.addch(y + 2, i, character(i) , crs.color_pair(COLOR_S))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y, y + 2):
-					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_S))
+					window.addch(j, i, character(i) , crs.color_pair(COLOR_S))
 			for i in range(x + 2, x + 4):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_S))
+					window.addch(j, i, character(i), crs.color_pair(COLOR_S))
 	elif piece == 'Z':
 		if orient == 'H':
 			for i in range(x, x + 4):
-				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_Z))
+				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_Z))
 			for i in range(x + 2, x + 6):
-				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_Z))
+				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_Z))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_Z))
+					window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 2):
-					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_Z))
+					window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
 	elif piece == 'L':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_L))
+					window.addch(j, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_L))
+				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_L))
+				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_L))
+				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_L))
+					window.addch(j, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x, x + 2):
-				window.addch(y, i, character(i)) #, crs.color_pair(COLOR_L))
+				window.addch(y, i, character(i), crs.color_pair(COLOR_L))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_L))
+				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, character(i)) #, crs.color_pair(COLOR_L))
+				window.addch(y, i, character(i), crs.color_pair(COLOR_L))
 	elif piece == 'R':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_R))
+					window.addch(j, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_R))
+				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_R))
+				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x, x + 2):
-				window.addch(y, i, character(i)) #, crs.color_pair(COLOR_R))
+				window.addch(y, i, character(i), crs.color_pair(COLOR_R))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_R))
+					window.addch(j, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, character(i)) #, crs.color_pair(COLOR_R))
+				window.addch(y, i, character(i), crs.color_pair(COLOR_R))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_R))
+				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_R))
+				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
 	elif piece == 'I':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 4):
-					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_I))
+					window.addch(j, i, character(i), crs.color_pair(COLOR_I))
 		else:
 			for i in range(x, x + 8):
-				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_I))
+				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_I))
 	elif piece == 'T':
 		if orient == 'H':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_T))
+				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x + 2, x + 4):
-				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_T))
+				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_T))
 		elif orient == 'V':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_T))
+					window.addch(j, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x, x + 2):
-				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_T))
+				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 		elif orient == 'HP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_T))
+				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x + 2, x + 4):
-				window.addch(y, i, character(i)) #, crs.color_pair(COLOR_T))
+				window.addch(y, i, character(i), crs.color_pair(COLOR_T))
 		elif orient == 'VP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_T))
+					window.addch(j, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_T))
+				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 """
 Redraws characters in a window.
 
@@ -174,7 +174,7 @@ def changeTexture(yi, xi, yf, xf, characterA, characterB, window):
 	for i in range(xi, xf + 1):
 		for j in range(yi, yf + 1):
 			if type(characterB) is str and window.inch(j, i) == ord(characterB) \
-				or type(characterB) is int and window.inch(j, i) == characterB:
+				or type(characterB) is int and window.inch(j, i) % 0x100 == characterB % 0x100:
 				window.addch(j, i, characterA)
 """
 Returns the number of base-10 digits in a number (n)
@@ -259,9 +259,25 @@ def setCellValue(y, x, val):
 		"EMPTY": '. ', \
 		"ACTIVE": (crs.ACS_CKBOARD, crs.ACS_CKBOARD) \
 	}
+	colors = { \
+		"ACTIVE-C": 1, \
+		"ACTIVE-S": 2, \
+		"ACTIVE-Z": 3, \
+		"ACTIVE-L": 4, \
+		"ACTIVE-R": 5, \
+		"ACTIVE-I": 6, \
+		"ACTIVE-T": 7 \
+	}
+	if val == "EMPTY":
+		v = val
+	else:
+		v = "ACTIVE"
 	i = 2 * x - 1
-	for c in values[val]:
-		wBoard.addch(y, i, c)
+	for c in values[v]:
+		if v != "ACTIVE":
+			wBoard.addch(y, i, c)
+		else:
+			wBoard.addch(y, i, c, crs.color_pair(colors[val]))
 		i += 1
 """
 Returns True if the indicated cell is empty
@@ -827,7 +843,16 @@ def ctMain():
 		'T': {'y': 1, 'x': 4, "orient" : 'H', "yn": 2}, \
 	}
 	# SECTION: CONTROL VARIABLES AND BOOLEANS
-	cellValues = {ord(' '): "EMPTY", crs.ACS_CKBOARD: "ACTIVE"}
+	cellValues = { \
+		ord(' '): "EMPTY", \
+		crs.ACS_CKBOARD + 0x100: "ACTIVE-C", \
+		crs.ACS_CKBOARD + 0x200: "ACTIVE-S", \
+		crs.ACS_CKBOARD + 0x300: "ACTIVE-Z", \
+		crs.ACS_CKBOARD + 0x400: "ACTIVE-L", \
+		crs.ACS_CKBOARD + 0x500: "ACTIVE-R", \
+		crs.ACS_CKBOARD + 0x600: "ACTIVE-I", \
+		crs.ACS_CKBOARD + 0x700: "ACTIVE-T" \
+	}
 	active = True
 	playing = False
 	paused = False
@@ -1086,16 +1111,20 @@ screen = crs.initscr()
 crs.start_color()
 crs.use_default_colors()
 #Define colors
-crs.init_color(8, 1000, 800, 0)
-COLOR_ORANGE = 8
-crs.init_pair(1, crs.COLOR_YELLOW, -1)
-crs.init_pair(2, crs.COLOR_GREEN, -1)
-crs.init_pair(3, crs.COLOR_RED, -1)
-crs.init_pair(4, COLOR_ORANGE, -1)
-crs.init_pair(5, crs.COLOR_BLUE, -1)
-crs.init_pair(6, crs.COLOR_CYAN, -1)
-crs.init_pair(7, crs.COLOR_MAGENTA, -1)
-crs.init_pair(8, -1, -1)
+crs.init_color(1, 1000, 1000, 0)
+crs.init_color(2, 0, 1000, 0)
+crs.init_color(3, 1000, 0, 0)
+crs.init_color(4, 1000, 750, 0)
+crs.init_color(5, 0, 0, 1000)
+crs.init_color(6, 500, 500, 1000)
+crs.init_color(7, 1000, 500, 1000)
+crs.init_pair(1, -1, 1)
+crs.init_pair(2, -1, 2)
+crs.init_pair(3, -1, 3)
+crs.init_pair(4, -1, 4)
+crs.init_pair(5, -1, 5)
+crs.init_pair(6, -1, 6)
+crs.init_pair(7, -1, 7)
 #Set proper key settings
 crs.noecho()
 crs.cbreak()
