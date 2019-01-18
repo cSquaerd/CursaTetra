@@ -40,6 +40,13 @@ and even cells will get a ' ' from int(True)
 See README.md or check the bottom of this file for details on block behavoir
 """
 def drawPiece(y, x, orient, piece, window, characters):
+	COLOR_C = 1
+	COLOR_S = 2
+	COLOR_Z = 3
+	COLOR_L = 4
+	COLOR_R = 5
+	COLOR_I = 6
+	COLOR_T = 7
 	if len(characters) == 1:
 		character = lambda x : characters[0]
 	elif len(characters) == 2:
@@ -49,110 +56,110 @@ def drawPiece(y, x, orient, piece, window, characters):
 	if piece == 'C':
 		for i in range(x, x + 4):
 			for j in range(y, y + 2):
-				window.addch(j, i, character(i))
+				window.addch(j, i, character(i)) #, crs.color_pair(COLOR_C))
 	elif piece == 'S':
 		if orient == 'H':
 			for i in range(x + 2, x + 6):
-				window.addch(y + 1, i, character(i))
+				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_S))
 			for i in range(x, x + 4):
-				window.addch(y + 2, i, character(i))
+				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_S))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y, y + 2):
-					window.addch(j, i, character(i))
+					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_S))
 			for i in range(x + 2, x + 4):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, character(i))
+					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_S))
 	elif piece == 'Z':
 		if orient == 'H':
 			for i in range(x, x + 4):
-				window.addch(y + 1, i, character(i))
+				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_Z))
 			for i in range(x + 2, x + 6):
-				window.addch(y + 2, i, character(i))
+				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_Z))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, character(i))
+					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_Z))
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 2):
-					window.addch(j, i, character(i))
+					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_Z))
 	elif piece == 'L':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i))
+					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_L))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, character(i))
+				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_L))
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i))
+				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_L))
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, character(i))
+				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_L))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i))
+					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_L))
 			for i in range(x, x + 2):
-				window.addch(y, i, character(i))
+				window.addch(y, i, character(i)) #, crs.color_pair(COLOR_L))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i))
+				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_L))
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, character(i))
+				window.addch(y, i, character(i)) #, crs.color_pair(COLOR_L))
 	elif piece == 'R':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i))
+					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_R))
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, character(i))
+				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_R))
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i))
+				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_R))
 			for i in range(x, x + 2):
-				window.addch(y, i, character(i))
+				window.addch(y, i, character(i)) #, crs.color_pair(COLOR_R))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i))
+					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_R))
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, character(i))
+				window.addch(y, i, character(i)) #, crs.color_pair(COLOR_R))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i))
+				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_R))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, character(i))
+				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_R))
 	elif piece == 'I':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 4):
-					window.addch(j, i, character(i))
+					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_I))
 		else:
 			for i in range(x, x + 8):
-				window.addch(y + 2, i, character(i))
+				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_I))
 	elif piece == 'T':
 		if orient == 'H':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i))
+				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_T))
 			for i in range(x + 2, x + 4):
-				window.addch(y + 2, i, character(i))
+				window.addch(y + 2, i, character(i)) #, crs.color_pair(COLOR_T))
 		elif orient == 'V':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i))
+					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_T))
 			for i in range(x, x + 2):
-				window.addch(y + 1, i, character(i))
+				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_T))
 		elif orient == 'HP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i))
+				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_T))
 			for i in range(x + 2, x + 4):
-				window.addch(y, i, character(i))
+				window.addch(y, i, character(i)) #, crs.color_pair(COLOR_T))
 		elif orient == 'VP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i))
+					window.addch(j, i, character(i)) #, crs.color_pair(COLOR_T))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 1, i, character(i))
+				window.addch(y + 1, i, character(i)) #, crs.color_pair(COLOR_T))
 """
 Redraws characters in a window.
 
@@ -1076,6 +1083,19 @@ def ctMain():
 os.environ.setdefault('ESCDELAY', '25')
 #Initialize screen
 screen = crs.initscr()
+crs.start_color()
+crs.use_default_colors()
+#Define colors
+crs.init_color(8, 1000, 800, 0)
+COLOR_ORANGE = 8
+crs.init_pair(1, crs.COLOR_YELLOW, -1)
+crs.init_pair(2, crs.COLOR_GREEN, -1)
+crs.init_pair(3, crs.COLOR_RED, -1)
+crs.init_pair(4, COLOR_ORANGE, -1)
+crs.init_pair(5, crs.COLOR_BLUE, -1)
+crs.init_pair(6, crs.COLOR_CYAN, -1)
+crs.init_pair(7, crs.COLOR_MAGENTA, -1)
+crs.init_pair(8, -1, -1)
 #Set proper key settings
 crs.noecho()
 crs.cbreak()
@@ -1098,7 +1118,7 @@ wNextP.border()
 wStats.border()
 #Write titles and labels
 wTitle.addstr(1, 4, "Cursa Tetra")
-wTitle.addstr(2, 1, 17 * '-')
+wTitle.addstr(2, 4, 11 * '-')
 wTitle.addstr(3, 4, "By C. Cook")
 wTitle.addstr(4, 2, "Ded. A. Pajitnov")
 wScore.addstr(1, 1, "SCORE:")
