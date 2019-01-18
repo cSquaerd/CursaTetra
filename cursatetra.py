@@ -861,6 +861,7 @@ def ctMain():
 	pieceDropped = False
 	pieceJustSpawned = False
 	difficulty = -1
+	trueRandom = False
 	pieceBag = list(pieceInfo.keys())
 	rnd.shuffle(pieceBag)
 	bagIndex = 0
@@ -887,10 +888,19 @@ def ctMain():
 			writeBoardLabel('L', "DIFFICULTY SELECTION")
 			crs.delay_output(500)
 			sure = False
-			# Select difficulty
+			# Select randomizer and difficulty
 			while not sure:
-				wBoard.addstr(1, 1, "PRESS A NUMBER 0-9")
-				wBoard.addstr(2, 1, "TO SET DIFFICULTY.")
+				wBoard.addstr(1, 1, "PRESS \'B\' FOR 7-BAG")
+				wBoard.addstr(2, 1, "RANDOMIZER OR \'R\'")
+				wBoard.addstr(3, 1, "FOR TRUE RANDOMIZER")
+				wBoard.refresh()
+				r = 0
+				while r not in (ord('B'), ord('b'), ord('R'), ord('r')):
+					r = wBoard.getch()
+				if chr(r).upper() == 'R':
+					trueRandom = True
+				wBoard.addstr(4, 1, "PRESS A NUMBER 0-9")
+				wBoard.addstr(5, 1, "TO SET DIFFICULTY:")
 				wBoard.refresh()
 				# The ASCII number-key codes in hexidecimal
 				# Have the number as the first digit
@@ -899,8 +909,9 @@ def ctMain():
 					k = wBoard.getch()
 				difficulty = k - 0x30
 				# Confirm difficulty
-				wBoard.addstr(3, 1, "YOU CHOSE DIFF. " + str(difficulty))
-				wBoard.addstr(4, 1, "ARE YOU SURE? [Y/N]")
+				wBoard.addstr(6, 1, "YOU CHOSE DIFF. " + str(difficulty))
+				wBoard.addstr(7, 1, "AND RANDOMIZER " + chr(r).upper())
+				wBoard.addstr(8, 1, "ARE YOU SURE? [Y/N]")
 				wBoard.refresh()
 				k = 0
 				while k not in yesnoCodes:
@@ -908,7 +919,7 @@ def ctMain():
 				# Proceed to game start
 				if k in yesCodes:
 					sure = True
-					wBoard.addstr(5, 1, "OKAY, GET READY!")
+					wBoard.addstr(9, 1, "OKAY, GET READY!")
 					wBoard.refresh()
 					crs.delay_output(500)
 				# Retry difficulty selection
@@ -972,9 +983,13 @@ def ctMain():
 			)
 			pieceJustSpawned = True
 			# Go to the next piece and check if the bag needs shuffling
-			bagIndex += 1
-			if bagIndex % 7 < (bagIndex - 1) % 7:
-				rnd.shuffle(pieceBag)
+			# if using the bag randomizer
+			if trueRandom:
+				bagIndex = rnd.randint(0, 6)
+			else:
+				bagIndex += 1
+				if bagIndex % 7 < (bagIndex - 1) % 7:
+					rnd.shuffle(pieceBag)
 			nextPID = pieceBag[bagIndex % 7]
 			# Clear the next piece window and draw the next piece
 			changeTexture(2, 1, 5, 12, ' ', crs.ACS_CKBOARD, wNextP)
