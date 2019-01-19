@@ -3,7 +3,11 @@ import curses as crs
 import os
 import time
 import random as rnd
-
+import sys
+# SECTION: VERSION CHECK
+if sys.version_info[0] < 3:
+	print("This game requires Python 3. Please install it and/or run this file with it.")
+	exit()
 # SECTION: FUNCTIONS
 """
 Draws an alignment grid in the board window
