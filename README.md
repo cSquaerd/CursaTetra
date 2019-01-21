@@ -4,6 +4,7 @@ This game is dedicated to Alexey Pajitnov, original author of Tetris. This versi
 ## Featurs coming soon
 * High score file `.ctHiScrs.txt`
 	* High score code after game over
+* Ghost piece option (Toggleable with G key)
 ## Piece development documentation
 ### Piece orientations
 * H : horizontal (default)
