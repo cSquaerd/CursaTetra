@@ -1093,6 +1093,9 @@ def ctMain():
 			continue
 		keypress = keyCodes[k]
 		# SUBSECTION: KEY INPUT PROCESSING
+		if (keypress in arrowCodes or keypress in rotateCodes) and \
+			pieceInPlay:
+			pieceJustSpawned = False
 		if keypress in arrowCodes and pieceInPlay:
 			if keypress != 'U':
 				pieceToDrop = False
@@ -1106,8 +1109,8 @@ def ctMain():
 				if not pieceToDrop:
 					pieceToDrop = True
 					continue
-				if piece.canMove('D') and pieceJustSpawned:
-					pieceJustSpawned = False
+			#	if piece.canMove('D') and pieceJustSpawned:
+			#		pieceJustSpawned = False
 				while piece.canMove('D'):
 					piece.move('D')
 					softDrops += 1
