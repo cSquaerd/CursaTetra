@@ -904,6 +904,8 @@ def ctMain():
 					r = wBoard.getch()
 				if chr(r).upper() == 'R':
 					trueRandom = True
+				elif chr(r).upper() == 'B':
+					trueRandom = False
 				wBoard.addstr(4, 1, "PRESS A NUMBER 0-9")
 				wBoard.addstr(5, 1, "TO SET DIFFICULTY:")
 				wBoard.refresh()
