@@ -25,6 +25,11 @@ def drawBoardBorder():
 		wBoard.addch(21, x, crs.ACS_HLINE)
 	wBoard.addch(21, 21, crs.ACS_RTEE)
 """
+Checks if a character is in the play area of wBoard
+"""
+def isCharInBounds(y, x):
+	return y > 0 and y < 21 and x > 0 and x < 21
+"""
 Draws a piece to a window (use wBoard or wNextP only!)
 
 In order to allow for erasure a.k.a. undrawing of pieces,
@@ -60,7 +65,8 @@ def drawPiece(y, x, orient, piece, window, characters):
 	if piece == 'C':
 		for i in range(x, x + 4):
 			for j in range(y, y + 2):
-				window.addch(j, i, character(i) , crs.color_pair(COLOR_C))
+				if isCharInBounds(j, i):
+					window.addch(j, i, character(i) , crs.color_pair(COLOR_C))
 	elif piece == 'S':
 		if orient == 'H':
 			for i in range(x + 2, x + 6):
@@ -137,10 +143,12 @@ def drawPiece(y, x, orient, piece, window, characters):
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 4):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_I))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_I))
 		else:
 			for i in range(x, x + 8):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_I))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_I))
 	elif piece == 'T':
 		if orient == 'H':
 			for i in range(x, x + 6):
@@ -287,12 +295,12 @@ def setCellValue(y, x, val):
 Returns True if the indicated cell is empty
 """
 def isCellEmpty(y, x):
-	return getCellValue(y, x) == ord(' ')
+	return y < 1 or getCellValue(y, x) == ord(' ')
 """
 Returns True if the indicated cell is a valid board space
 """
 def isCellInBounds(y, x):
-	return y > 0 and y < 21 and x > 0 and x < 11
+	return y < 21 and x > 0 and x < 11
 """
 Return a list of y-addresses that are full of blocks
 """
@@ -487,7 +495,8 @@ class Piece:
 					return True
 		elif self.pID == 'I':
 			if self.orient == 'H' and isCellInBounds(self.y + 3, self.x + 3) and \
-				isCellEmpty(self.y + 1, self.x) and \
+				isCellInBounds(self.y + 3, self.x) and \
+				isCellEmpty(self.y + 2, self.x) and \
 				isCellEmpty(self.y + 2, self.x + 2) and \
 				isCellEmpty(self.y + 2, self.x + 3):
 				return True
@@ -838,12 +847,12 @@ def ctMain():
 	lineClearScores = (0, 40, 100, 300, 1200)
 	lineClearDiffShifts = (10, 20, 30, 45, 60, 75, 95, 115, 140, 165)
 	pieceInfo = { \
-		'C': {'y': 1, 'x': 5, "orient" : '', "yn": 3}, \
+		'C': {'y': -1, 'x': 5, "orient" : '', "yn": 3}, \
 		'S': {'y': 1, 'x': 5, "orient" : 'V', "yn": 2}, \
 		'Z': {'y': 1, 'x': 5, "orient" : 'V', "yn": 2}, \
 		'L': {'y': 1, 'x': 5, "orient" : 'HP', "yn": 2}, \
 		'R': {'y': 1, 'x': 5, "orient" : 'HP', "yn": 2}, \
-		'I': {'y': 1, 'x': 4, "orient" : 'H', "yn": 2}, \
+		'I': {'y': -2, 'x': 4, "orient" : 'H', "yn": 2}, \
 		'T': {'y': 1, 'x': 4, "orient" : 'H', "yn": 2}, \
 	}
 	# SECTION: CONTROL VARIABLES AND BOOLEANS
