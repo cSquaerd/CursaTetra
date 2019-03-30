@@ -4,6 +4,7 @@ import os
 import time
 import random as rnd
 import sys
+import json
 # SECTION: VERSION CHECK
 if sys.version_info[0] < 3:
 	print("This game requires Python 3. Please install it and/or run this file with it.")
@@ -954,7 +955,26 @@ def ctMain():
 	bagIndex = 0
 	nextPID = pieceBag[bagIndex % 7]
 	softDrops = 0
+	scoreFileName = ".ctHiScrs.json"
+	scoreFileWrite = False
 	global doGhost
+	# SECTION: HIGH SCORE PREP
+	try:
+		scoreFile = open(scoreFileName, 'r')
+		highScores = json.loads(scoreFile.read())
+		scoreFile.close()
+		tempKeys = list(highScores.keys())
+		for k in tempKeys:
+			highScores[int(k)] = highScores[k]
+			del highScores[k]
+		#writeBoardLabel('C', highScores[1]["NAME"])
+	except FileNotFoundError:
+		highScores = {}
+		for i in range(1, 11):
+			highScores[i] = {"SCORE": 0, "NAME": "..."}
+		scoreFile = open(scoreFileName, 'w')
+		scoreFile.write(json.dumps(highScores, sort_keys = True, indent = 2))
+		scoreFile.close()
 	# SECTION: ACTIVE LOOP
 	while active:
 		# SUBSECTION: STARTUP CONTROL
@@ -1227,6 +1247,20 @@ def ctMain():
 			paused = True
 			clearBoardLabel()
 			writeBoardLabel('C', "PAUSED")
+	# SECTION: HIGH SCORE WRITE
+	place = 11
+	for i in range(10, 0, -1):
+		if scoreData["SCORE"] > highScores[i]["SCORE"]:
+			place = i
+		else:
+			break
+	if i < 11:
+		highScores[i]["SCORE"] = scoreData["SCORE"]
+		scoreFileWrite = True
+	if scoreFileWrite:
+		scoreFile = open(scoreFileName, 'w')
+		scoreFile.write(json.dumps(highScores, sort_keys = True, indent = 2))
+		scoreFile.close()
 	return None
 
 # SECTION: MAIN
