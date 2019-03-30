@@ -912,7 +912,8 @@ def ctMain():
 		ord('n') : 'n', ord('N') : 'N'}
 	yesCodes = {ord('\n') : 'ENTER', ord('y') : 'y', ord('Y') : 'Y'}
 	noCodes = {ord('n') : 'n', ord('N') : 'N'}
-	menuCodes = {27 : "ESC", ord('q') : 'Q', ord('Q') : 'Q', ord('\n') : "ENTER"}
+	menuCodes = {27 : "ESC", ord('q') : 'Q', ord('Q') : 'Q', \
+		ord('\n') : "ENTER", ord('G') : 'G', ord('g') : 'G'}
 	startCodes = {ord('q') : 'Q', ord('Q') : 'Q', ord(' ') : "SPACE"}
 	dropTimes = (0.75, 0.6, 0.5, 0.425, 0.35, 0.3, 0.25, 0.200, 0.15, 0.1)
 	lineClearChars = (crs.ACS_S1, crs.ACS_S3, crs.ACS_S7, crs.ACS_S9)
@@ -953,6 +954,7 @@ def ctMain():
 	bagIndex = 0
 	nextPID = pieceBag[bagIndex % 7]
 	softDrops = 0
+	global doGhost
 	# SECTION: ACTIVE LOOP
 	while active:
 		# SUBSECTION: STARTUP CONTROL
@@ -1034,7 +1036,7 @@ def ctMain():
 			continue
 		# SUBSECTION: PAUSE MENU CONTROL
 		if paused:
-			# Get a key and either quit or continue
+			# Get a key and either quit, toggle the ghost piece, or continue
 			wBoard.nodelay(False)
 			k = -1
 			while k not in menuCodes :
@@ -1055,6 +1057,13 @@ def ctMain():
 				writeBoardLabel('C', "PAUSED")
 				continue
 			elif keypress == "ENTER":
+				continue
+			elif keypress == 'G':
+				if doGhost:
+					piece.undrawGhost()
+				doGhost = not doGhost
+				if doGhost:
+					piece.drawGhost()
 				continue
 			# If neither the enter nor q key are pressed, it must be ESC,
 			# Which means unpause
