@@ -937,6 +937,7 @@ def ctMain():
 	pieceInPlay = False
 	pieceToDrop = False
 	pieceDropped = False
+	dropDelay = True
 	pieceJustSpawned = False
 	difficulty = -1
 	trueRandom = False
@@ -1093,6 +1094,8 @@ def ctMain():
 				pieceJustSpawned = False
 			# When the piece it at the bottom
 			else:
+				if pieceDropped:
+					dropDelay = False
 				pieceInPlay = False
 				pieceDropped = False
 				# Game over check
@@ -1164,6 +1167,10 @@ def ctMain():
 						difficulty += 1
 						clearBoardLabel()
 						writeBoardLabel('C', "LEVEL " + str(difficulty))
+				# Sleep to delay before next piece spawns
+				if dropDelay:
+					crs.napms(333)
+				dropDelay = True
 				continue
 		# SUBSECTION: KEY INPUT HANDLING
 		k = wBoard.getch()
