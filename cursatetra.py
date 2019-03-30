@@ -70,75 +70,99 @@ def drawPiece(y, x, orient, piece, window, characters):
 	elif piece == 'S':
 		if orient == 'H':
 			for i in range(x + 2, x + 6):
-				window.addch(y + 1, i, character(i) , crs.color_pair(COLOR_S))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i) , crs.color_pair(COLOR_S))
 			for i in range(x, x + 4):
-				window.addch(y + 2, i, character(i) , crs.color_pair(COLOR_S))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i) , crs.color_pair(COLOR_S))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y, y + 2):
-					window.addch(j, i, character(i) , crs.color_pair(COLOR_S))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i) , crs.color_pair(COLOR_S))
 			for i in range(x + 2, x + 4):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_S))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_S))
 	elif piece == 'Z':
 		if orient == 'H':
 			for i in range(x, x + 4):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_Z))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_Z))
 			for i in range(x + 2, x + 6):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_Z))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_Z))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 2):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
 	elif piece == 'L':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_L))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_L))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x, x + 2):
-				window.addch(y, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y, i):
+					window.addch(y, i, character(i), crs.color_pair(COLOR_L))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y, i):
+					window.addch(y, i, character(i), crs.color_pair(COLOR_L))
 	elif piece == 'R':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_R))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x, x + 2):
-				window.addch(y, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y, i):
+					window.addch(y, i, character(i), crs.color_pair(COLOR_R))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_R))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y, i):
+					window.addch(y, i, character(i), crs.color_pair(COLOR_R))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
 	elif piece == 'I':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
@@ -152,26 +176,34 @@ def drawPiece(y, x, orient, piece, window, characters):
 	elif piece == 'T':
 		if orient == 'H':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x + 2, x + 4):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_T))
 		elif orient == 'V':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_T))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x, x + 2):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 		elif orient == 'HP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x + 2, x + 4):
-				window.addch(y, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y, i):
+					window.addch(y, i, character(i), crs.color_pair(COLOR_T))
 		elif orient == 'VP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_T))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 """
 Redraws characters in a window.
 
@@ -848,12 +880,12 @@ def ctMain():
 	lineClearDiffShifts = (10, 20, 30, 45, 60, 75, 95, 115, 140, 165)
 	pieceInfo = { \
 		'C': {'y': -1, 'x': 5, "orient" : '', "yn": 3}, \
-		'S': {'y': 1, 'x': 5, "orient" : 'V', "yn": 2}, \
-		'Z': {'y': 1, 'x': 5, "orient" : 'V', "yn": 2}, \
-		'L': {'y': 1, 'x': 5, "orient" : 'HP', "yn": 2}, \
-		'R': {'y': 1, 'x': 5, "orient" : 'HP', "yn": 2}, \
-		'I': {'y': -2, 'x': 4, "orient" : 'H', "yn": 2}, \
-		'T': {'y': 1, 'x': 4, "orient" : 'H', "yn": 2}, \
+		'S': {'y': -1, 'x': 5, "orient" : 'V', "yn": 2}, \
+		'Z': {'y': -1, 'x': 5, "orient" : 'V', "yn": 2}, \
+		'L': {'y': -1, 'x': 5, "orient" : 'HP', "yn": 2}, \
+		'R': {'y': -1, 'x': 5, "orient" : 'HP', "yn": 2}, \
+		'I': {'y': -1, 'x': 4, "orient" : 'V', "yn": 2}, \
+		'T': {'y': -1, 'x': 4, "orient" : 'H', "yn": 2}, \
 	}
 	# SECTION: CONTROL VARIABLES AND BOOLEANS
 	cellValues = { \
