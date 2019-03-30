@@ -1168,6 +1168,7 @@ def ctMain():
 		# SUBSECTION: KEY INPUT HANDLING
 		k = wBoard.getch()
 		if k not in keyCodes:
+			crs.napms(10)
 			continue
 		keypress = keyCodes[k]
 		# SUBSECTION: KEY INPUT PROCESSING
