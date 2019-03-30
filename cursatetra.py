@@ -25,6 +25,11 @@ def drawBoardBorder():
 		wBoard.addch(21, x, crs.ACS_HLINE)
 	wBoard.addch(21, 21, crs.ACS_RTEE)
 """
+Checks if a character is in the play area of wBoard
+"""
+def isCharInBounds(y, x):
+	return y > 0 and y < 21 and x > 0 and x < 21
+"""
 Draws a piece to a window (use wBoard or wNextP only!)
 
 In order to allow for erasure a.k.a. undrawing of pieces,
@@ -60,110 +65,145 @@ def drawPiece(y, x, orient, piece, window, characters):
 	if piece == 'C':
 		for i in range(x, x + 4):
 			for j in range(y, y + 2):
-				window.addch(j, i, character(i) , crs.color_pair(COLOR_C))
+				if isCharInBounds(j, i):
+					window.addch(j, i, character(i) , crs.color_pair(COLOR_C))
 	elif piece == 'S':
 		if orient == 'H':
 			for i in range(x + 2, x + 6):
-				window.addch(y + 1, i, character(i) , crs.color_pair(COLOR_S))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i) , crs.color_pair(COLOR_S))
 			for i in range(x, x + 4):
-				window.addch(y + 2, i, character(i) , crs.color_pair(COLOR_S))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i) , crs.color_pair(COLOR_S))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y, y + 2):
-					window.addch(j, i, character(i) , crs.color_pair(COLOR_S))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i) , crs.color_pair(COLOR_S))
 			for i in range(x + 2, x + 4):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_S))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_S))
 	elif piece == 'Z':
 		if orient == 'H':
 			for i in range(x, x + 4):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_Z))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_Z))
 			for i in range(x + 2, x + 6):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_Z))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_Z))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y + 1, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 2):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
 	elif piece == 'L':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_L))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_L))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x, x + 2):
-				window.addch(y, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y, i):
+					window.addch(y, i, character(i), crs.color_pair(COLOR_L))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, character(i), crs.color_pair(COLOR_L))
+				if isCharInBounds(y, i):
+					window.addch(y, i, character(i), crs.color_pair(COLOR_L))
 	elif piece == 'R':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_R))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x, x + 2):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
 		elif orient == 'V':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x, x + 2):
-				window.addch(y, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y, i):
+					window.addch(y, i, character(i), crs.color_pair(COLOR_R))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_R))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x + 4, x + 6):
-				window.addch(y, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y, i):
+					window.addch(y, i, character(i), crs.color_pair(COLOR_R))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
 	elif piece == 'I':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 4):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_I))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_I))
 		else:
 			for i in range(x, x + 8):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_I))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_I))
 	elif piece == 'T':
 		if orient == 'H':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x + 2, x + 4):
-				window.addch(y + 2, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y + 2, i):
+					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_T))
 		elif orient == 'V':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_T))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x, x + 2):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 		elif orient == 'HP':
 			for i in range(x, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x + 2, x + 4):
-				window.addch(y, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y, i):
+					window.addch(y, i, character(i), crs.color_pair(COLOR_T))
 		elif orient == 'VP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
-					window.addch(j, i, character(i), crs.color_pair(COLOR_T))
+					if isCharInBounds(j, i):
+						window.addch(j, i, character(i), crs.color_pair(COLOR_T))
 			for i in range(x + 4, x + 6):
-				window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+				if isCharInBounds(y + 1, i):
+					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
 """
 Redraws characters in a window.
 
@@ -283,16 +323,21 @@ def setCellValue(y, x, val):
 		else:
 			wBoard.addch(y, i, c, crs.color_pair(colors[val]))
 		i += 1
+# String that contains the ghost piece characters
+ghostChars = "[]"
+# Boolean that enables the ghost piece
+# (Werid stuff happens if it changes during a game)
+doGhost = True
 """
 Returns True if the indicated cell is empty
 """
 def isCellEmpty(y, x):
-	return getCellValue(y, x) == ord(' ')
+	return y < 1 or getCellValue(y, x) in (ord(' '), ord(ghostChars[1]))
 """
 Returns True if the indicated cell is a valid board space
 """
 def isCellInBounds(y, x):
-	return y > 0 and y < 21 and x > 0 and x < 11
+	return y < 21 and x > 0 and x < 11
 """
 Return a list of y-addresses that are full of blocks
 """
@@ -331,6 +376,9 @@ Class for active block data
 * Methods & Valid Values:
 	* draw(): Draws the piece on the board
 	* undraw(): Erases the piece from the board
+	* getGhostDepth(): Determines the y-position of the ghost piece
+	* drawGhost(): Draws the ghost piece on the board
+	* undrawGhost(): Erases the ghost piece from the board
 	* getNewOrient(rotDir): Gets the new orientation for the piece based on rot. dir.
 		* rotDir: {'CW', 'CCW'}
 			* Clockwise or Counter-Clockwise
@@ -352,11 +400,32 @@ class Piece:
 		self.pID = p
 		self.orient = o
 		self.hasLanded = False
+		self.ghostDepth = 0
+		self.drawGhost()
 		self.draw()
 	def draw(self):
 		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, [crs.ACS_CKBOARD])
 	def undraw(self):
 		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, ". ")
+	def getGhostDepth(self):
+		originalY = self.y
+		while self.canMove('D'):
+			self.y += 1
+		self.ghostDepth = self.y
+		self.y = originalY
+	def drawGhost(self):
+		if not doGhost:
+			return None
+		self.getGhostDepth()
+		drawPiece( \
+			self.ghostDepth, 2 * self.x - 1, \
+			self.orient, self.pID, wBoard, \
+			ghostChars \
+		)
+	def undrawGhost(self):
+		if not doGhost:
+			return None
+		drawPiece(self.ghostDepth, 2 * self.x - 1, self.orient, self.pID, wBoard, ". ")
 	def getNewOrient(self, rotDir):
 		if self.pID == 'C':
 			return ''
@@ -385,14 +454,18 @@ class Piece:
 					return 'HP'
 	def rotate(self, rotDir):
 		self.undraw()
+		self.undrawGhost()
 		self.orient = self.getNewOrient(rotDir)
+		self.drawGhost()
 		self.draw()
 	def move(self, direction):
 		yShift = 1 if direction == 'D' else 0
 		xShift = 1 if direction == 'R' else -1 if direction == 'L' else 0
 		self.undraw()
+		self.undrawGhost()
 		self.y += yShift
 		self.x += xShift
+		self.drawGhost()
 		self.draw()
 	def canRotate(self, direction):
 		if self.pID == 'S':
@@ -487,7 +560,8 @@ class Piece:
 					return True
 		elif self.pID == 'I':
 			if self.orient == 'H' and isCellInBounds(self.y + 3, self.x + 3) and \
-				isCellEmpty(self.y + 1, self.x) and \
+				isCellInBounds(self.y + 3, self.x) and \
+				isCellEmpty(self.y + 2, self.x) and \
 				isCellEmpty(self.y + 2, self.x + 2) and \
 				isCellEmpty(self.y + 2, self.x + 3):
 				return True
@@ -838,13 +912,13 @@ def ctMain():
 	lineClearScores = (0, 40, 100, 300, 1200)
 	lineClearDiffShifts = (10, 20, 30, 45, 60, 75, 95, 115, 140, 165)
 	pieceInfo = { \
-		'C': {'y': 1, 'x': 5, "orient" : '', "yn": 3}, \
-		'S': {'y': 1, 'x': 5, "orient" : 'V', "yn": 2}, \
-		'Z': {'y': 1, 'x': 5, "orient" : 'V', "yn": 2}, \
-		'L': {'y': 1, 'x': 5, "orient" : 'HP', "yn": 2}, \
-		'R': {'y': 1, 'x': 5, "orient" : 'HP', "yn": 2}, \
-		'I': {'y': 1, 'x': 4, "orient" : 'H', "yn": 2}, \
-		'T': {'y': 1, 'x': 4, "orient" : 'H', "yn": 2}, \
+		'C': {'y': 1, 'x': 5, "orient" : '', "yn": 3, "xn": 5}, \
+		'S': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
+		'Z': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
+		'L': {'y': 0, 'x': 4, "orient" : 'V', "yn": 2, "xn": 5}, \
+		'R': {'y': 0, 'x': 4, "orient" : 'VP', "yn": 2, "xn": 5}, \
+		'I': {'y': -1, 'x': 4, "orient" : 'V', "yn": 1, "xn": 3}, \
+		'T': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
 	}
 	# SECTION: CONTROL VARIABLES AND BOOLEANS
 	cellValues = { \
@@ -885,7 +959,8 @@ def ctMain():
 				clearBoardLabel()
 				writeBoardLabel('C', "QUITTING...")
 				crs.delay_output(750)
-				return None
+				active = False
+				continue
 			# Start the game
 			playing = True
 			clearBoardLabel()
@@ -903,6 +978,8 @@ def ctMain():
 					r = wBoard.getch()
 				if chr(r).upper() == 'R':
 					trueRandom = True
+				elif chr(r).upper() == 'B':
+					trueRandom = False
 				wBoard.addstr(4, 1, "PRESS A NUMBER 0-9")
 				wBoard.addstr(5, 1, "TO SET DIFFICULTY:")
 				wBoard.refresh()
@@ -963,7 +1040,8 @@ def ctMain():
 					clearBoardLabel()
 					writeBoardLabel('C', "QUITTING...")
 					crs.delay_output(750)
-					return None
+					active = False
+					continue
 				clearBoardLabel()
 				writeBoardLabel('C', "PAUSED")
 				continue
@@ -998,8 +1076,8 @@ def ctMain():
 			# Clear the next piece window and draw the next piece
 			changeTexture(2, 1, 5, 12, ' ', crs.ACS_CKBOARD, wNextP)
 			drawPiece( \
-				pieceInfo[nextPID]["yn"], 5, pieceInfo[nextPID]["orient"], \
-				nextPID, wNextP, [crs.ACS_CKBOARD] \
+				pieceInfo[nextPID]["yn"], pieceInfo[nextPID]["xn"], \
+				pieceInfo[nextPID]["orient"], nextPID, wNextP, [crs.ACS_CKBOARD] \
 			)
 			wNextP.refresh()
 			pieceInPlay = True
@@ -1093,6 +1171,9 @@ def ctMain():
 			continue
 		keypress = keyCodes[k]
 		# SUBSECTION: KEY INPUT PROCESSING
+		if (keypress in arrowCodes or keypress in rotateCodes) and \
+			pieceInPlay:
+			pieceJustSpawned = False
 		if keypress in arrowCodes and pieceInPlay:
 			if keypress != 'U':
 				pieceToDrop = False
@@ -1106,8 +1187,8 @@ def ctMain():
 				if not pieceToDrop:
 					pieceToDrop = True
 					continue
-				if piece.canMove('D') and pieceJustSpawned:
-					pieceJustSpawned = False
+			#	if piece.canMove('D') and pieceJustSpawned:
+			#		pieceJustSpawned = False
 				while piece.canMove('D'):
 					piece.move('D')
 					softDrops += 1
@@ -1121,6 +1202,7 @@ def ctMain():
 			paused = True
 			clearBoardLabel()
 			writeBoardLabel('C', "PAUSED")
+	return None
 
 # SECTION: MAIN
 #Set ESC key delay time
@@ -1270,180 +1352,3 @@ crs.nocbreak()
 crs.echo()
 #Close screen
 crs.endwin()
-
-"""
-# Piece orientations
-
-* H : horizontal (default)
-* V : vertical
-* HP : horizontal, pi radians around (180 deg)
-* VP : vertical, pi radians around (180 deg)
-
-# Piece designations & diagrams
-## Based on specification in Game Boy version
-
-* Note: The orientation of the pieces may seem backwards at first glance;
-Consider it in terms of the orientation of an underline
-below the text character that identifies a piece
-
-* C : Square
-	* Diagram:
-	```
-	  012345
-	0.[][]
-	1.[][]
-	2.
-	```
-* S : S-piece
-	* Diagrams:
-		* Horizontal
-		```
-		  012345
-		0.
-		1.  [][]
-		2.[][]
-		```
-		* Vertical
-		```
-		  012345
-		0.[]
-		1.[][]
-		2.  []
-		```
-	* Observations:
-		* Rotates about (2:3, 1) Clockwise
-* Z : Z-piece
-	* Diagrams:
-		* Horizontal
-		```
-		  012345
-		0.
-		1.[][]
-		2.  [][]
-		```
-		* Vertical
-		```
-		  012345
-		0.  []
-		1.[][]
-		2.[]
-		```
-	* Observations:
-		* Rotates about (2:3, 1) Counter-Clockwise
-* L : L-piece
-	* Diagrams:
-		* Horizontal
-		```
-		  012345
-		0.  []
-		1.  []
-		2.  [][]
-		```
-		* Vertical
-		```
-		  012345
-		0.
-		1.[][][]
-		2.[]
-		```
-		* Horizontal-Pi
-		```
-		  012345
-		0.[][]
-		1.  []
-		2.  []
-		```
-		* Vertical-Pi
-		```
-		  012345
-		0.    []
-		1.[][][]
-		2.
-		```
-	* Observations:
-		* Rotates about (2:3, 1) Both Ways
-* R : Reversed L-piece
-	* Diagrams:
-		* Horizontal
-		```
-		  012345
-		0.  []
-		1.  []
-		2.[][]
-		```
-		* Vertical
-		```
-		  012345
-		0.[]
-		1.[][][]
-		2.
-		```
-		* Horizontal-Pi
-		```
-		  012345
-		0.  [][]
-		1.  []
-		2.  []
-		```
-		* Vertical-Pi
-		```
-		  012345
-		0.
-		1.[][][]
-		2.    []
-		```
-	* Observations:
-		* Rotates about (2:3, 1) Both Ways
-* I : Line
-	* Diagrams:
-		* Horizontal
-		```
-		  01234567
-		0.  []
-		1.  []
-		2.  []
-		3.  []
-		```
-		* Vertical
-		```
-		  01234567
-		0.
-		1.
-		2.[][][][]
-		3.
-		```
-	* Observations:
-		* Rotates about (2:3, 2) Clockwise
-* T : T-piece
-	* Diagrams:
-		* Horizontal
-		```
-		  012345
-		0.
-		1.[][][]
-		2.  []
-		```
-		* Vertical
-		```
-		  012345
-		0.  []
-		1.[][]
-		2.  []
-		```
-		* Horizontal-Pi
-		```
-		  012345
-		0.  []
-		1.[][][]
-		2.
-		```
-		* Vertical-Pi
-		```
-		  012345
-		0.  []
-		1.  [][]
-		2.  []
-		```
-	* Observations:
-		* Rotates about (2:3, 1) Both Ways
-"""
