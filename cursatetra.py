@@ -879,13 +879,13 @@ def ctMain():
 	lineClearScores = (0, 40, 100, 300, 1200)
 	lineClearDiffShifts = (10, 20, 30, 45, 60, 75, 95, 115, 140, 165)
 	pieceInfo = { \
-		'C': {'y': -1, 'x': 5, "orient" : '', "yn": 3}, \
-		'S': {'y': -1, 'x': 5, "orient" : 'V', "yn": 2}, \
-		'Z': {'y': -1, 'x': 5, "orient" : 'V', "yn": 2}, \
-		'L': {'y': -1, 'x': 5, "orient" : 'HP', "yn": 2}, \
-		'R': {'y': -1, 'x': 5, "orient" : 'HP', "yn": 2}, \
-		'I': {'y': -1, 'x': 4, "orient" : 'V', "yn": 2}, \
-		'T': {'y': -1, 'x': 4, "orient" : 'H', "yn": 2}, \
+		'C': {'y': 1, 'x': 5, "orient" : '', "yn": 3, "xn": 5}, \
+		'S': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
+		'Z': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
+		'L': {'y': 0, 'x': 4, "orient" : 'V', "yn": 2, "xn": 5}, \
+		'R': {'y': 0, 'x': 4, "orient" : 'VP', "yn": 2, "xn": 5}, \
+		'I': {'y': -1, 'x': 4, "orient" : 'V', "yn": 1, "xn": 3}, \
+		'T': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
 	}
 	# SECTION: CONTROL VARIABLES AND BOOLEANS
 	cellValues = { \
@@ -1043,8 +1043,8 @@ def ctMain():
 			# Clear the next piece window and draw the next piece
 			changeTexture(2, 1, 5, 12, ' ', crs.ACS_CKBOARD, wNextP)
 			drawPiece( \
-				pieceInfo[nextPID]["yn"], 5, pieceInfo[nextPID]["orient"], \
-				nextPID, wNextP, [crs.ACS_CKBOARD] \
+				pieceInfo[nextPID]["yn"], pieceInfo[nextPID]["xn"], \
+				pieceInfo[nextPID]["orient"], nextPID, wNextP, [crs.ACS_CKBOARD] \
 			)
 			wNextP.refresh()
 			pieceInPlay = True
