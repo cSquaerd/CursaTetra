@@ -17,6 +17,13 @@ def drawGrid():
 		for y in range(1, 21):
 			wBoard.addch(y, x, '.' if x % 2 != 0 else ' ')
 """
+Erases the alignment grid in the board window
+"""
+def undrawGrid():
+	for x in range(1, 21):
+		for y in range(1, 21):
+			wBoard.addch(y, x, " ")
+"""
 Draws the bottom border in the board window
 """
 def drawBoardBorder():
@@ -970,6 +977,7 @@ def ctMain():
 			sure = False
 			# Select randomizer and difficulty
 			while not sure:
+				undrawGrid()
 				wBoard.addstr(1, 1, "PRESS \'B\' FOR 7-BAG")
 				wBoard.addstr(2, 1, "RANDOMIZER OR \'R\'")
 				wBoard.addstr(3, 1, "FOR TRUE RANDOMIZER")
@@ -1006,7 +1014,7 @@ def ctMain():
 					crs.delay_output(500)
 				# Retry difficulty selection
 				else:
-					drawGrid()
+					undrawGrid()
 					wBoard.addstr(1, 1, "OKAY, CHOOSE AGAIN.")
 					wBoard.refresh()
 				crs.delay_output(1000)
