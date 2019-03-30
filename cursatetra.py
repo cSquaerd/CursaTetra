@@ -323,11 +323,16 @@ def setCellValue(y, x, val):
 		else:
 			wBoard.addch(y, i, c, crs.color_pair(colors[val]))
 		i += 1
+# String that contains the ghost piece characters
+ghostChars = "[]"
+# Boolean that enables the ghost piece
+# (Werid stuff happens if it changes during a game)
+doGhost = True
 """
 Returns True if the indicated cell is empty
 """
 def isCellEmpty(y, x):
-	return y < 1 or getCellValue(y, x) == ord(' ')
+	return y < 1 or getCellValue(y, x) in (ord(' '), ord(ghostChars[1]))
 """
 Returns True if the indicated cell is a valid board space
 """
@@ -371,6 +376,9 @@ Class for active block data
 * Methods & Valid Values:
 	* draw(): Draws the piece on the board
 	* undraw(): Erases the piece from the board
+	* getGhostDepth(): Determines the y-position of the ghost piece
+	* drawGhost(): Draws the ghost piece on the board
+	* undrawGhost(): Erases the ghost piece from the board
 	* getNewOrient(rotDir): Gets the new orientation for the piece based on rot. dir.
 		* rotDir: {'CW', 'CCW'}
 			* Clockwise or Counter-Clockwise
@@ -392,11 +400,32 @@ class Piece:
 		self.pID = p
 		self.orient = o
 		self.hasLanded = False
+		self.ghostDepth = 0
+		self.drawGhost()
 		self.draw()
 	def draw(self):
 		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, [crs.ACS_CKBOARD])
 	def undraw(self):
 		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, ". ")
+	def getGhostDepth(self):
+		originalY = self.y
+		while self.canMove('D'):
+			self.y += 1
+		self.ghostDepth = self.y
+		self.y = originalY
+	def drawGhost(self):
+		if not doGhost:
+			return None
+		self.getGhostDepth()
+		drawPiece( \
+			self.ghostDepth, 2 * self.x - 1, \
+			self.orient, self.pID, wBoard, \
+			ghostChars \
+		)
+	def undrawGhost(self):
+		if not doGhost:
+			return None
+		drawPiece(self.ghostDepth, 2 * self.x - 1, self.orient, self.pID, wBoard, ". ")
 	def getNewOrient(self, rotDir):
 		if self.pID == 'C':
 			return ''
@@ -425,14 +454,18 @@ class Piece:
 					return 'HP'
 	def rotate(self, rotDir):
 		self.undraw()
+		self.undrawGhost()
 		self.orient = self.getNewOrient(rotDir)
+		self.drawGhost()
 		self.draw()
 	def move(self, direction):
 		yShift = 1 if direction == 'D' else 0
 		xShift = 1 if direction == 'R' else -1 if direction == 'L' else 0
 		self.undraw()
+		self.undrawGhost()
 		self.y += yShift
 		self.x += xShift
+		self.drawGhost()
 		self.draw()
 	def canRotate(self, direction):
 		if self.pID == 'S':
