@@ -969,7 +969,6 @@ def ctMain():
 		for k in tempKeys:
 			highScores[int(k)] = highScores[k]
 			del highScores[k]
-		#writeBoardLabel('C', highScores[1]["NAME"])
 	except FileNotFoundError:
 		highScores = {}
 		for i in range(1, 11):
@@ -977,6 +976,23 @@ def ctMain():
 		scoreFile = open(scoreFileName, 'w')
 		scoreFile.write(json.dumps(highScores, sort_keys = True, indent = 2))
 		scoreFile.close()
+	# SECTION: HIGH SCORE WRITE FUNCTIONS
+	def writeHighScores():
+		wBoard.addch(4, 1, crs.ACS_LTEE)
+		wBoard.addch(4, 20, crs.ACS_RTEE)
+		for i in range(18):
+			wBoard.addch(4, 2 + i, crs.ACS_HLINE)
+		wBoard.addstr(4, 5, "HIGH SCORES:")
+		i = 1
+		while i <= 10 and highScores[i]["SCORE"] > 0:
+			wBoard.addstr(4 + i, 1, 20 * ' ')
+			wBoard.addstr( \
+				4 + i, 1, \
+				str(i) + ". " + highScores[i]["NAME"] + ":" + \
+				str(highScores[i]["SCORE"]) + ", " + str(highScores[i]["LINES"]) \
+			)
+			i += 1
+		wBoard.refresh()
 	# SECTION: ACTIVE LOOP
 	while active:
 		# SUBSECTION: HIGH SCORE WRITE
@@ -985,9 +1001,6 @@ def ctMain():
 			for i in range(10, 0, -1):
 				if scoreData["SCORE"] > highScores[i]["SCORE"]:
 					place = i
-					writeBoardLabel('L', str(i) + ':' + str(scoreData["SCORE"]) + '_' + str(highScores[i]["SCORE"]))
-					wBoard.refresh()
-					crs.delay_output(500)
 				else:
 					break
 			if place < 11:
@@ -1021,6 +1034,7 @@ def ctMain():
 					if k in yesCodes:
 						wBoard.addstr(8, 1, "SAVING SCORE...")
 						wBoard.refresh()
+						crs.delay_output(1000)
 						nameEntered = True
 						wBoard.nodelay(True)
 						continue
@@ -1044,14 +1058,16 @@ def ctMain():
 				scoreFile = open(scoreFileName, 'w')
 				scoreFile.write(json.dumps(highScores, sort_keys = True, indent = 2))
 				scoreFile.close()
-				wBoard.addstr(9, 1, "SAVED! PRESS SPACE")
-				wBoard.addstr(10, 1, "FOR A NEW GAME, OR Q")
-				wBoard.addstr(11, 1, "TO QUIT.")
+				undrawGrid()
+				wBoard.addstr(1, 1, "SAVED! PRESS SPACE")
+				wBoard.addstr(2, 1, "FOR A NEW GAME, OR Q")
+				wBoard.addstr(3, 1, "TO QUIT.")
 				wBoard.refresh()
 				scoreFileWrite = False
 				checkScore = False
 		# SUBSECTION: STARTUP CONTROL
 		if not playing:
+			writeHighScores()
 			# Wait for a keypress
 			wBoard.nodelay(False)
 			k = -1
