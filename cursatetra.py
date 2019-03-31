@@ -978,6 +978,8 @@ def ctMain():
 		scoreFile.close()
 	# SECTION: HIGH SCORE WRITE FUNCTIONS
 	def writeHighScores():
+		if highScores[1]["SCORE"] == 0:
+			return None
 		wBoard.addch(4, 1, crs.ACS_LTEE)
 		wBoard.addch(4, 20, crs.ACS_RTEE)
 		for i in range(18):
