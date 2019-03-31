@@ -980,19 +980,31 @@ def ctMain():
 	def writeHighScores():
 		if highScores[1]["SCORE"] == 0:
 			return None
-		wBoard.addch(4, 1, crs.ACS_LTEE)
-		wBoard.addch(4, 20, crs.ACS_RTEE)
+		wBoard.addch(4, 1, crs.ACS_ULCORNER)
+		wBoard.addch(4, 20, crs.ACS_URCORNER)
+		wBoard.addch(5, 1, crs.ACS_LTEE)
+		wBoard.addch(5, 20, crs.ACS_RTEE)
+		wBoard.addch(6, 1, crs.ACS_LLCORNER)
+		wBoard.addch(6, 20, crs.ACS_LRCORNER)
 		for i in range(18):
 			wBoard.addch(4, 2 + i, crs.ACS_HLINE)
-		wBoard.addstr(4, 5, "HIGH SCORES:")
+			wBoard.addch(5, 2 + i, crs.ACS_HLINE)
+			wBoard.addch(6, 2 + i, crs.ACS_HLINE)
+		wBoard.addch(6, 7, crs.ACS_TTEE)
+		wBoard.addch(6, 15, crs.ACS_TTEE)
+		wBoard.addstr(5, 5, " TOP SCORES ")
+		wBoard.addstr(7, 1, "# NAME  SCORE  LINES")
+		wBoard.addch(7, 7, crs.ACS_VLINE)
+		wBoard.addch(7, 15, crs.ACS_VLINE)
 		i = 1
 		while i <= 10 and highScores[i]["SCORE"] > 0:
-			wBoard.addstr(4 + i, 1, 20 * ' ')
-			wBoard.addstr( \
-				4 + i, 1, \
-				str(i) + ". " + highScores[i]["NAME"] + ":" + \
-				str(highScores[i]["SCORE"]) + ", " + str(highScores[i]["LINES"]) \
-			)
+			wBoard.addstr(7 + i, 1, 20 * ' ')
+			wBoard.addstr(7 + i, 1, str(i) + ".")
+			wBoard.addstr(7 + i, 4, highScores[i]["NAME"])
+			wBoard.addstr(7 + i, 8, "{:>7}".format(highScores[i]["SCORE"]))
+			wBoard.addstr(7 + i, 16, "{:>5}".format(highScores[i]["LINES"]))
+			wBoard.addch(7 + i, 7, crs.ACS_VLINE)
+			wBoard.addch(7 + i, 15, crs.ACS_VLINE)
 			i += 1
 		wBoard.refresh()
 	# SECTION: ACTIVE LOOP
