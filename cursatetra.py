@@ -929,6 +929,7 @@ def ctMain():
 		'I': {'y': -1, 'x': 4, "orient" : 'V', "yn": 1, "xn": 3}, \
 		'T': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
 	}
+	letters = tuple(range(0x41, 0x41 + 26)) + tuple(range(0x61, 0x61 + 26))
 	# SECTION: CONTROL VARIABLES AND BOOLEANS
 	cellValues = { \
 		ord(' '): "EMPTY", \
@@ -955,6 +956,7 @@ def ctMain():
 	bagIndex = 0
 	nextPID = pieceBag[bagIndex % 7]
 	softDrops = 0
+	checkScore = False
 	scoreFileName = ".ctHiScrs.json"
 	scoreFileWrite = False
 	global doGhost
@@ -971,12 +973,83 @@ def ctMain():
 	except FileNotFoundError:
 		highScores = {}
 		for i in range(1, 11):
-			highScores[i] = {"SCORE": 0, "NAME": "..."}
+			highScores[i] = {"SCORE": 0, "NAME": "...", "LINES": 0}
 		scoreFile = open(scoreFileName, 'w')
 		scoreFile.write(json.dumps(highScores, sort_keys = True, indent = 2))
 		scoreFile.close()
 	# SECTION: ACTIVE LOOP
 	while active:
+		# SUBSECTION: HIGH SCORE WRITE
+		if checkScore:
+			place = 11
+			for i in range(10, 0, -1):
+				if scoreData["SCORE"] > highScores[i]["SCORE"]:
+					place = i
+					writeBoardLabel('L', str(i) + ':' + str(scoreData["SCORE"]) + '_' + str(highScores[i]["SCORE"]))
+					wBoard.refresh()
+					crs.delay_output(500)
+				else:
+					break
+			if place < 11:
+				wBoard.nodelay(False)
+				nameEntered = False
+				while not nameEntered:
+					undrawGrid()
+					wBoard.addstr(1, 1, "CONGRATULATIONS!")
+					wBoard.addstr(2, 1, "YOUR SCORE PUTS YOU")
+					wBoard.addstr(3, 1, "AT RANK " + str(place) + "!")
+					wBoard.addstr(4, 1, "PLEASE ENTER YOUR")
+					wBoard.addstr(5, 1, "INITIALS:")
+					wBoard.refresh()
+					k = -1
+					l = 0
+					s = ''
+					while l < 3:
+						while k not in letters:
+							k = wBoard.getch()
+						wBoard.addstr(5, 11 + l, chr(k))
+						s += chr(k)
+						wBoard.refresh()
+						l += 1
+						k = -1
+					wBoard.addstr(6, 1, "ARE YOU INITIALS")
+					wBoard.addstr(7, 1, "CORRECT? [Y/N]")
+					wBoard.refresh()
+					k = -1
+					while k not in yesnoCodes:
+						k = wBoard.getch()
+					if k in yesCodes:
+						wBoard.addstr(8, 1, "SAVING SCORE...")
+						wBoard.refresh()
+						nameEntered = True
+						wBoard.nodelay(True)
+						continue
+					else:
+						wBoard.addstr(8, 1, "OKAY, ENTER AGAIN.")
+						wBoard.refresh()
+						crs.delay_output(500)
+						continue
+				tempEntry = {}
+				tempEntry["SCORE"] = scoreData["SCORE"]
+				tempEntry["NAME"] = s
+				tempEntry["LINES"] = scoreData["LINES"]
+				for j in range(10, place, -1):
+					highScores[j] = highScores[j - 1]
+				highScores[place] = tempEntry
+				scoreFileWrite = True
+			else:
+				checkScore = False
+				continue
+			if scoreFileWrite:
+				scoreFile = open(scoreFileName, 'w')
+				scoreFile.write(json.dumps(highScores, sort_keys = True, indent = 2))
+				scoreFile.close()
+				wBoard.addstr(9, 1, "SAVED! PRESS SPACE")
+				wBoard.addstr(10, 1, "FOR A NEW GAME, OR Q")
+				wBoard.addstr(11, 1, "TO QUIT.")
+				wBoard.refresh()
+				scoreFileWrite = False
+				checkScore = False
 		# SUBSECTION: STARTUP CONTROL
 		if not playing:
 			# Wait for a keypress
@@ -1144,6 +1217,7 @@ def ctMain():
 					writeBoardLabel('C', "GAME OVER!")
 					crs.delay_output(2000)
 					playing = False
+					checkScore = True
 					continue
 				pieceJustSpawned = False
 				wBoard.refresh()
@@ -1247,20 +1321,6 @@ def ctMain():
 			paused = True
 			clearBoardLabel()
 			writeBoardLabel('C', "PAUSED")
-	# SECTION: HIGH SCORE WRITE
-	place = 11
-	for i in range(10, 0, -1):
-		if scoreData["SCORE"] > highScores[i]["SCORE"]:
-			place = i
-		else:
-			break
-	if i < 11:
-		highScores[i]["SCORE"] = scoreData["SCORE"]
-		scoreFileWrite = True
-	if scoreFileWrite:
-		scoreFile = open(scoreFileName, 'w')
-		scoreFile.write(json.dumps(highScores, sort_keys = True, indent = 2))
-		scoreFile.close()
 	return None
 
 # SECTION: MAIN
