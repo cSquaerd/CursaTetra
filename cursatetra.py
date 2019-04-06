@@ -57,13 +57,13 @@ and even cells will get a ' ' from int(True)
 See README.md or check the bottom of this file for details on block behavoir
 """
 def drawPiece(y, x, orient, piece, window, characters):
-	COLOR_C = 1
+	COLOR_C = 3
 	COLOR_S = 2
-	COLOR_Z = 3
-	COLOR_L = 4
-	COLOR_R = 5
+	COLOR_Z = 1
+	COLOR_L = 7
+	COLOR_R = 4
 	COLOR_I = 6
-	COLOR_T = 7
+	COLOR_T = 5
 	if len(characters) == 1:
 		character = lambda x : characters[0]
 	elif len(characters) == 2:
@@ -312,13 +312,13 @@ def setCellValue(y, x, val):
 		"ACTIVE": (crs.ACS_CKBOARD, crs.ACS_CKBOARD) \
 	}
 	colors = { \
-		"ACTIVE-C": 1, \
+		"ACTIVE-C": 3, \
 		"ACTIVE-S": 2, \
-		"ACTIVE-Z": 3, \
-		"ACTIVE-L": 4, \
-		"ACTIVE-R": 5, \
+		"ACTIVE-Z": 1, \
+		"ACTIVE-L": 7, \
+		"ACTIVE-R": 4, \
 		"ACTIVE-I": 6, \
-		"ACTIVE-T": 7 \
+		"ACTIVE-T": 5 \
 	}
 	if val == "EMPTY":
 		v = val
@@ -933,13 +933,13 @@ def ctMain():
 	# SECTION: CONTROL VARIABLES AND BOOLEANS
 	cellValues = { \
 		ord(' '): "EMPTY", \
-		crs.ACS_CKBOARD + 0x100: "ACTIVE-C", \
+		crs.ACS_CKBOARD + 0x300: "ACTIVE-C", \
 		crs.ACS_CKBOARD + 0x200: "ACTIVE-S", \
-		crs.ACS_CKBOARD + 0x300: "ACTIVE-Z", \
-		crs.ACS_CKBOARD + 0x400: "ACTIVE-L", \
-		crs.ACS_CKBOARD + 0x500: "ACTIVE-R", \
+		crs.ACS_CKBOARD + 0x100: "ACTIVE-Z", \
+		crs.ACS_CKBOARD + 0x700: "ACTIVE-L", \
+		crs.ACS_CKBOARD + 0x400: "ACTIVE-R", \
 		crs.ACS_CKBOARD + 0x600: "ACTIVE-I", \
-		crs.ACS_CKBOARD + 0x700: "ACTIVE-T" \
+		crs.ACS_CKBOARD + 0x500: "ACTIVE-T" \
 	}
 	active = True
 	playing = False
@@ -1205,6 +1205,7 @@ def ctMain():
 				pieceInfo[nextPID]["orient"] \
 			)
 			pieceJustSpawned = True
+			pieceToDrop = False
 			# Go to the next piece and check if the bag needs shuffling
 			# if using the bag randomizer
 			if trueRandom:
@@ -1368,13 +1369,13 @@ if crs.LINES < 24 or crs.COLS < 80:
 	exit()
 #Define colors
 if crs.can_change_color():
-	crs.init_color(1, 1000, 1000, 0)
+	crs.init_color(1, 1000, 0, 0)
 	crs.init_color(2, 0, 1000, 0)
-	crs.init_color(3, 1000, 0, 0)
-	crs.init_color(4, 1000, 750, 0)
-	crs.init_color(5, 0, 0, 1000)
+	crs.init_color(3, 1000, 1000, 0)
+	crs.init_color(4, 0, 0, 1000)
+	crs.init_color(5, 1000, 500, 1000)
 	crs.init_color(6, 500, 500, 1000)
-	crs.init_color(7, 1000, 500, 1000)
+	crs.init_color(7, 1000, 750, 0)
 crs.init_pair(1, -1, 1)
 crs.init_pair(2, -1, 2)
 crs.init_pair(3, -1, 3)
