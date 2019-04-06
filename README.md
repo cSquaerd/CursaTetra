@@ -1,4 +1,5 @@
 # CursaTetra
+![alt text](readmeBanner.png)
 ## A terminal-bounded block-based puzzle game written in Python/Curses
 
 This game is dedicated to Alexey Pajitnov, original author of Tetris. This version features:
@@ -13,6 +14,8 @@ This game is dedicated to Alexey Pajitnov, original author of Tetris. This versi
 * The traditional 20-block high playing board
 
 The goal is simple: rotate and move pieces as they fall, line up ten blocks in a row to clear a row, and keep going until the board tops out.
+
+(Banner picture depicts the game running in Cool Retro Term, found [here](https://github.com/Swordfish90/cool-retro-term))
 
 ## Featurs coming soon
 * Compatability with `windows-curses`
