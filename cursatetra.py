@@ -4,6 +4,7 @@ import os
 import time
 import random as rnd
 import sys
+import json
 # SECTION: VERSION CHECK
 if sys.version_info[0] < 3:
 	print("This game requires Python 3. Please install it and/or run this file with it.")
@@ -16,6 +17,13 @@ def drawGrid():
 	for x in range(1, 21):
 		for y in range(1, 21):
 			wBoard.addch(y, x, '.' if x % 2 != 0 else ' ')
+"""
+Erases the alignment grid in the board window
+"""
+def undrawGrid():
+	for x in range(1, 21):
+		for y in range(1, 21):
+			wBoard.addch(y, x, " ")
 """
 Draws the bottom border in the board window
 """
@@ -49,13 +57,13 @@ and even cells will get a ' ' from int(True)
 See README.md or check the bottom of this file for details on block behavoir
 """
 def drawPiece(y, x, orient, piece, window, characters):
-	COLOR_C = 1
+	COLOR_C = 3
 	COLOR_S = 2
-	COLOR_Z = 3
-	COLOR_L = 4
-	COLOR_R = 5
+	COLOR_Z = 1
+	COLOR_L = 7
+	COLOR_R = 4
 	COLOR_I = 6
-	COLOR_T = 7
+	COLOR_T = 5
 	if len(characters) == 1:
 		character = lambda x : characters[0]
 	elif len(characters) == 2:
@@ -231,7 +239,7 @@ def numDigits(n):
 		m += 1
 	return m
 # Tuple containing score label IDs for score functions
-scoreLabels = ('', "SCORE", "LINES", "STATC", "STATS", "STATZ", \
+scoreLabels = ('', "SCORE", "LINES", '', "STATC", "STATS", "STATZ", \
 	"STATL", "STATR", "STATI", "STATT", '', "STAT1", "STAT2", \
 	"STAT3", "STAT4")
 """
@@ -304,13 +312,13 @@ def setCellValue(y, x, val):
 		"ACTIVE": (crs.ACS_CKBOARD, crs.ACS_CKBOARD) \
 	}
 	colors = { \
-		"ACTIVE-C": 1, \
+		"ACTIVE-C": 3, \
 		"ACTIVE-S": 2, \
-		"ACTIVE-Z": 3, \
-		"ACTIVE-L": 4, \
-		"ACTIVE-R": 5, \
+		"ACTIVE-Z": 1, \
+		"ACTIVE-L": 7, \
+		"ACTIVE-R": 4, \
 		"ACTIVE-I": 6, \
-		"ACTIVE-T": 7 \
+		"ACTIVE-T": 5 \
 	}
 	if val == "EMPTY":
 		v = val
@@ -326,7 +334,7 @@ def setCellValue(y, x, val):
 # String that contains the ghost piece characters
 ghostChars = "[]"
 # Boolean that enables the ghost piece
-# (Werid stuff happens if it changes during a game)
+# (Werid stuff happens if it changes during an unpaused game)
 doGhost = True
 """
 Returns True if the indicated cell is empty
@@ -905,7 +913,8 @@ def ctMain():
 		ord('n') : 'n', ord('N') : 'N'}
 	yesCodes = {ord('\n') : 'ENTER', ord('y') : 'y', ord('Y') : 'Y'}
 	noCodes = {ord('n') : 'n', ord('N') : 'N'}
-	menuCodes = {27 : "ESC", ord('q') : 'Q', ord('Q') : 'Q', ord('\n') : "ENTER"}
+	menuCodes = {27 : "ESC", ord('q') : 'Q', ord('Q') : 'Q', \
+		ord('\n') : "ENTER", ord('G') : 'G', ord('g') : 'G'}
 	startCodes = {ord('q') : 'Q', ord('Q') : 'Q', ord(' ') : "SPACE"}
 	dropTimes = (0.75, 0.6, 0.5, 0.425, 0.35, 0.3, 0.25, 0.200, 0.15, 0.1)
 	lineClearChars = (crs.ACS_S1, crs.ACS_S3, crs.ACS_S7, crs.ACS_S9)
@@ -920,16 +929,17 @@ def ctMain():
 		'I': {'y': -1, 'x': 4, "orient" : 'V', "yn": 1, "xn": 3}, \
 		'T': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
 	}
+	letters = tuple(range(0x41, 0x41 + 26)) + tuple(range(0x61, 0x61 + 26))
 	# SECTION: CONTROL VARIABLES AND BOOLEANS
 	cellValues = { \
 		ord(' '): "EMPTY", \
-		crs.ACS_CKBOARD + 0x100: "ACTIVE-C", \
+		crs.ACS_CKBOARD + 0x300: "ACTIVE-C", \
 		crs.ACS_CKBOARD + 0x200: "ACTIVE-S", \
-		crs.ACS_CKBOARD + 0x300: "ACTIVE-Z", \
-		crs.ACS_CKBOARD + 0x400: "ACTIVE-L", \
-		crs.ACS_CKBOARD + 0x500: "ACTIVE-R", \
+		crs.ACS_CKBOARD + 0x100: "ACTIVE-Z", \
+		crs.ACS_CKBOARD + 0x700: "ACTIVE-L", \
+		crs.ACS_CKBOARD + 0x400: "ACTIVE-R", \
 		crs.ACS_CKBOARD + 0x600: "ACTIVE-I", \
-		crs.ACS_CKBOARD + 0x700: "ACTIVE-T" \
+		crs.ACS_CKBOARD + 0x500: "ACTIVE-T" \
 	}
 	active = True
 	playing = False
@@ -937,6 +947,7 @@ def ctMain():
 	pieceInPlay = False
 	pieceToDrop = False
 	pieceDropped = False
+	dropDelay = True
 	pieceJustSpawned = False
 	difficulty = -1
 	trueRandom = False
@@ -945,10 +956,142 @@ def ctMain():
 	bagIndex = 0
 	nextPID = pieceBag[bagIndex % 7]
 	softDrops = 0
+	checkScore = False
+	scoreFileName = ".ctHiScrs.json"
+	scoreFileWrite = False
+	global doGhost
+	# SECTION: HIGH SCORE PREP
+	try:
+		# Assume the high score file exists
+		scoreFile = open(scoreFileName, 'r')
+		highScores = json.loads(scoreFile.read())
+		scoreFile.close()
+		tempKeys = list(highScores.keys())
+		# Primary JSON Keys are always strings.
+		# Convert them back to integers
+		for k in tempKeys:
+			highScores[int(k)] = highScores[k]
+			del highScores[k]
+	except FileNotFoundError:
+		# Create the high score file as it doesn't exist
+		highScores = {}
+		for i in range(1, 11):
+			highScores[i] = {"SCORE": 0, "NAME": "...", "LINES": 0}
+		scoreFile = open(scoreFileName, 'w')
+		scoreFile.write(json.dumps(highScores, sort_keys = True, indent = 2))
+		scoreFile.close()
+	# SECTION: HIGH SCORE WRITE FUNCTIONS
+	def writeHighScores():
+		if highScores[1]["SCORE"] == 0:
+			return None
+		wBoard.addch(4, 1, crs.ACS_ULCORNER)
+		wBoard.addch(4, 20, crs.ACS_URCORNER)
+		wBoard.addch(5, 1, crs.ACS_LTEE)
+		wBoard.addch(5, 20, crs.ACS_RTEE)
+		wBoard.addch(6, 1, crs.ACS_LLCORNER)
+		wBoard.addch(6, 20, crs.ACS_LRCORNER)
+		for i in range(18):
+			wBoard.addch(4, 2 + i, crs.ACS_HLINE)
+			wBoard.addch(5, 2 + i, crs.ACS_HLINE)
+			wBoard.addch(6, 2 + i, crs.ACS_HLINE)
+		wBoard.addch(6, 7, crs.ACS_TTEE)
+		wBoard.addch(6, 15, crs.ACS_TTEE)
+		wBoard.addstr(5, 5, " TOP SCORES ")
+		wBoard.addstr(7, 1, "# NAME  SCORE  LINES")
+		wBoard.addch(7, 7, crs.ACS_VLINE)
+		wBoard.addch(7, 15, crs.ACS_VLINE)
+		i = 1
+		while i <= 10 and highScores[i]["SCORE"] > 0:
+			wBoard.addstr(7 + i, 1, 20 * ' ')
+			wBoard.addstr(7 + i, 1, str(i) + ".")
+			wBoard.addstr(7 + i, 4, highScores[i]["NAME"])
+			wBoard.addstr(7 + i, 8, "{:>7}".format(highScores[i]["SCORE"]))
+			wBoard.addstr(7 + i, 16, "{:>5}".format(highScores[i]["LINES"]))
+			wBoard.addch(7 + i, 7, crs.ACS_VLINE)
+			wBoard.addch(7 + i, 15, crs.ACS_VLINE)
+			i += 1
+		wBoard.refresh()
 	# SECTION: ACTIVE LOOP
 	while active:
+		# SUBSECTION: HIGH SCORE WRITE
+		if checkScore:
+			# Find where the user places in the list
+			place = 11
+			for i in range(10, 0, -1):
+				if scoreData["SCORE"] > highScores[i]["SCORE"]:
+					place = i
+				else:
+					break
+			# If place has changed, the user should be added to the list
+			if place < 11:
+				wBoard.nodelay(False)
+				nameEntered = False
+				while not nameEntered:
+					undrawGrid()
+					wBoard.addstr(1, 1, "CONGRATULATIONS!")
+					wBoard.addstr(2, 1, "YOUR SCORE PUTS YOU")
+					wBoard.addstr(3, 1, "AT RANK " + str(place) + "!")
+					wBoard.addstr(4, 1, "PLEASE ENTER YOUR")
+					wBoard.addstr(5, 1, "INITIALS:")
+					wBoard.refresh()
+					k = -1
+					l = 0
+					s = ''
+					# Get the user's initials, letters only
+					while l < 3:
+						while k not in letters:
+							k = wBoard.getch()
+						wBoard.addstr(5, 11 + l, chr(k))
+						s += chr(k)
+						wBoard.refresh()
+						l += 1
+						k = -1
+					wBoard.addstr(6, 1, "ARE YOU INITIALS")
+					wBoard.addstr(7, 1, "CORRECT? [Y/N]")
+					wBoard.refresh()
+					k = -1
+					while k not in yesnoCodes:
+						k = wBoard.getch()
+					if k in yesCodes:
+						wBoard.addstr(8, 1, "SAVING SCORE...")
+						wBoard.refresh()
+						crs.delay_output(1000)
+						nameEntered = True
+						wBoard.nodelay(True)
+						continue
+					else:
+						wBoard.addstr(8, 1, "OKAY, ENTER AGAIN.")
+						wBoard.refresh()
+						crs.delay_output(500)
+						continue
+				# Setup the new high score dict. object
+				tempEntry = {}
+				tempEntry["SCORE"] = scoreData["SCORE"]
+				tempEntry["NAME"] = s
+				tempEntry["LINES"] = scoreData["LINES"]
+				# Shift all scores lower than new one down
+				for j in range(10, place, -1):
+					highScores[j] = highScores[j - 1]
+				# Insert the new high score
+				highScores[place] = tempEntry
+				scoreFileWrite = True
+			else:
+				checkScore = False
+				continue
+			if scoreFileWrite:
+				scoreFile = open(scoreFileName, 'w')
+				scoreFile.write(json.dumps(highScores, sort_keys = True, indent = 2))
+				scoreFile.close()
+				undrawGrid()
+				wBoard.addstr(1, 1, "SAVED! PRESS SPACE")
+				wBoard.addstr(2, 1, "FOR A NEW GAME, OR Q")
+				wBoard.addstr(3, 1, "TO QUIT.")
+				wBoard.refresh()
+				scoreFileWrite = False
+				checkScore = False
 		# SUBSECTION: STARTUP CONTROL
 		if not playing:
+			writeHighScores()
 			# Wait for a keypress
 			wBoard.nodelay(False)
 			k = -1
@@ -969,6 +1112,7 @@ def ctMain():
 			sure = False
 			# Select randomizer and difficulty
 			while not sure:
+				undrawGrid()
 				wBoard.addstr(1, 1, "PRESS \'B\' FOR 7-BAG")
 				wBoard.addstr(2, 1, "RANDOMIZER OR \'R\'")
 				wBoard.addstr(3, 1, "FOR TRUE RANDOMIZER")
@@ -1005,7 +1149,7 @@ def ctMain():
 					crs.delay_output(500)
 				# Retry difficulty selection
 				else:
-					drawGrid()
+					undrawGrid()
 					wBoard.addstr(1, 1, "OKAY, CHOOSE AGAIN.")
 					wBoard.refresh()
 				crs.delay_output(1000)
@@ -1025,7 +1169,7 @@ def ctMain():
 			continue
 		# SUBSECTION: PAUSE MENU CONTROL
 		if paused:
-			# Get a key and either quit or continue
+			# Get a key and either quit, toggle the ghost piece, or continue
 			wBoard.nodelay(False)
 			k = -1
 			while k not in menuCodes :
@@ -1047,6 +1191,13 @@ def ctMain():
 				continue
 			elif keypress == "ENTER":
 				continue
+			elif keypress == 'G':
+				if doGhost:
+					piece.undrawGhost()
+				doGhost = not doGhost
+				if doGhost:
+					piece.drawGhost()
+				continue
 			# If neither the enter nor q key are pressed, it must be ESC,
 			# Which means unpause
 			clearBoardLabel()
@@ -1064,6 +1215,7 @@ def ctMain():
 				pieceInfo[nextPID]["orient"] \
 			)
 			pieceJustSpawned = True
+			pieceToDrop = False
 			# Go to the next piece and check if the bag needs shuffling
 			# if using the bag randomizer
 			if trueRandom:
@@ -1093,6 +1245,8 @@ def ctMain():
 				pieceJustSpawned = False
 			# When the piece it at the bottom
 			else:
+				if pieceDropped:
+					dropDelay = False
 				pieceInPlay = False
 				pieceDropped = False
 				# Game over check
@@ -1104,6 +1258,7 @@ def ctMain():
 					writeBoardLabel('C', "GAME OVER!")
 					crs.delay_output(2000)
 					playing = False
+					checkScore = True
 					continue
 				pieceJustSpawned = False
 				wBoard.refresh()
@@ -1164,6 +1319,10 @@ def ctMain():
 						difficulty += 1
 						clearBoardLabel()
 						writeBoardLabel('C', "LEVEL " + str(difficulty))
+				# Sleep to delay before next piece spawns
+				if dropDelay:
+					crs.napms(333)
+				dropDelay = True
 				continue
 		# SUBSECTION: KEY INPUT HANDLING
 		k = wBoard.getch()
@@ -1219,13 +1378,14 @@ if crs.LINES < 24 or crs.COLS < 80:
 	print("Please adjust your terminal settings accordingly.")
 	exit()
 #Define colors
-crs.init_color(1, 1000, 1000, 0)
-crs.init_color(2, 0, 1000, 0)
-crs.init_color(3, 1000, 0, 0)
-crs.init_color(4, 1000, 750, 0)
-crs.init_color(5, 0, 0, 1000)
-crs.init_color(6, 500, 500, 1000)
-crs.init_color(7, 1000, 500, 1000)
+if crs.can_change_color():
+	crs.init_color(1, 1000, 0, 0)
+	crs.init_color(2, 0, 1000, 0)
+	crs.init_color(3, 1000, 1000, 0)
+	crs.init_color(4, 0, 0, 1000)
+	crs.init_color(5, 1000, 500, 1000)
+	crs.init_color(6, 500, 500, 1000)
+	crs.init_color(7, 1000, 750, 0)
 crs.init_pair(1, -1, 1)
 crs.init_pair(2, -1, 2)
 crs.init_pair(3, -1, 3)
@@ -1240,12 +1400,12 @@ crs.curs_set(0)
 #Initialize windows
 wTitle = crs.newwin(6, 19, 0, 4)
 wScore = crs.newwin(4, 17, 6, 5)
-wCntrl = crs.newwin(13, 23, 10, 2)
+wCntrl = crs.newwin(14, 23, 10, 2)
 wBoard = crs.newwin(24, 22, 0, 28)
 wBoard.keypad(True)
 wBoard.nodelay(True)
 wNextP = crs.newwin(7, 15, 0, 54)
-wStats = crs.newwin(16, 19, 7, 52)
+wStats = crs.newwin(17, 19, 7, 52)
 #Draw boarders of windows
 wTitle.border()
 wScore.border()
@@ -1269,28 +1429,31 @@ wCntrl.addstr(6, 1, "          : OR START")
 wCntrl.addstr(7, 1, "CTRL+SPACE: ROT. CCW")
 wCntrl.addstr(8, 1, "ESC       : PAUSE OR")
 wCntrl.addstr(9, 1, "          : RESUME")
-wCntrl.addstr(10, 1, "Q         : QUIT IF")
-wCntrl.addstr(11, 1, "          : PAUSED")
+wCntrl.addstr(10, 6, "IF PAUSED:")
+wCntrl.addstr(11, 1, "Q     : QUIT GAME")
+wCntrl.addstr(12, 1, "G     : TOGGLE GHOST")
 drawGrid()
 drawBoardBorder()
 writeBoardLabel('L', "PRESS SPACE TO START")
 wNextP.addstr(1, 2, "NEXT PIECE:")
+wNextP.addstr(2, 2, 11 * '-')
 wStats.addstr(1, 4, "STATISTICS:")
-wStats.addstr(2, 1, ":PIECES::")
-wStats.addstr(3, 1, "SQUARES :")
-wStats.addstr(4, 1, "S-PIECES:")
-wStats.addstr(5, 1, "Z-PIECES:")
-wStats.addstr(6, 1, "L-PIECES:")
+wStats.addstr(2, 4, 11 * '-')
+wStats.addstr(3, 1, "::PIECES" + 9 * ':')
+wStats.addstr(4, 1, "SQUARES :")
+wStats.addstr(5, 1, "S-PIECES:")
+wStats.addstr(6, 1, "Z-PIECES:")
+wStats.addstr(7, 1, "L-PIECES:")
 #wStats.addstr(7, 1, chr(0x2143) + "-BLOCKS:")
 #wStats.addstr(7, 1, chr(0xac) + "-PIECES:")
-wStats.addstr(7, 1, "J-PIECES:")
-wStats.addstr(8, 1, "I-PIECES:")
-wStats.addstr(9, 1, "T-PIECES:")
-wStats.addstr(10, 1, ":LINES:::")
-wStats.addstr(11, 1, "SINGLES :")
-wStats.addstr(12, 1, "DOUBLES :")
-wStats.addstr(13, 1, "TRIPLES :")
-wStats.addstr(14, 1, "TETRI   :")
+wStats.addstr(8, 1, "J-PIECES:")
+wStats.addstr(9, 1, "I-PIECES:")
+wStats.addstr(10, 1, "T-PIECES:")
+wStats.addstr(11, 1, "::LINES" + 10 * ':')
+wStats.addstr(12, 1, "SINGLES :")
+wStats.addstr(13, 1, "DOUBLES :")
+wStats.addstr(14, 1, "TRIPLES :")
+wStats.addstr(15, 1, "TETRI   :")
 #Write initial scores and statistics
 writeScore(0, "SCORE")
 writeScore(0, "LINES")
