@@ -334,7 +334,7 @@ def setCellValue(y, x, val):
 # String that contains the ghost piece characters
 ghostChars = "[]"
 # Boolean that enables the ghost piece
-# (Werid stuff happens if it changes during a game)
+# (Werid stuff happens if it changes during an unpaused game)
 doGhost = True
 """
 Returns True if the indicated cell is empty
@@ -962,14 +962,18 @@ def ctMain():
 	global doGhost
 	# SECTION: HIGH SCORE PREP
 	try:
+		# Assume the high score file exists
 		scoreFile = open(scoreFileName, 'r')
 		highScores = json.loads(scoreFile.read())
 		scoreFile.close()
 		tempKeys = list(highScores.keys())
+		# Primary JSON Keys are always strings.
+		# Convert them back to integers
 		for k in tempKeys:
 			highScores[int(k)] = highScores[k]
 			del highScores[k]
 	except FileNotFoundError:
+		# Create the high score file as it doesn't exist
 		highScores = {}
 		for i in range(1, 11):
 			highScores[i] = {"SCORE": 0, "NAME": "...", "LINES": 0}
@@ -1011,12 +1015,14 @@ def ctMain():
 	while active:
 		# SUBSECTION: HIGH SCORE WRITE
 		if checkScore:
+			# Find where the user places in the list
 			place = 11
 			for i in range(10, 0, -1):
 				if scoreData["SCORE"] > highScores[i]["SCORE"]:
 					place = i
 				else:
 					break
+			# If place has changed, the user should be added to the list
 			if place < 11:
 				wBoard.nodelay(False)
 				nameEntered = False
@@ -1031,6 +1037,7 @@ def ctMain():
 					k = -1
 					l = 0
 					s = ''
+					# Get the user's initials, letters only
 					while l < 3:
 						while k not in letters:
 							k = wBoard.getch()
@@ -1057,12 +1064,15 @@ def ctMain():
 						wBoard.refresh()
 						crs.delay_output(500)
 						continue
+				# Setup the new high score dict. object
 				tempEntry = {}
 				tempEntry["SCORE"] = scoreData["SCORE"]
 				tempEntry["NAME"] = s
 				tempEntry["LINES"] = scoreData["LINES"]
+				# Shift all scores lower than new one down
 				for j in range(10, place, -1):
 					highScores[j] = highScores[j - 1]
+				# Insert the new high score
 				highScores[place] = tempEntry
 				scoreFileWrite = True
 			else:
