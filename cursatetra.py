@@ -1372,9 +1372,9 @@ screen = crs.initscr()
 crs.start_color()
 crs.use_default_colors()
 #Run screen checks
-if crs.LINES < 24 or crs.COLS < 80:
+if crs.LINES < 24 or crs.COLS < 72:
 	crs.endwin()
-	print("Your terminal must be at least 80x24 to run this game.")
+	print("Your terminal must be at least 72x24 to run this game.")
 	print("Please adjust your terminal settings accordingly.")
 	exit()
 #Define colors
@@ -1401,11 +1401,11 @@ crs.curs_set(0)
 wTitle = crs.newwin(6, 19, 0, 4)
 wScore = crs.newwin(4, 17, 6, 5)
 wCntrl = crs.newwin(14, 23, 10, 2)
-wBoard = crs.newwin(24, 22, 0, 28)
+wBoard = crs.newwin(24, 22, 0, 27)
 wBoard.keypad(True)
 wBoard.nodelay(True)
-wNextP = crs.newwin(7, 15, 0, 54)
-wStats = crs.newwin(17, 19, 7, 52)
+wNextP = crs.newwin(7, 15, 0, 53)
+wStats = crs.newwin(17, 19, 7, 51)
 #Draw boarders of windows
 wTitle.border()
 wScore.border()
