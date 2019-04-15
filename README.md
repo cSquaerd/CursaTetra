@@ -20,6 +20,9 @@ The goal is simple: rotate and move pieces as they fall, line up ten blocks in a
 ## Featurs coming soon
 * Compatability with `windows-curses`
 
+## Bugs to fix
+* Inhibit inputs delivered during line clearing routine
+
 ## Piece development documentation
 ### Piece orientations
 * H : horizontal (default)
