@@ -5,292 +5,13 @@ import time
 import random as rnd
 import sys
 import json
+from ct_draw import *
+from ct_label import *
 # SECTION: VERSION CHECK
 if sys.version_info[0] < 3:
 	print("This game requires Python 3. Please install it and/or run this file with it.")
 	exit()
 # SECTION: FUNCTIONS
-"""
-Draws an alignment grid in the board window
-"""
-def drawGrid():
-	for x in range(1, 21):
-		for y in range(1, 21):
-			wBoard.addch(y, x, '.' if x % 2 != 0 else ' ')
-"""
-Erases the alignment grid in the board window
-"""
-def undrawGrid():
-	for x in range(1, 21):
-		for y in range(1, 21):
-			wBoard.addch(y, x, " ")
-"""
-Draws the bottom border in the board window
-"""
-def drawBoardBorder():
-	wBoard.addch(21, 0, crs.ACS_LTEE)
-	for x in range(1, 21):
-		wBoard.addch(21, x, crs.ACS_HLINE)
-	wBoard.addch(21, 21, crs.ACS_RTEE)
-"""
-Checks if a character is in the play area of wBoard
-"""
-def isCharInBounds(y, x):
-	return y > 0 and y < 21 and x > 0 and x < 21
-"""
-Draws a piece to a window (use wBoard or wNextP only!)
-
-In order to allow for erasure a.k.a. undrawing of pieces,
-the characters argument must either be a string or list,
-and the character variable is actually a function;
-When undrawing, the grid pattern is ". ", which are
-two distinct characters, thus a two-member tuple
-with indices 0 and 1 (False and True) can be used and
-kept in sync with the x position of the cursor
-
-The check is equals 0, hence even, because the board
-starts at an x value of 1. Thus, if ['.', ' '] is passed
-in for characters arg. (or ". " since strings are subscriptable),
-the odd character cells will get a '.' from int(False)
-and even cells will get a ' ' from int(True)
-
-See README.md or check the bottom of this file for details on block behavoir
-"""
-def drawPiece(y, x, orient, piece, window, characters):
-	COLOR_C = 3
-	COLOR_S = 2
-	COLOR_Z = 1
-	COLOR_L = 7
-	COLOR_R = 4
-	COLOR_I = 6
-	COLOR_T = 5
-	if len(characters) == 1:
-		character = lambda x : characters[0]
-	elif len(characters) == 2:
-		character = lambda x : characters[int(x % 2 == 0)]
-	else:
-		return None
-	if piece == 'C':
-		for i in range(x, x + 4):
-			for j in range(y, y + 2):
-				if isCharInBounds(j, i):
-					window.addch(j, i, character(i) , crs.color_pair(COLOR_C))
-	elif piece == 'S':
-		if orient == 'H':
-			for i in range(x + 2, x + 6):
-				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i) , crs.color_pair(COLOR_S))
-			for i in range(x, x + 4):
-				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i) , crs.color_pair(COLOR_S))
-		else:
-			for i in range(x, x + 2):
-				for j in range(y, y + 2):
-					if isCharInBounds(j, i):
-						window.addch(j, i, character(i) , crs.color_pair(COLOR_S))
-			for i in range(x + 2, x + 4):
-				for j in range(y + 1, y + 3):
-					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_S))
-	elif piece == 'Z':
-		if orient == 'H':
-			for i in range(x, x + 4):
-				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_Z))
-			for i in range(x + 2, x + 6):
-				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_Z))
-		else:
-			for i in range(x, x + 2):
-				for j in range(y + 1, y + 3):
-					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
-			for i in range(x + 2, x + 4):
-				for j in range(y, y + 2):
-					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
-	elif piece == 'L':
-		if orient == 'H':
-			for i in range(x + 2, x + 4):
-				for j in range(y, y + 3):
-					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_L))
-			for i in range(x + 4, x + 6):
-				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
-		elif orient == 'V':
-			for i in range(x, x + 6):
-				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
-			for i in range(x, x + 2):
-				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
-		elif orient == 'HP':
-			for i in range(x + 2, x + 4):
-				for j in range(y, y + 3):
-					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_L))
-			for i in range(x, x + 2):
-				if isCharInBounds(y, i):
-					window.addch(y, i, character(i), crs.color_pair(COLOR_L))
-		elif orient == 'VP':
-			for i in range(x, x + 6):
-				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
-			for i in range(x + 4, x + 6):
-				if isCharInBounds(y, i):
-					window.addch(y, i, character(i), crs.color_pair(COLOR_L))
-	elif piece == 'R':
-		if orient == 'H':
-			for i in range(x + 2, x + 4):
-				for j in range(y, y + 3):
-					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_R))
-			for i in range(x, x + 2):
-				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
-		elif orient == 'V':
-			for i in range(x, x + 6):
-				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
-			for i in range(x, x + 2):
-				if isCharInBounds(y, i):
-					window.addch(y, i, character(i), crs.color_pair(COLOR_R))
-		elif orient == 'HP':
-			for i in range(x + 2, x + 4):
-				for j in range(y, y + 3):
-					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_R))
-			for i in range(x + 4, x + 6):
-				if isCharInBounds(y, i):
-					window.addch(y, i, character(i), crs.color_pair(COLOR_R))
-		elif orient == 'VP':
-			for i in range(x, x + 6):
-				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
-			for i in range(x + 4, x + 6):
-				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
-	elif piece == 'I':
-		if orient == 'H':
-			for i in range(x + 2, x + 4):
-				for j in range(y, y + 4):
-					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_I))
-		else:
-			for i in range(x, x + 8):
-				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_I))
-	elif piece == 'T':
-		if orient == 'H':
-			for i in range(x, x + 6):
-				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
-			for i in range(x + 2, x + 4):
-				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_T))
-		elif orient == 'V':
-			for i in range(x + 2, x + 4):
-				for j in range(y, y + 3):
-					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_T))
-			for i in range(x, x + 2):
-				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
-		elif orient == 'HP':
-			for i in range(x, x + 6):
-				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
-			for i in range(x + 2, x + 4):
-				if isCharInBounds(y, i):
-					window.addch(y, i, character(i), crs.color_pair(COLOR_T))
-		elif orient == 'VP':
-			for i in range(x + 2, x + 4):
-				for j in range(y, y + 3):
-					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_T))
-			for i in range(x + 4, x + 6):
-				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
-"""
-Redraws characters in a window.
-
-Given a target character (B), and a region from
-(xi, yi) to (xf, yf) where xi < xf and yi < yf,
-any instances of the target char. in the window
-will be overwritten with the result character (A)
-"""
-def changeTexture(yi, xi, yf, xf, characterA, characterB, window):
-	if not (xi <= xf and yi <= yf):
-		return None
-	for i in range(xi, xf + 1):
-		for j in range(yi, yf + 1):
-			if type(characterB) is str and window.inch(j, i) == ord(characterB) \
-				or type(characterB) is int and window.inch(j, i) % 0x100 == characterB % 0x100:
-				window.addch(j, i, characterA)
-"""
-Returns the number of base-10 digits in a number (n)
-"""
-def numDigits(n):
-	if n == 0:
-		return 1
-	m = 0;
-	while n >= 10 ** m:
-		m += 1
-	return m
-# Tuple containing score label IDs for score functions
-scoreLabels = ('', "SCORE", "LINES", '', "STATC", "STATS", "STATZ", \
-	"STATL", "STATR", "STATI", "STATT", '', "STAT1", "STAT2", \
-	"STAT3", "STAT4")
-"""
-Writes a score value to a score label, listed above
-"""
-def writeScore(score, scoreType):
-	scoreIndex = scoreLabels.index(scoreType)
-	if scoreIndex < 3:
-		wScore.addstr(scoreIndex, 16 - numDigits(score), str(score))
-	else:
-		wStats.addstr(scoreIndex, 18 - numDigits(score), str(score))
-"""
-Clears a score label
-"""
-def clearScore(scoreType):
-	scoreIndex = scoreLabels.index(scoreType)
-	if scoreIndex < 3:
-		wScore.addstr(scoreIndex, 9, "      0")
-	else:
-		wStats.addstr(scoreIndex, 11, "      0")
-
-"""
-Writes a label to the lower section of the board;
-
-The label can be left, center, or right aligned;
-If the align argument is a string representation of
-an integer, then the label will be written starting at
-the numbered cell and will wrap around, allowing
-for scrolling labels with repeated calls
-"""
-def writeBoardLabel(align, label):
-	if align == 'L':
-		x = 1
-	elif align == 'C':
-		x = (20 - len(label)) // 2 + 1
-	elif align == 'R':
-		x = 21 - len(label)
-	else:
-		x = int(align) - 1
-		for c in label:
-			wBoard.addch(22, x % 20 + 1, c)
-			x += 1
-		return None
-
-	wBoard.addstr(22, x, label)
-	wBoard.refresh()
-"""
-Clears the lower section of the board
-"""
-def clearBoardLabel():
-	wBoard.addstr(22, 1, 20 * ' ')
 """
 Gets the character value (as an int) of a cell in the board;
 
@@ -1027,7 +748,7 @@ def ctMain():
 				wBoard.nodelay(False)
 				nameEntered = False
 				while not nameEntered:
-					undrawGrid()
+					undrawGrid(wBoard)
 					wBoard.addstr(1, 1, "CONGRATULATIONS!")
 					wBoard.addstr(2, 1, "YOUR SCORE PUTS YOU")
 					wBoard.addstr(3, 1, "AT RANK " + str(place) + "!")
@@ -1082,7 +803,7 @@ def ctMain():
 				scoreFile = open(scoreFileName, 'w')
 				scoreFile.write(json.dumps(highScores, sort_keys = True, indent = 2))
 				scoreFile.close()
-				undrawGrid()
+				undrawGrid(wBoard)
 				wBoard.addstr(1, 1, "SAVED! PRESS SPACE")
 				wBoard.addstr(2, 1, "FOR A NEW GAME, OR Q")
 				wBoard.addstr(3, 1, "TO QUIT.")
@@ -1099,20 +820,20 @@ def ctMain():
 				k = wBoard.getch()
 			# Quit the game
 			if startCodes[k] == 'Q':
-				clearBoardLabel()
-				writeBoardLabel('C', "QUITTING...")
+				clearBoardLabel(wBoard)
+				writeBoardLabel('C', "QUITTING...", wBoard)
 				crs.delay_output(750)
 				active = False
 				continue
 			# Start the game
 			playing = True
-			clearBoardLabel()
-			writeBoardLabel('L', "DIFFICULTY SELECTION")
+			clearBoardLabel(wBoard)
+			writeBoardLabel('L', "DIFFICULTY SELECTION", wBoard)
 			crs.delay_output(500)
 			sure = False
 			# Select randomizer and difficulty
 			while not sure:
-				undrawGrid()
+				undrawGrid(wBoard)
 				wBoard.addstr(1, 1, "PRESS \'B\' FOR 7-BAG")
 				wBoard.addstr(2, 1, "RANDOMIZER OR \'R\'")
 				wBoard.addstr(3, 1, "FOR TRUE RANDOMIZER")
@@ -1149,22 +870,22 @@ def ctMain():
 					crs.delay_output(500)
 				# Retry difficulty selection
 				else:
-					undrawGrid()
+					undrawGrid(wBoard)
 					wBoard.addstr(1, 1, "OKAY, CHOOSE AGAIN.")
 					wBoard.refresh()
 				crs.delay_output(1000)
-				drawGrid()
-			clearBoardLabel()
-			writeBoardLabel('C', "BEGINNING GAME...")
+				drawGrid(wBoard)
+			clearBoardLabel(wBoard)
+			writeBoardLabel('C', "BEGINNING GAME...", wBoard)
 			crs.delay_output(750)
 			# Clear old scores
 			for s in scoreData.keys():
 				scoreData[s] = 0
-				clearScore(s)
+				clearScore(s, wScore, wStats)
 			wScore.refresh()
 			wStats.refresh()
-			clearBoardLabel()
-			writeBoardLabel('C', "LEVEL " + str(difficulty))
+			clearBoardLabel(wBoard)
+			writeBoardLabel('C', "LEVEL " + str(difficulty), wBoard)
 			wBoard.nodelay(True)
 			continue
 		# SUBSECTION: PAUSE MENU CONTROL
@@ -1177,17 +898,17 @@ def ctMain():
 			keypress = menuCodes[k]
 			# Quit the game
 			if keypress == 'Q':
-				clearBoardLabel()
-				writeBoardLabel('C', "PRESS ENTER TO QUIT")
+				clearBoardLabel(wBoard)
+				writeBoardLabel('C', "PRESS ENTER TO QUIT", wBoard)
 				# To avoid accidental quits, confirm with enter key
 				if wBoard.getch() == ord('\n'):
-					clearBoardLabel()
-					writeBoardLabel('C', "QUITTING...")
+					clearBoardLabel(wBoard)
+					writeBoardLabel('C', "QUITTING...", wBoard)
 					crs.delay_output(750)
 					active = False
 					continue
-				clearBoardLabel()
-				writeBoardLabel('C', "PAUSED")
+				clearBoardLabel(wBoard)
+				writeBoardLabel('C', "PAUSED", wBoard)
 				continue
 			elif keypress == "ENTER":
 				continue
@@ -1200,8 +921,8 @@ def ctMain():
 				continue
 			# If neither the enter nor q key are pressed, it must be ESC,
 			# Which means unpause
-			clearBoardLabel()
-			writeBoardLabel('C', "LEVEL " + str(difficulty))
+			clearBoardLabel(wBoard)
+			writeBoardLabel('C', "LEVEL " + str(difficulty), wBoard)
 			wBoard.nodelay(True)
 			paused = False
 			continue
@@ -1254,8 +975,8 @@ def ctMain():
 					for n in range(4):
 						crs.flash()
 						crs.delay_output(125)
-					clearBoardLabel()
-					writeBoardLabel('C', "GAME OVER!")
+					clearBoardLabel(wBoard)
+					writeBoardLabel('C', "GAME OVER!", wBoard)
 					crs.delay_output(2000)
 					playing = False
 					checkScore = True
@@ -1265,10 +986,10 @@ def ctMain():
 				# Add softDrops to score and update piece statistics
 				scoreData["SCORE"] += softDrops
 				softDrops = 0
-				writeScore(scoreData["SCORE"], "SCORE")
+				writeScore(scoreData["SCORE"], "SCORE", wScore, wStats)
 				wScore.refresh()
 				scoreData["STAT" + piece.pID] += 1
-				writeScore(scoreData["STAT" + piece.pID], "STAT" + piece.pID)
+				writeScore(scoreData["STAT" + piece.pID], "STAT" + piece.pID, wScore, wStats)
 				wStats.refresh()
 				# Erase old piece object
 				del piece
@@ -1307,18 +1028,18 @@ def ctMain():
 					# Update scoreData and score labels
 					scoreData["LINES"] += len(lines)
 					scoreData["SCORE"] += lineClearScores[len(lines)] * (difficulty + 1)
-					writeScore(scoreData["LINES"], "LINES")
-					writeScore(scoreData["SCORE"], "SCORE")
+					writeScore(scoreData["LINES"], "LINES", wScore, wStats)
+					writeScore(scoreData["SCORE"], "SCORE", wScore, wStats)
 					wScore.refresh()
 					scoreData["STAT" + str(len(lines))] += 1
-					writeScore(scoreData["STAT" + str(len(lines))], "STAT" + str(len(lines)))
+					writeScore(scoreData["STAT" + str(len(lines))], "STAT" + str(len(lines)), wScore, wStats)
 					wStats.refresh()
 					# Update difficulty check
 					if lineClearDiffShifts[difficulty] <= scoreData["LINES"] and \
 						difficulty < 9:
 						difficulty += 1
-						clearBoardLabel()
-						writeBoardLabel('C', "LEVEL " + str(difficulty))
+						clearBoardLabel(wBoard)
+						writeBoardLabel('C', "LEVEL " + str(difficulty), wBoard)
 				# Sleep to delay before next piece spawns
 				if dropDelay:
 					crs.napms(333)
@@ -1360,8 +1081,8 @@ def ctMain():
 				piece.rotate(rotDir)
 		elif keypress == "ESC":
 			paused = True
-			clearBoardLabel()
-			writeBoardLabel('C', "PAUSED")
+			clearBoardLabel(wBoard)
+			writeBoardLabel('C', "PAUSED", wBoard)
 	return None
 
 # SECTION: MAIN
@@ -1432,9 +1153,9 @@ wCntrl.addstr(9, 1, "          : RESUME")
 wCntrl.addstr(10, 6, "IF PAUSED:")
 wCntrl.addstr(11, 1, "Q     : QUIT GAME")
 wCntrl.addstr(12, 1, "G     : TOGGLE GHOST")
-drawGrid()
-drawBoardBorder()
-writeBoardLabel('L', "PRESS SPACE TO START")
+drawGrid(wBoard)
+drawBoardBorder(wBoard)
+writeBoardLabel('L', "PRESS SPACE TO START", wBoard)
 wNextP.addstr(1, 2, "NEXT PIECE:")
 wNextP.addstr(2, 2, 11 * '-')
 wStats.addstr(1, 4, "STATISTICS:")
@@ -1455,19 +1176,19 @@ wStats.addstr(13, 1, "DOUBLES :")
 wStats.addstr(14, 1, "TRIPLES :")
 wStats.addstr(15, 1, "TETRI   :")
 #Write initial scores and statistics
-writeScore(0, "SCORE")
-writeScore(0, "LINES")
-writeScore(0, "STATC")
-writeScore(0, "STATS")
-writeScore(0, "STATZ")
-writeScore(0, "STATL")
-writeScore(0, "STATR")
-writeScore(0, "STATI")
-writeScore(0, "STATT")
-writeScore(0, "STAT1")
-writeScore(0, "STAT2")
-writeScore(0, "STAT3")
-writeScore(0, "STAT4")
+writeScore(0, "SCORE", wScore, wStats)
+writeScore(0, "LINES", wScore, wStats)
+writeScore(0, "STATC", wScore, wStats)
+writeScore(0, "STATS", wScore, wStats)
+writeScore(0, "STATZ", wScore, wStats)
+writeScore(0, "STATL", wScore, wStats)
+writeScore(0, "STATR", wScore, wStats)
+writeScore(0, "STATI", wScore, wStats)
+writeScore(0, "STATT", wScore, wStats)
+writeScore(0, "STAT1", wScore, wStats)
+writeScore(0, "STAT2", wScore, wStats)
+writeScore(0, "STAT3", wScore, wStats)
+writeScore(0, "STAT4", wScore, wStats)
 #Make windows visible
 wTitle.refresh()
 wScore.refresh()
