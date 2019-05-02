@@ -7,90 +7,11 @@ import sys
 import json
 from ct_draw import *
 from ct_label import *
+from ct_cell import *
 # SECTION: VERSION CHECK
 if sys.version_info[0] < 3:
 	print("This game requires Python 3. Please install it and/or run this file with it.")
 	exit()
-# SECTION: FUNCTIONS
-"""
-Gets the character value (as an int) of a cell in the board;
-
-As blocks take up two curses-coordinate spaces,
-a cell is defined as such, and its identifying
-symbol will be in the righthand space;
-In theory, the cell will either be empty (". "),
-have an old block (two ACS_BLOCK chars),
-or have an active block (two ACS_CKBOARD chars)
-"""
-def getCellValue(y, x):
-	return wBoard.inch(y, 2 * x)
-"""
-Sets the character values of a cell in the board
-"""
-def setCellValue(y, x, val):
-	values = { \
-		"EMPTY": '. ', \
-		"ACTIVE": (crs.ACS_CKBOARD, crs.ACS_CKBOARD) \
-	}
-	colors = { \
-		"ACTIVE-C": 3, \
-		"ACTIVE-S": 2, \
-		"ACTIVE-Z": 1, \
-		"ACTIVE-L": 7, \
-		"ACTIVE-R": 4, \
-		"ACTIVE-I": 6, \
-		"ACTIVE-T": 5 \
-	}
-	if val == "EMPTY":
-		v = val
-	else:
-		v = "ACTIVE"
-	i = 2 * x - 1
-	for c in values[v]:
-		if v != "ACTIVE":
-			wBoard.addch(y, i, c)
-		else:
-			wBoard.addch(y, i, c, crs.color_pair(colors[val]))
-		i += 1
-# String that contains the ghost piece characters
-ghostChars = "[]"
-# Boolean that enables the ghost piece
-# (Werid stuff happens if it changes during an unpaused game)
-doGhost = True
-"""
-Returns True if the indicated cell is empty
-"""
-def isCellEmpty(y, x):
-	return y < 1 or getCellValue(y, x) in (ord(' '), ord(ghostChars[1]))
-"""
-Returns True if the indicated cell is a valid board space
-"""
-def isCellInBounds(y, x):
-	return y < 21 and x > 0 and x < 11
-"""
-Return a list of y-addresses that are full of blocks
-"""
-def getFullLines():
-	fullLines = []
-	for y in range(20, 0, -1):
-		full = True
-		for x in range(1, 11):
-			if isCellEmpty(y, x):
-				full = False
-				break
-		if full:
-			fullLines.append(y)
-	return fullLines
-"""
-Returns True if the indicated line has no blocks in it
-"""
-def isLineEmpty(y):
-	for x in range(1, 11):
-		if isCellEmpty(y, x):
-			continue
-		else:
-			return False
-	return True
 """
 Class for active block data
 
@@ -123,38 +44,38 @@ Class for active block data
 		* direction: See notes in move
 """
 class Piece:
-	def __init__(self, y, x, p, o):
+	def __init__(self, y, x, p, o, board):
 		self.y = y
 		self.x = x
 		self.pID = p
 		self.orient = o
 		self.hasLanded = False
 		self.ghostDepth = 0
-		self.drawGhost()
+		self.drawGhost(board)
 		self.draw()
 	def draw(self):
 		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, [crs.ACS_CKBOARD])
 	def undraw(self):
 		drawPiece(self.y, 2 * self.x - 1, self.orient, self.pID, wBoard, ". ")
-	def getGhostDepth(self):
+	def getGhostDepth(self, board):
 		originalY = self.y
-		while self.canMove('D'):
+		while self.canMove('D', board):
 			self.y += 1
 		self.ghostDepth = self.y
 		self.y = originalY
-	def drawGhost(self):
+	def drawGhost(self, board):
 		if not doGhost:
 			return None
-		self.getGhostDepth()
+		self.getGhostDepth(board)
 		drawPiece( \
 			self.ghostDepth, 2 * self.x - 1, \
 			self.orient, self.pID, wBoard, \
 			ghostChars \
 		)
-	def undrawGhost(self):
+	def undrawGhost(self, board):
 		if not doGhost:
 			return None
-		drawPiece(self.ghostDepth, 2 * self.x - 1, self.orient, self.pID, wBoard, ". ")
+		drawPiece(self.ghostDepth, 2 * self.x - 1, self.orient, self.pID, board, ". ")
 	def getNewOrient(self, rotDir):
 		if self.pID == 'C':
 			return ''
@@ -181,416 +102,416 @@ class Piece:
 					return 'H'
 				elif rotDir == 'CCW':
 					return 'HP'
-	def rotate(self, rotDir):
+	def rotate(self, rotDir, board):
 		self.undraw()
-		self.undrawGhost()
+		self.undrawGhost(board)
 		self.orient = self.getNewOrient(rotDir)
-		self.drawGhost()
+		self.drawGhost(board)
 		self.draw()
-	def move(self, direction):
+	def move(self, direction, board):
 		yShift = 1 if direction == 'D' else 0
 		xShift = 1 if direction == 'R' else -1 if direction == 'L' else 0
 		self.undraw()
-		self.undrawGhost()
+		self.undrawGhost(board)
 		self.y += yShift
 		self.x += xShift
-		self.drawGhost()
+		self.drawGhost(board)
 		self.draw()
-	def canRotate(self, direction):
+	def canRotate(self, direction, board):
 		if self.pID == 'S':
-			if self.orient == 'H' and isCellEmpty(self.y, self.x) and \
-				isCellEmpty(self.y + 1, self.x):
+			if self.orient == 'H' and isCellEmpty(self.y, self.x, board) and \
+				isCellEmpty(self.y + 1, self.x, board):
 				return True
-			elif self.orient == 'V' and isCellEmpty(self.y + 1, self.x + 2) and \
-				isCellEmpty(self.y + 2, self.x) and \
+			elif self.orient == 'V' and isCellEmpty(self.y + 1, self.x + 2, board) and \
+				isCellEmpty(self.y + 2, self.x, board) and \
 				isCellInBounds(self.y + 2, self.x + 2):
 				return True
 		elif self.pID == 'Z':
-			if self.orient == 'H' and isCellEmpty(self.y, self.x + 1) and \
-				isCellEmpty(self.y + 2, self.x):
+			if self.orient == 'H' and isCellEmpty(self.y, self.x + 1, board) and \
+				isCellEmpty(self.y + 2, self.x, board):
 				return True
-			elif self.orient == 'V' and isCellEmpty(self.y + 2, self.x + 1) and \
-				isCellEmpty(self.y + 2, self.x + 2) and \
+			elif self.orient == 'V' and isCellEmpty(self.y + 2, self.x + 1, board) and \
+				isCellEmpty(self.y + 2, self.x + 2, board) and \
 				isCellInBounds(self.y + 2, self.x + 2):
 				return True
 		elif self.pID == 'L':
 			if self.orient == 'H':
 				if direction == 'CW' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 1, self.x + 2):
+					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board):
 					return True
 				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x + 2):
+					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y, self.x + 2, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board):
 					return True
 			elif self.orient == 'V':
-				if direction == 'CW' and isCellEmpty(self.y, self.x) and \
-					isCellEmpty(self.y, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 1):
+				if direction == 'CW' and isCellEmpty(self.y, self.x, board) and \
+					isCellEmpty(self.y, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board):
 					return True
-				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 			elif self.orient == 'HP':
 				if direction == 'CW' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x + 2):
+					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y, self.x + 2, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board):
 					return True
 				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 1, self.x + 2):
+					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board):
 					return True
 			elif self.orient == 'VP':
-				if direction == 'CW' and isCellEmpty(self.y, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+				if direction == 'CW' and isCellEmpty(self.y, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
-				elif direction == 'CCW' and isCellEmpty(self.y, self.x) and \
-					isCellEmpty(self.y, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 1):
+				elif direction == 'CCW' and isCellEmpty(self.y, self.x, board) and \
+					isCellEmpty(self.y, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board):
 					return True
 		elif self.pID == 'R':
 			if self.orient == 'H':
 				if direction == 'CW' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y, self.x) and \
-					isCellEmpty(self.y + 1, self.x + 2):
+					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y, self.x, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board):
 					return True
 				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x + 2):
+					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x + 2, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board):
 					return True
 			elif self.orient == 'V':
-				if direction == 'CW' and isCellEmpty(self.y, self.x + 1) and \
-					isCellEmpty(self.y, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x + 1):
+				if direction == 'CW' and isCellEmpty(self.y, self.x + 1, board) and \
+					isCellEmpty(self.y, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board):
 					return True
-				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x):
+				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 			elif self.orient == 'HP':
 				if direction == 'CW' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 1, self.x) and isCellEmpty(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x + 2):
+					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x + 2, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board):
 					return True
 				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y, self.x) and isCellEmpty(self.y + 1, self.x) and \
-					isCellEmpty(self.y + 1, self.x + 2):
+					isCellEmpty(self.y, self.x, board) and isCellEmpty(self.y + 1, self.x, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board):
 					return True
 			elif self.orient == 'VP':
-				if direction == 'CW' and isCellEmpty(self.y, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 2, self.x + 1):
+				if direction == 'CW' and isCellEmpty(self.y, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board):
 					return True
-				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1) and \
-					isCellEmpty(self.y, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x + 1):
+				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1, board) and \
+					isCellEmpty(self.y, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board):
 					return True
 		elif self.pID == 'I':
 			if self.orient == 'H' and isCellInBounds(self.y + 3, self.x + 3) and \
 				isCellInBounds(self.y + 3, self.x) and \
-				isCellEmpty(self.y + 2, self.x) and \
-				isCellEmpty(self.y + 2, self.x + 2) and \
-				isCellEmpty(self.y + 2, self.x + 3):
+				isCellEmpty(self.y + 2, self.x, board) and \
+				isCellEmpty(self.y + 2, self.x + 2, board) and \
+				isCellEmpty(self.y + 2, self.x + 3, board):
 				return True
 			elif self.orient == 'V' and isCellInBounds(self.y + 3, self.x + 1) and \
-				isCellEmpty(self.y, self.x + 1) and \
-				isCellEmpty(self.y + 1, self.x + 1) and \
-				isCellEmpty(self.y + 3, self.x + 1):
+				isCellEmpty(self.y, self.x + 1, board) and \
+				isCellEmpty(self.y + 1, self.x + 1, board) and \
+				isCellEmpty(self.y + 3, self.x + 1, board):
 				return True
 		elif self.pID == 'T':
-			if self.orient == 'H' and isCellEmpty(self.y, self.x + 1):
+			if self.orient == 'H' and isCellEmpty(self.y, self.x + 1, board):
 				return True
-			elif self.orient == 'V' and isCellEmpty(self.y + 1, self.x + 2) and \
+			elif self.orient == 'V' and isCellEmpty(self.y + 1, self.x + 2, board) and \
 				isCellInBounds(self.y + 2, self.x + 2):
 				return True
-			elif self.orient == 'HP' and isCellEmpty(self.y + 2, self.x + 1):
+			elif self.orient == 'HP' and isCellEmpty(self.y + 2, self.x + 1, board):
 				return True
-			elif self.orient == 'VP' and isCellEmpty(self.y + 1, self.x) and \
+			elif self.orient == 'VP' and isCellEmpty(self.y + 1, self.x, board) and \
 				isCellInBounds(self.y + 2, self.x):
 				return True
 		return False
-	def canMove(self, direction):
+	def canMove(self, direction, board):
 		if self.pID == 'C':
 			if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
-				isCellEmpty(self.y, self.x - 1) and \
-				isCellEmpty(self.y + 1, self.x - 1):
+				isCellEmpty(self.y, self.x - 1, board) and \
+				isCellEmpty(self.y + 1, self.x - 1, board):
 				return True
 			elif direction == 'R' and isCellInBounds(self.y + 1, self.x + 2) and \
-				isCellEmpty(self.y, self.x + 2) and \
-				isCellEmpty(self.y + 1, self.x + 2):
+				isCellEmpty(self.y, self.x + 2, board) and \
+				isCellEmpty(self.y + 1, self.x + 2, board):
 				return True
 			elif direction == 'D' and isCellInBounds(self.y + 2, self.x) and \
-				isCellEmpty(self.y + 2, self.x) and \
-				isCellEmpty(self.y + 2, self.x + 1):
+				isCellEmpty(self.y + 2, self.x, board) and \
+				isCellEmpty(self.y + 2, self.x + 1, board):
 				return True
 		elif self.pID == 'S':
 			if self.orient == 'H':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x):
+					isCellEmpty(self.y + 2, self.x - 1, board) and \
+					isCellEmpty(self.y + 1, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y + 1, self.x + 3, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y + 3, self.x, board) and \
+					isCellEmpty(self.y + 3, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 			elif self.orient == 'V':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y, self.x - 1, board) and \
+					isCellEmpty(self.y + 1, self.x - 1, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y, self.x + 1):
+					isCellEmpty(self.y + 1, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board) and \
+					isCellEmpty(self.y, self.x + 1, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y + 3, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 		elif self.pID == 'Z':
 			if self.orient == 'H':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y + 1, self.x - 1, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 2):
+					isCellEmpty(self.y + 2, self.x + 3, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y + 3, self.x + 1, board) and \
+					isCellEmpty(self.y + 3, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 			elif self.orient == 'V':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y, self.x):
+					isCellEmpty(self.y + 1, self.x - 1, board) and \
+					isCellEmpty(self.y + 2, self.x - 1, board) and \
+					isCellEmpty(self.y, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x + 1):
+					isCellEmpty(self.y, self.x + 2, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 2, self.x + 1):
+					isCellEmpty(self.y + 3, self.x, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board):
 					return True
 		elif self.pID == 'L':
 			if self.orient == 'H':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y, self.x) and \
-					isCellEmpty(self.y + 1, self.x) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y, self.x, board) and \
+					isCellEmpty(self.y + 1, self.x, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 2) and \
-					isCellEmpty(self.y, self.x + 2):
+					isCellEmpty(self.y + 2, self.x + 3, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board) and \
+					isCellEmpty(self.y, self.x + 2, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 2):
+					isCellEmpty(self.y + 3, self.x + 1, board) and \
+					isCellEmpty(self.y + 3, self.x + 2, board):
 					return True
 			elif self.orient == 'V':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x - 1):
+					isCellEmpty(self.y + 1, self.x - 1, board) and \
+					isCellEmpty(self.y + 2, self.x - 1, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y + 2, self.x + 1):
+					isCellEmpty(self.y + 1, self.x + 3, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 2, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y + 3, self.x, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 			if self.orient == 'HP':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y, self.x - 1, board) and \
+					isCellEmpty(self.y + 1, self.x, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y, self.x + 2, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 1, self.x):
+					isCellEmpty(self.y + 3, self.x + 1, board) and \
+					isCellEmpty(self.y + 1, self.x, board):
 					return True
 			elif self.orient == 'VP':
 				if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y, self.x + 1):
+					isCellEmpty(self.y + 1, self.x - 1, board) and \
+					isCellEmpty(self.y, self.x + 1, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3):
+					isCellEmpty(self.y, self.x + 3, board) and \
+					isCellEmpty(self.y + 1, self.x + 3, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 2, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y + 2, self.x, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 		elif self.pID == 'R':
 			if self.orient == 'H':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x) and \
-					isCellEmpty(self.y, self.x):
+					isCellEmpty(self.y + 2, self.x - 1, board) and \
+					isCellEmpty(self.y + 1, self.x, board) and \
+					isCellEmpty(self.y, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y, self.x + 2, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x + 1):
+					isCellEmpty(self.y + 3, self.x, board) and \
+					isCellEmpty(self.y + 3, self.x + 1, board):
 					return True
 			elif self.orient == 'V':
 				if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1):
+					isCellEmpty(self.y, self.x - 1, board) and \
+					isCellEmpty(self.y + 1, self.x - 1, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y, self.x + 1):
+					isCellEmpty(self.y + 1, self.x + 3, board) and \
+					isCellEmpty(self.y, self.x + 1, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 2, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y + 2, self.x, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 			if self.orient == 'HP':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y, self.x) and \
-					isCellEmpty(self.y + 1, self.x) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y, self.x, board) and \
+					isCellEmpty(self.y + 1, self.x, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y, self.x + 3) and \
-					isCellEmpty(self.y, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y, self.x + 3, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 1, self.x + 2):
+					isCellEmpty(self.y + 3, self.x + 1, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board):
 					return True
 			elif self.orient == 'VP':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x + 1):
+					isCellEmpty(self.y + 1, self.x - 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y + 2, self.x + 3):
+					isCellEmpty(self.y + 1, self.x + 3, board) and \
+					isCellEmpty(self.y + 2, self.x + 3, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 2) and \
-					isCellEmpty(self.y + 3, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y + 3, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 		elif self.pID == 'I':
 			if self.orient == 'H':
 				if direction == 'L' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y, self.x) and \
-					isCellEmpty(self.y + 1, self.x) and \
-					isCellEmpty(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 3, self.x):
+					isCellEmpty(self.y, self.x, board) and \
+					isCellEmpty(self.y + 1, self.x, board) and \
+					isCellEmpty(self.y + 2, self.x, board) and \
+					isCellEmpty(self.y + 3, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 3, self.x + 2) and \
-					isCellEmpty(self.y, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 3, self.x + 2):
+					isCellEmpty(self.y, self.x + 2, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board) and \
+					isCellEmpty(self.y + 3, self.x + 2, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 4, self.x + 1) and \
-					isCellEmpty(self.y + 4, self.x + 1):
+					isCellEmpty(self.y + 4, self.x + 1, board):
 					return True
 			elif self.orient == 'V':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x - 1):
+					isCellEmpty(self.y + 2, self.x - 1, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 4) and \
-					isCellEmpty(self.y + 2, self.x + 4):
+					isCellEmpty(self.y + 2, self.x + 4, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 2) and \
-					isCellEmpty(self.y + 3, self.x + 3):
+					isCellEmpty(self.y + 3, self.x, board) and \
+					isCellEmpty(self.y + 3, self.x + 1, board) and \
+					isCellEmpty(self.y + 3, self.x + 2, board) and \
+					isCellEmpty(self.y + 3, self.x + 3, board):
 					return True
 		elif self.pID == 'T':
 			if self.orient == 'H':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y + 1, self.x - 1, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y + 1, self.x + 3, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y + 3, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 			elif self.orient == 'V':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 2, self.x) and \
-					isCellEmpty(self.y, self.x):
+					isCellEmpty(self.y + 1, self.x - 1, board) and \
+					isCellEmpty(self.y + 2, self.x, board) and \
+					isCellEmpty(self.y, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x + 2) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y, self.x + 2, board) and \
+					isCellEmpty(self.y + 1, self.x + 2, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x) and \
-					isCellEmpty(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y + 3, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 			elif self.orient == 'HP':
 				if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y + 1, self.x - 1) and \
-					isCellEmpty(self.y, self.x):
+					isCellEmpty(self.y + 1, self.x - 1, board) and \
+					isCellEmpty(self.y, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y, self.x + 2):
+					isCellEmpty(self.y + 1, self.x + 3, board) and \
+					isCellEmpty(self.y, self.x + 2, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 2, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y + 2, self.x, board) and \
+					isCellEmpty(self.y + 2, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 			elif self.orient == 'VP':
 				if direction == 'L' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y, self.x) and \
-					isCellEmpty(self.y + 1, self.x) and \
-					isCellEmpty(self.y + 2, self.x):
+					isCellEmpty(self.y, self.x, board) and \
+					isCellEmpty(self.y + 1, self.x, board) and \
+					isCellEmpty(self.y + 2, self.x, board):
 					return True
 				elif direction == 'R' and isCellInBounds(self.y + 2, self.x + 3) and \
-					isCellEmpty(self.y + 1, self.x + 3) and \
-					isCellEmpty(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y, self.x + 2):
+					isCellEmpty(self.y + 1, self.x + 3, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board) and \
+					isCellEmpty(self.y, self.x + 2, board):
 					return True
 				elif direction == 'D' and isCellInBounds(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 3, self.x + 1) and \
-					isCellEmpty(self.y + 2, self.x + 2):
+					isCellEmpty(self.y + 3, self.x + 1, board) and \
+					isCellEmpty(self.y + 2, self.x + 2, board):
 					return True
 		return False
 """
@@ -914,10 +835,10 @@ def ctMain():
 				continue
 			elif keypress == 'G':
 				if doGhost:
-					piece.undrawGhost()
+					piece.undrawGhost(wBoard)
 				doGhost = not doGhost
 				if doGhost:
-					piece.drawGhost()
+					piece.drawGhost(wBoard)
 				continue
 			# If neither the enter nor q key are pressed, it must be ESC,
 			# Which means unpause
@@ -933,7 +854,8 @@ def ctMain():
 				pieceInfo[nextPID]['y'], \
 				pieceInfo[nextPID]['x'], \
 				nextPID, \
-				pieceInfo[nextPID]["orient"] \
+				pieceInfo[nextPID]["orient"], \
+				wBoard \
 			)
 			pieceJustSpawned = True
 			pieceToDrop = False
@@ -960,8 +882,8 @@ def ctMain():
 		# SUBSECTION: PIECE AUTODROP, GAME OVER, AND LINE CLEAR
 		if time.time() - pieceDropTime > dropTimes[difficulty] or pieceDropped:
 			# Under normal circumstances
-			if piece.canMove('D'):
-				piece.move('D')
+			if piece.canMove('D', wBoard):
+				piece.move('D', wBoard)
 				pieceDropTime = time.time()
 				pieceJustSpawned = False
 			# When the piece it at the bottom
@@ -994,7 +916,7 @@ def ctMain():
 				# Erase old piece object
 				del piece
 				# Check if lines can be cleared
-				lines = getFullLines()
+				lines = getFullLines(wBoard)
 				if len(lines) > 0:
 					# Animate the lines to clear
 					for f in range(20):
@@ -1014,14 +936,14 @@ def ctMain():
 					# Clear the lines
 					for y in lines:
 						for x in range(1, 11):
-							setCellValue(y, x, "EMPTY")
+							setCellValue(y, x, "EMPTY", wBoard)
 					# From the topmost line, drop down the remaining blocks
 					for y in reversed(lines):
 						j = y
-						while not isLineEmpty(j - 1):
+						while not isLineEmpty(j - 1, wBoard):
 							for x in range(1, 11):
-								setCellValue(j, x, cellValues[getCellValue(j - 1, x)])
-								setCellValue(j - 1, x, "EMPTY")
+								setCellValue(j, x, cellValues[getCellValue(j - 1, x, wBoard)], wBoard)
+								setCellValue(j - 1, x, "EMPTY", wBoard)
 							j -= 1
 						wBoard.refresh()
 						crs.delay_output(50)
@@ -1058,8 +980,8 @@ def ctMain():
 		if keypress in arrowCodes and pieceInPlay:
 			if keypress != 'U':
 				pieceToDrop = False
-				if piece.canMove(keypress):
-					piece.move(keypress)
+				if piece.canMove(keypress, wBoard):
+					piece.move(keypress, wBoard)
 					if keypress == 'D':
 						pieceDropTime = time.time()
 						softDrops += 1
@@ -1070,15 +992,15 @@ def ctMain():
 					continue
 			#	if piece.canMove('D') and pieceJustSpawned:
 			#		pieceJustSpawned = False
-				while piece.canMove('D'):
-					piece.move('D')
+				while piece.canMove('D', wBoard):
+					piece.move('D', wBoard)
 					softDrops += 1
 				pieceToDrop = False
 				pieceDropped = True
 		elif keypress in rotateCodes and pieceInPlay:
 			rotDir = "CW" if keypress == "SPACE" else "CCW"
-			if piece.canRotate(rotDir):
-				piece.rotate(rotDir)
+			if piece.canRotate(rotDir, wBoard):
+				piece.rotate(rotDir, wBoard)
 		elif keypress == "ESC":
 			paused = True
 			clearBoardLabel(wBoard)
