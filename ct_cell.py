@@ -41,9 +41,6 @@ def setCellValue(y, x, val, board):
 		i += 1
 # String that contains the ghost piece characters
 ghostChars = "[]"
-# Boolean that enables the ghost piece
-# (Werid stuff happens if it changes during an unpaused game)
-doGhost = True
 """
 Returns True if the indicated cell is empty
 """
