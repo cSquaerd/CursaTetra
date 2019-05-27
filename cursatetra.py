@@ -271,6 +271,7 @@ def ctMain():
 				elif chr(r).upper() == 'G':
 					randomizer = "TGM"
 					recentPieces = []
+					nextPID = rnd.choice(('L', 'R', 'T', 'I'))
 				wBoard.addstr(5, 1, "PRESS A NUMBER 0-9")
 				wBoard.addstr(6, 1, "TO SET DIFFICULTY:")
 				wBoard.refresh()
@@ -381,7 +382,7 @@ def ctMain():
 				if len(recentPieces) > 5:
 					recentPieces.pop()
 				bagIndex = r
-				writeBoardLabel('C', ','.join(recentPieces), wBoard)
+			#	writeBoardLabel('C', ','.join(recentPieces), wBoard)
 			nextPID = pieceBag[bagIndex % 7]
 			# Clear the next piece window and draw the next piece
 			changeTexture(2, 1, 5, 12, ' ', crs.ACS_CKBOARD, wNextP)
