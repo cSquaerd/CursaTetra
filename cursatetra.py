@@ -91,7 +91,7 @@ def ctMain():
 	dropDelay = True
 	pieceJustSpawned = False
 	difficulty = -1
-	trueRandom = False
+	randomizer = None
 	pieceBag = list(pieceInfo.keys())
 	rnd.shuffle(pieceBag)
 	bagIndex = 0
@@ -255,18 +255,24 @@ def ctMain():
 			while not sure:
 				undrawGrid(wBoard)
 				wBoard.addstr(1, 1, "PRESS \'B\' FOR 7-BAG")
-				wBoard.addstr(2, 1, "RANDOMIZER OR \'R\'")
-				wBoard.addstr(3, 1, "FOR TRUE RANDOMIZER")
+				wBoard.addstr(2, 1, "\'R\' FOR SHUFFLE,")
+				wBoard.addstr(3, 1, "OR \'G\' FOR TGM")
+				wBoard.addstr(4, 1, "RANDOMIZER:  ")
 				wBoard.refresh()
 				r = 0
-				while r not in (ord('B'), ord('b'), ord('R'), ord('r')):
+				while r not in ( \
+					ord('B'), ord('b'), ord('R'), ord('r'), ord('G'), ord('g') \
+				):
 					r = wBoard.getch()
 				if chr(r).upper() == 'R':
-					trueRandom = True
+					randomizer = "SHUFFLE"
 				elif chr(r).upper() == 'B':
-					trueRandom = False
-				wBoard.addstr(4, 1, "PRESS A NUMBER 0-9")
-				wBoard.addstr(5, 1, "TO SET DIFFICULTY:")
+					randomizer = "BAG"
+				elif chr(r).upper() == 'G':
+					randomizer = "TGM"
+					recentPieces = []
+				wBoard.addstr(5, 1, "PRESS A NUMBER 0-9")
+				wBoard.addstr(6, 1, "TO SET DIFFICULTY:")
 				wBoard.refresh()
 				# The ASCII number-key codes in hexidecimal
 				# Have the number as the first digit
@@ -275,9 +281,9 @@ def ctMain():
 					k = wBoard.getch()
 				difficulty = k - 0x30
 				# Confirm difficulty
-				wBoard.addstr(6, 1, "YOU CHOSE DIFF. " + str(difficulty))
-				wBoard.addstr(7, 1, "AND RANDOMIZER " + chr(r).upper())
-				wBoard.addstr(8, 1, "ARE YOU SURE? [Y/N]")
+				wBoard.addstr(7, 1, "YOU CHOSE DIFF. " + str(difficulty))
+				wBoard.addstr(8, 1, "AND RANDOMIZER " + chr(r).upper())
+				wBoard.addstr(9, 1, "ARE YOU SURE? [Y/N]")
 				wBoard.refresh()
 				k = 0
 				while k not in yesnoCodes:
@@ -285,7 +291,7 @@ def ctMain():
 				# Proceed to game start
 				if k in yesCodes:
 					sure = True
-					wBoard.addstr(9, 1, "OKAY, GET READY!")
+					wBoard.addstr(10, 1, "OKAY, GET READY!")
 					wBoard.refresh()
 					crs.delay_output(500)
 				# Retry difficulty selection
@@ -360,12 +366,22 @@ def ctMain():
 			pieceToDrop = False
 			# Go to the next piece and check if the bag needs shuffling
 			# if using the bag randomizer
-			if trueRandom:
+			if randomizer == "SHUFFLE":
 				bagIndex = rnd.randint(0, 6)
-			else:
+			elif randomizer == "BAG":
 				bagIndex += 1
 				if bagIndex % 7 < (bagIndex - 1) % 7:
 					rnd.shuffle(pieceBag)
+			elif randomizer == "TGM":
+				recentPieces.insert(0, nextPID)
+				for n in range(5):
+					r = rnd.randint(0, 6)
+					if pieceBag[r] not in recentPieces:
+						break
+				if len(recentPieces) > 5:
+					recentPieces.pop()
+				bagIndex = r
+				writeBoardLabel('C', ','.join(recentPieces), wBoard)
 			nextPID = pieceBag[bagIndex % 7]
 			# Clear the next piece window and draw the next piece
 			changeTexture(2, 1, 5, 12, ' ', crs.ACS_CKBOARD, wNextP)
