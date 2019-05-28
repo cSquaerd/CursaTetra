@@ -196,14 +196,14 @@ def ctMain():
 					if k in yesCodes:
 						wBoard.addstr(8, 1, "SAVING SCORE...")
 						wBoard.refresh()
-						crs.delay_output(1000)
+						crs.napms(1000)
 						nameEntered = True
 						wBoard.nodelay(True)
 						continue
 					else:
 						wBoard.addstr(8, 1, "OKAY, ENTER AGAIN.")
 						wBoard.refresh()
-						crs.delay_output(500)
+						crs.napms(500)
 						continue
 				# Setup the new high score dict. object
 				tempEntry = {}
@@ -242,14 +242,14 @@ def ctMain():
 			if startCodes[k] == 'Q':
 				clearBoardLabel(wBoard)
 				writeBoardLabel('C', "QUITTING...", wBoard)
-				crs.delay_output(750)
+				crs.napms(750)
 				active = False
 				continue
 			# Start the game
 			playing = True
 			clearBoardLabel(wBoard)
 			writeBoardLabel('L', "DIFFICULTY SELECTION", wBoard)
-			crs.delay_output(500)
+			crs.napms(500)
 			sure = False
 			# Select randomizer and difficulty
 			while not sure:
@@ -294,17 +294,17 @@ def ctMain():
 					sure = True
 					wBoard.addstr(10, 1, "OKAY, GET READY!")
 					wBoard.refresh()
-					crs.delay_output(500)
+					crs.napms(500)
 				# Retry difficulty selection
 				else:
 					undrawGrid(wBoard)
 					wBoard.addstr(1, 1, "OKAY, CHOOSE AGAIN.")
 					wBoard.refresh()
-				crs.delay_output(1000)
+				crs.napms(1000)
 				drawGrid(wBoard)
 			clearBoardLabel(wBoard)
 			writeBoardLabel('C', "BEGINNING GAME...", wBoard)
-			crs.delay_output(750)
+			crs.napms(750)
 			# Clear old scores
 			for s in scoreData.keys():
 				scoreData[s] = 0
@@ -331,7 +331,7 @@ def ctMain():
 				if wBoard.getch() == ord('\n'):
 					clearBoardLabel(wBoard)
 					writeBoardLabel('C', "QUITTING...", wBoard)
-					crs.delay_output(750)
+					crs.napms(750)
 					active = False
 					continue
 				clearBoardLabel(wBoard)
@@ -412,10 +412,10 @@ def ctMain():
 				if pieceJustSpawned:
 					for n in range(4):
 						crs.flash()
-						crs.delay_output(125)
+						crs.napms(125)
 					clearBoardLabel(wBoard)
 					writeBoardLabel('C', "GAME OVER!", wBoard)
-					crs.delay_output(2000)
+					crs.napms(2000)
 					playing = False
 					checkScore = True
 					continue
@@ -448,7 +448,7 @@ def ctMain():
 									lineClearChars[(f - 1) % 4], wBoard \
 								)
 						wBoard.refresh()
-						crs.delay_output(50)
+						crs.napms(50)
 					# Clear the lines
 					for y in lines:
 						for x in range(1, 11):
@@ -462,7 +462,7 @@ def ctMain():
 								setCellValue(j - 1, x, "EMPTY", wBoard)
 							j -= 1
 						wBoard.refresh()
-						crs.delay_output(50)
+						crs.napms(50)
 					# Update scoreData and score labels
 					scoreData["LINES"] += len(lines)
 					scoreData["SCORE"] += lineClearScores[len(lines)] * (difficulty + 1)
