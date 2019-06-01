@@ -9,6 +9,7 @@ from ct_draw import *
 from ct_label import *
 from ct_cell import *
 from Piece import *
+resizedTooSmall = False
 # SECTION: VERSION CHECK
 if sys.version_info[0] < 3:
 	print("This game requires Python 3. Please install it and/or run this file with it.")
@@ -90,6 +91,7 @@ def ctMain():
 	active = True
 	playing = False
 	paused = False
+	global resizedTooSmall
 	pieceInPlay = False
 	pieceToDrop = False
 	pieceDropped = False
@@ -159,6 +161,12 @@ def ctMain():
 		wBoard.refresh()
 	# SECTION: ACTIVE LOOP
 	while active:
+		# SUBSECTION: RESIZE CHECK
+		crs.update_lines_cols()
+		if crs.LINES < 24 or crs.COLS < 72:
+			active = False
+			resizedTooSmall = True
+			continue
 		# SUBSECTION: HIGH SCORE WRITE
 		if checkScore:
 			# Find where the user places in the list
@@ -680,3 +688,9 @@ crs.nocbreak()
 crs.echo()
 #Close screen
 crs.endwin()
+#Display error message if screen shrunk too far
+if resizedTooSmall:
+	print("The terminal was resized beyond the minimum requirements of 72x24.")
+	print("This program is designed to shut down if the terminal is too small,")
+	print("as it is a pain to implement resizing for such a specific screen area.")
+	print("Please prevent small resizes from happening in the future.")
