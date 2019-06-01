@@ -45,6 +45,8 @@ def ctMain():
 		ord(' ') : "SPACE", \
 		ord('\0') : "NULL", \
 		27 : "ESC", \
+		ord('P') : "ESC", \
+		ord('p') : "ESC", \
 		ord('Q') : 'Q', \
 		ord('q') : 'Q' \
 	}
@@ -54,8 +56,11 @@ def ctMain():
 		ord('n') : 'n', ord('N') : 'N'}
 	yesCodes = {ord('\n') : 'ENTER', ord('y') : 'y', ord('Y') : 'Y'}
 	noCodes = {ord('n') : 'n', ord('N') : 'N'}
-	menuCodes = {27 : "ESC", ord('q') : 'Q', ord('Q') : 'Q', \
-		ord('\n') : "ENTER", ord('G') : 'G', ord('g') : 'G'}
+	menuCodes = { \
+		27 : "ESC", ord('q') : 'Q', ord('Q') : 'Q', \
+		ord('P') : "ESC", ord('p') : "ESC", ord('\n') : "ENTER", \
+		ord('G') : 'G', ord('g') : 'G' \
+	}
 	startCodes = {ord('q') : 'Q', ord('Q') : 'Q', ord(' ') : "SPACE"}
 	dropTimes = (0.75, 0.6, 0.5, 0.425, 0.35, 0.3, 0.25, 0.200, 0.15, 0.1)
 	lineClearChars = (crs.ACS_S1, crs.ACS_S3, crs.ACS_S7, crs.ACS_S9)
@@ -586,7 +591,7 @@ wCntrl.addstr(4, 1, "UP ARROWx2: DROP ALL")
 wCntrl.addstr(5, 1, "SPACE BAR : ROT. CW")
 wCntrl.addstr(6, 1, "          : OR START")
 wCntrl.addstr(7, 1, "CTRL+SPACE: ROT. CCW")
-wCntrl.addstr(8, 1, "ESC       : PAUSE OR")
+wCntrl.addstr(8, 1, "ESC or P  : PAUSE OR")
 wCntrl.addstr(9, 1, "          : RESUME")
 wCntrl.addstr(10, 6, "IF PAUSED:")
 wCntrl.addstr(11, 1, "Q     : QUIT GAME")
