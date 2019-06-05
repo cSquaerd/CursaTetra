@@ -104,6 +104,7 @@ def ctMain():
 	bagIndex = 0
 	nextPID = pieceBag[bagIndex % 7]
 	softDrops = 0
+	tSpun = False
 	checkScore = False
 	scoreFileName = ".ctHiScrs.json"
 	scoreFileWrite = False
@@ -405,6 +406,11 @@ def ctMain():
 			)
 			wNextP.refresh()
 			pieceInPlay = True
+			# Reset the T-Spin boolean if necessary
+			if tSpun:
+				tSpun = False
+				clearBoardLabel(wBoard)
+				writeBoardLabel('C', "LEVEL " + str(difficulty), wBoard)
 			# Set the autodrop timer
 			pieceDropTime = time.time()
 			continue
@@ -478,7 +484,15 @@ def ctMain():
 						crs.napms(50)
 					# Update scoreData and score labels
 					scoreData["LINES"] += len(lines)
-					scoreData["SCORE"] += lineClearScores[len(lines)] * (difficulty + 1)
+					if tSpun:
+						scoreData["SCORE"] += 2 * lineClearScores[len(lines)] * (difficulty + 1)
+						for n in range(2):
+							crs.flash()
+							crs.napms(125)
+						writeBoardLabel('C', "T-SPIN DETECTED!", wBoard)
+						crs.napms(250)
+					else:
+						scoreData["SCORE"] += lineClearScores[len(lines)] * (difficulty + 1)
 					writeScore(scoreData["LINES"], "LINES", wScore, wStats)
 					writeScore(scoreData["SCORE"], "SCORE", wScore, wStats)
 					wScore.refresh()
@@ -530,6 +544,10 @@ def ctMain():
 			rotDir = "CW" if keypress == "SPACE" else "CCW"
 			if piece.canRotate(rotDir, wBoard):
 				piece.rotate(rotDir, wBoard)
+				if piece.pID == 'T' and ( not piece.canMove('D', wBoard) ) \
+					and ( not isCellEmpty(piece.y, piece.x, wBoard) \
+					or not isCellEmpty(piece.y, piece.x + 2, wBoard) ):
+					tSpun = True
 		elif keypress == "ESC":
 			paused = True
 			clearBoardLabel(wBoard)
