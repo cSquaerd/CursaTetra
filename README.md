@@ -6,18 +6,20 @@ This game is dedicated to Alexey Pajitnov, original author of Tetris. This versi
 * 80x24 character resolution
 * Colored pieces
 * Nintendo-style scoring
-* Two randomizer algorithms:
+* Three randomizer algorithms:
 	* A 7-Bag piece randomizer
-	* A"true" randomizer
-* A "ghost" piece to help guide your aim
+	* A random.randint() shuffle (a.k.a. "true") randomizer
+	* A T.G.M.-inspired randomizer
+* A "ghost piece" to help guide your aim
 * A high score file (JSON format)
+* T-Spin detection and score reward
 * The traditional 20-block high playing board
 
 The goal is simple: rotate and move pieces as they fall, line up ten blocks in a row to clear a row, and keep going until the board tops out.
 
 (Banner picture depicts the game running in Cool Retro Term, found [here](https://github.com/Swordfish90/cool-retro-term))
 
-## Featurs coming soon
+## Featurs coming eventually
 * Compatability with `windows-curses`
 
 ## Piece development documentation
