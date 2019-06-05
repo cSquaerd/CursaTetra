@@ -97,6 +97,7 @@ def ctMain():
 	pieceDropped = False
 	dropDelay = True
 	pieceJustSpawned = False
+	atBottom = False
 	difficulty = -1
 	randomizer = None
 	pieceBag = list(pieceInfo.keys())
@@ -427,6 +428,7 @@ def ctMain():
 					dropDelay = False
 				pieceInPlay = False
 				pieceDropped = False
+				atBottom = False
 				# Game over check
 				if pieceJustSpawned:
 					for n in range(4):
@@ -517,9 +519,6 @@ def ctMain():
 			continue
 		keypress = keyCodes[k]
 		# SUBSECTION: KEY INPUT PROCESSING
-		if (keypress in arrowCodes or keypress in rotateCodes) and \
-			pieceInPlay:
-			pieceJustSpawned = False
 		if keypress in arrowCodes and pieceInPlay:
 			if keypress != 'U':
 				pieceToDrop = False
@@ -528,16 +527,19 @@ def ctMain():
 					if keypress == 'D':
 						pieceDropTime = time.time()
 						softDrops += 1
+					if not piece.canMove('D', wBoard) and not atBottom:
+						pieceDropTime = time.time() + 0.25
+						atBottom = True
+					pieceJustSpawned = False
 			# pieceToDrop Boolean is used to check for double press of up arrow key
 			else:
 				if not pieceToDrop:
 					pieceToDrop = True
 					continue
-			#	if piece.canMove('D') and pieceJustSpawned:
-			#		pieceJustSpawned = False
 				while piece.canMove('D', wBoard):
 					piece.move('D', wBoard)
 					softDrops += 1
+					pieceJustSpawned = False
 				pieceToDrop = False
 				pieceDropped = True
 		elif keypress in rotateCodes and pieceInPlay:
@@ -548,6 +550,7 @@ def ctMain():
 					and ( not isCellEmpty(piece.y, piece.x, wBoard) \
 					or not isCellEmpty(piece.y, piece.x + 2, wBoard) ):
 					tSpun = True
+				pieceJustSpawned = False
 		elif keypress == "ESC":
 			paused = True
 			clearBoardLabel(wBoard)
