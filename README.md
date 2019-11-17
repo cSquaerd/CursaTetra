@@ -19,6 +19,9 @@ The goal is simple: rotate and move pieces as they fall, line up ten blocks in a
 
 (Banner picture depicts the game running in Cool Retro Term, found [here](https://github.com/Swordfish90/cool-retro-term))
 
+## Fixes coming soon
+* Draw routine bugs introduced (most likely) by Python 3.8
+
 ## Featurs coming eventually
 * Compatability with `windows-curses`
 
