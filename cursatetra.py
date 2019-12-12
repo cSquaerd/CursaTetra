@@ -80,14 +80,15 @@ def ctMain():
 	# SECTION: CONTROL VARIABLES AND BOOLEANS
 	cellValues = { \
 		ord(' '): "EMPTY", \
-		crs.ACS_CKBOARD + 0x300: "ACTIVE-C", \
-		crs.ACS_CKBOARD + 0x200: "ACTIVE-S", \
-		crs.ACS_CKBOARD + 0x100: "ACTIVE-Z", \
-		crs.ACS_CKBOARD + 0x700: "ACTIVE-L", \
-		crs.ACS_CKBOARD + 0x400: "ACTIVE-R", \
-		crs.ACS_CKBOARD + 0x600: "ACTIVE-I", \
-		crs.ACS_CKBOARD + 0x500: "ACTIVE-T" \
-	}
+		crs.ACS_CKBOARD: "ACTIVE-C", \
+	}	#+ 0x300: "ACTIVE-C", \
+		#crs.ACS_CKBOARD: "ACTIVE-S", \ #+ 0x200: "ACTIVE-S", \
+		#crs.ACS_CKBOARD: "ACTIVE-Z", \ #+ 0x100: "ACTIVE-Z", \
+		#crs.ACS_CKBOARD: "ACTIVE-L", \ #+ 0x700: "ACTIVE-L", \
+		#crs.ACS_CKBOARD: "ACTIVE-R", \ #+ 0x400: "ACTIVE-R", \
+		#crs.ACS_CKBOARD: "ACTIVE-I", \ #+ 0x600: "ACTIVE-I", \
+		#crs.ACS_CKBOARD: "ACTIVE-T", \ #+ 0x500: "ACTIVE-T" \
+#	}
 	active = True
 	playing = False
 	paused = False

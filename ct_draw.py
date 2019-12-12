@@ -63,144 +63,144 @@ def drawPiece(y, x, orient, piece, window, characters):
 		for i in range(x, x + 4):
 			for j in range(y, y + 2):
 				if isCharInBounds(j, i):
-					window.addch(j, i, character(i) , crs.color_pair(COLOR_C))
+					window.addch(j, i, character(i))# , crs.color_pair(COLOR_C))
 	elif piece == 'S':
 		if orient == 'H':
 			for i in range(x + 2, x + 6):
 				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i) , crs.color_pair(COLOR_S))
+					window.addch(y + 1, i, character(i))# , crs.color_pair(COLOR_S))
 			for i in range(x, x + 4):
 				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i) , crs.color_pair(COLOR_S))
+					window.addch(y + 2, i, character(i))# , crs.color_pair(COLOR_S))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y, y + 2):
 					if isCharInBounds(j, i):
-						window.addch(j, i, character(i) , crs.color_pair(COLOR_S))
+						window.addch(j, i, character(i))# , crs.color_pair(COLOR_S))
 			for i in range(x + 2, x + 4):
 				for j in range(y + 1, y + 3):
 					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_S))
+						window.addch(j, i, character(i))#, crs.color_pair(COLOR_S))
 	elif piece == 'Z':
 		if orient == 'H':
 			for i in range(x, x + 4):
 				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_Z))
+					window.addch(y + 1, i, character(i))#, crs.color_pair(COLOR_Z))
 			for i in range(x + 2, x + 6):
 				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_Z))
+					window.addch(y + 2, i, character(i))#, crs.color_pair(COLOR_Z))
 		else:
 			for i in range(x, x + 2):
 				for j in range(y + 1, y + 3):
 					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
+						window.addch(j, i, character(i))#, crs.color_pair(COLOR_Z))
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 2):
 					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_Z))
+						window.addch(j, i, character(i))#, crs.color_pair(COLOR_Z))
 	elif piece == 'L':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
 					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_L))
+						window.addch(j, i, character(i))#, crs.color_pair(COLOR_L))
 			for i in range(x + 4, x + 6):
 				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
+					window.addch(y + 2, i, character(i))#, crs.color_pair(COLOR_L))
 		elif orient == 'V':
 			for i in range(x, x + 6):
 				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
+					window.addch(y + 1, i, character(i))#, crs.color_pair(COLOR_L))
 			for i in range(x, x + 2):
 				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_L))
+					window.addch(y + 2, i, character(i))#, crs.color_pair(COLOR_L))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
 					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_L))
+						window.addch(j, i, character(i))#, crs.color_pair(COLOR_L))
 			for i in range(x, x + 2):
 				if isCharInBounds(y, i):
-					window.addch(y, i, character(i), crs.color_pair(COLOR_L))
+					window.addch(y, i, character(i))#, crs.color_pair(COLOR_L))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
 				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_L))
+					window.addch(y + 1, i, character(i))#, crs.color_pair(COLOR_L))
 			for i in range(x + 4, x + 6):
 				if isCharInBounds(y, i):
-					window.addch(y, i, character(i), crs.color_pair(COLOR_L))
+					window.addch(y, i, character(i))#, crs.color_pair(COLOR_L))
 	elif piece == 'R':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
 					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_R))
+						window.addch(j, i, character(i))#, crs.color_pair(COLOR_R))
 			for i in range(x, x + 2):
 				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
+					window.addch(y + 2, i, character(i))#, crs.color_pair(COLOR_R))
 		elif orient == 'V':
 			for i in range(x, x + 6):
 				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
+					window.addch(y + 1, i, character(i))#, crs.color_pair(COLOR_R))
 			for i in range(x, x + 2):
 				if isCharInBounds(y, i):
-					window.addch(y, i, character(i), crs.color_pair(COLOR_R))
+					window.addch(y, i, character(i))#, crs.color_pair(COLOR_R))
 		elif orient == 'HP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
 					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_R))
+						window.addch(j, i, character(i))#, crs.color_pair(COLOR_R))
 			for i in range(x + 4, x + 6):
 				if isCharInBounds(y, i):
-					window.addch(y, i, character(i), crs.color_pair(COLOR_R))
+					window.addch(y, i, character(i))#, crs.color_pair(COLOR_R))
 		elif orient == 'VP':
 			for i in range(x, x + 6):
 				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_R))
+					window.addch(y + 1, i, character(i))#, crs.color_pair(COLOR_R))
 			for i in range(x + 4, x + 6):
 				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_R))
+					window.addch(y + 2, i, character(i))#, crs.color_pair(COLOR_R))
 	elif piece == 'I':
 		if orient == 'H':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 4):
 					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_I))
+						window.addch(j, i, character(i))#, crs.color_pair(COLOR_I))
 		else:
 			for i in range(x, x + 8):
 				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_I))
+					window.addch(y + 2, i, character(i))#, crs.color_pair(COLOR_I))
 	elif piece == 'T':
 		if orient == 'H':
 			for i in range(x, x + 6):
 				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+					window.addch(y + 1, i, character(i))#, crs.color_pair(COLOR_T))
 			for i in range(x + 2, x + 4):
 				if isCharInBounds(y + 2, i):
-					window.addch(y + 2, i, character(i), crs.color_pair(COLOR_T))
+					window.addch(y + 2, i, character(i))#, crs.color_pair(COLOR_T))
 		elif orient == 'V':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
 					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_T))
+						window.addch(j, i, character(i))#, crs.color_pair(COLOR_T))
 			for i in range(x, x + 2):
 				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+					window.addch(y + 1, i, character(i))#, crs.color_pair(COLOR_T))
 		elif orient == 'HP':
 			for i in range(x, x + 6):
 				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+					window.addch(y + 1, i, character(i))#, crs.color_pair(COLOR_T))
 			for i in range(x + 2, x + 4):
 				if isCharInBounds(y, i):
-					window.addch(y, i, character(i), crs.color_pair(COLOR_T))
+					window.addch(y, i, character(i))#, crs.color_pair(COLOR_T))
 		elif orient == 'VP':
 			for i in range(x + 2, x + 4):
 				for j in range(y, y + 3):
 					if isCharInBounds(j, i):
-						window.addch(j, i, character(i), crs.color_pair(COLOR_T))
+						window.addch(j, i, character(i))#, crs.color_pair(COLOR_T))
 			for i in range(x + 4, x + 6):
 				if isCharInBounds(y + 1, i):
-					window.addch(y + 1, i, character(i), crs.color_pair(COLOR_T))
+					window.addch(y + 1, i, character(i))#, crs.color_pair(COLOR_T))
 """
 Redraws characters in a window.
 
