@@ -303,10 +303,20 @@ def ctMain():
 				while k < 0x30 or k > 0x39:
 					k = wBoard.getch()
 				difficulty = k - 0x30
-				# Confirm difficulty
+				# Show difficulty
 				wBoard.addstr(7, 1, "YOU CHOSE DIFF. " + str(difficulty))
 				wBoard.addstr(8, 1, "AND RANDOMIZER " + chr(r).upper())
-				wBoard.addstr(9, 1, "ARE YOU SURE? [Y/N]")
+				# Initialize the ghost piece (or don't)
+				wBoard.addstr(9, 1, "DO YOU WANT TO USE")
+				wBoard.addstr(10, 1, "THE GHOST PIECE?")
+				wBoard.addstr(11, 1, "[Y/N]")
+				wBoard.refresh()
+				k = 0
+				while k not in yesnoCodes:
+					k = wBoard.getch()
+				doGhost[0] = k in yesCodes
+				# Confirm settings
+				wBoard.addstr(12, 1, "ARE YOU ALL SET? Y/N")
 				wBoard.refresh()
 				k = 0
 				while k not in yesnoCodes:
@@ -314,7 +324,7 @@ def ctMain():
 				# Proceed to game start
 				if k in yesCodes:
 					sure = True
-					wBoard.addstr(10, 1, "OKAY, GET READY!")
+					wBoard.addstr(13, 1, "OKAY, GET READY!")
 					wBoard.refresh()
 					crs.napms(500)
 				# Retry difficulty selection
@@ -585,7 +595,8 @@ if crs.can_change_color():
 	crs.init_color(4, 0, 0, 1000)
 	crs.init_color(5, 1000, 500, 1000)
 	crs.init_color(6, 500, 500, 1000)
-	crs.init_color(7, 1000, 750, 0)
+	crs.init_color(7, 1000, 750, 325)
+	
 crs.init_pair(1, -1, 1)
 crs.init_pair(2, -1, 2)
 crs.init_pair(3, -1, 3)
