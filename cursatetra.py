@@ -81,12 +81,19 @@ def ctMain():
 	cellValues = { \
 		ord(' '): "EMPTY", \
 		crs.ACS_CKBOARD + 0x300: "ACTIVE-C", \
+		crs.ACS_CKBOARD + 0x3000000: "ACTIVE-C", \
 		crs.ACS_CKBOARD + 0x200: "ACTIVE-S", \
+		crs.ACS_CKBOARD + 0x2000000: "ACTIVE-S", \
 		crs.ACS_CKBOARD + 0x100: "ACTIVE-Z", \
+		crs.ACS_CKBOARD + 0x1000000: "ACTIVE-Z", \
 		crs.ACS_CKBOARD + 0x700: "ACTIVE-L", \
+		crs.ACS_CKBOARD + 0x7000000: "ACTIVE-L", \
 		crs.ACS_CKBOARD + 0x400: "ACTIVE-R", \
+		crs.ACS_CKBOARD + 0x4000000: "ACTIVE-R", \
 		crs.ACS_CKBOARD + 0x600: "ACTIVE-I", \
-		crs.ACS_CKBOARD + 0x500: "ACTIVE-T" \
+		crs.ACS_CKBOARD + 0x6000000: "ACTIVE-I", \
+		crs.ACS_CKBOARD + 0x500: "ACTIVE-T", \
+		crs.ACS_CKBOARD + 0x5000000: "ACTIVE-T" \
 	}
 	active = True
 	playing = False

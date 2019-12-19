@@ -19,8 +19,8 @@ The goal is simple: rotate and move pieces as they fall, line up ten blocks in a
 
 (Banner picture depicts the game running in Cool Retro Term, found [here](https://github.com/Swordfish90/cool-retro-term))
 
-## Featurs coming eventually
-* Compatability with `windows-curses`
+## Experimental Features
+* Compatibility with `windows-curses` (Just needed extra entries in the cellValues dictionary because the color attributes are encoded differently in `windows-curses`)
 
 ## Bugs (Present)
 * Disabling the ghost piece feature when the piece fully overlaps the ghost piece's position will delete (?) the piece
