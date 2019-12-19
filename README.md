@@ -19,11 +19,14 @@ The goal is simple: rotate and move pieces as they fall, line up ten blocks in a
 
 (Banner picture depicts the game running in Cool Retro Term, found [here](https://github.com/Swordfish90/cool-retro-term))
 
-## Fixes coming soon
-* Draw routine bugs introduced (most likely) by Python 3.8
-
 ## Featurs coming eventually
 * Compatability with `windows-curses`
+
+## Bugs (Present)
+* Disabling the ghost piece feature when the piece fully overlaps the ghost piece's position will delete (?) the piece
+
+## Bugs (Fixed)
+* *[Introduced after upgrading to Python 3.8]* Invoking the `undraw()` method on a piece, specifically during an invocation of `move()` on said piece, would cause the piece's color data to remain behind, causing the blank space to not register as such. This was game breaking. Was fixed by ensuring that a Curses `color_pair` is passed to the calls of `addch()` in the `drawPiece()` method. In particular, `color_pair` 0 is passed for when cells are to be made blank via invoking `undraw()`
 
 ## Piece development documentation
 ### Piece orientations

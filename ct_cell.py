@@ -37,7 +37,7 @@ def setCellValue(y, x, val, board):
 		if v != "ACTIVE":
 			board.addch(y, i, c)
 		else:
-			board.addch(y, i, c)#, crs.color_pair(colors[val]))
+			board.addch(y, i, c, crs.color_pair(colors[val]))
 		i += 1
 # String that contains the ghost piece characters
 ghostChars = "[]"
