@@ -19,6 +19,10 @@ The goal is simple: rotate and move pieces as they fall, line up ten blocks in a
 
 (Banner picture depicts the game running in Cool Retro Term, found [here](https://github.com/Swordfish90/cool-retro-term))
 
+## How to run
+
+* From the directory/folder where you have all the `.py` files, run `python cursatetra.py`
+
 ## Experimental Features
 * Compatibility with `windows-curses` (Just needed extra entries in the cellValues dictionary because the color attributes are encoded differently in `windows-curses`)
 
