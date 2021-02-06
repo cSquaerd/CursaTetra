@@ -4,7 +4,15 @@ from ct_draw import *
 # (Werid stuff happens if it changes during an unpaused game)
 doGhost = [True]
 pieceSchemaChecks = {
-	'S': {
+	'C': {
+		"movement": {
+			'': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}
+		}
+	}, 'S': {
 		"rotation": {
 			'H': { "empty": [(0, 0), (0, 1)], "bounds": [] },
 			'V': { "empty": [(2, 1), (0, 2)], "bounds": [(2, 2)] }
@@ -17,6 +25,135 @@ pieceSchemaChecks = {
 				'L': { "empty": [(-1, 0), (-1, 1), (0, 2)], "bounds": [(-1, 2)] },
 				'R': { "empty": [(2, 1), (2, 2), (1, 0)], "bounds": [(2, 2)] },
 				'D': { "empty": [(1, 3), (0, 2)], "bounds": [(1, 3)] }
+			}
+		}
+	}, 'Z': {
+		"rotation": {
+			'H': { "empty": [], "bounds": [] },
+			'V': { "empty": [], "bounds": [] }
+		}, "movement": {
+			'H': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}, 'V': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}
+		}
+	}, 'L': {
+		"rotation": {
+			'H': {
+				"CW": { "empty": [], "bounds": [] },
+				"CCW": { "empty": [], "bounds": [] }
+			},
+			'V': {
+				"CW": { "empty": [], "bounds": [] },
+				"CCW": { "empty": [], "bounds": [] }
+			},
+			'HP': {
+				"CW": { "empty": [], "bounds": [] },
+				"CCW": { "empty": [], "bounds": [] }
+			},
+			'VP': {
+				"CW": { "empty": [], "bounds": [] },
+				"CCW": { "empty": [], "bounds": [] }
+			}
+		}, "movement": {
+			'H': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}, 'V': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}, 'HP': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}, 'VP': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}
+		}
+	}, 'R': {
+		"rotation": {
+			'H': {
+				"CW": { "empty": [], "bounds": [] },
+				"CCW": { "empty": [], "bounds": [] }
+			},
+			'V': {
+				"CW": { "empty": [], "bounds": [] },
+				"CCW": { "empty": [], "bounds": [] }
+			},
+			'HP': {
+				"CW": { "empty": [], "bounds": [] },
+				"CCW": { "empty": [], "bounds": [] }
+			},
+			'VP': {
+				"CW": { "empty": [], "bounds": [] },
+				"CCW": { "empty": [], "bounds": [] }
+			}
+		}, "movement": {
+			'H': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}, 'V': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}, 'HP': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}, 'VP': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}
+		}
+	}, 'I': {
+		"rotation": {
+			'H': { "empty": [], "bounds": [] },
+			'V': { "empty": [], "bounds": [] }
+		}, "movement": {
+			'H': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}, 'V': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}
+		}
+	}, 'T': {
+		"rotation": {
+			'H': { "empty": [], "bounds": [] },
+			'V': { "empty": [], "bounds": [] },
+			'HP': { "empty": [], "bounds": [] },
+			'VP': { "empty": [], "bounds": [] }
+		}, "movement": {
+			'H': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}, 'V': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}, 'HP': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
+			}, 'VP': {
+				'L': { "empty": [], "bounds": [] },
+				'R': { "empty": [], "bounds": [] },
+				'D': { "empty": [], "bounds": [] }
 			}
 		}
 	}
