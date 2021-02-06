@@ -3,6 +3,24 @@ from ct_draw import *
 # Boolean that enables the ghost piece
 # (Werid stuff happens if it changes during an unpaused game)
 doGhost = [True]
+pieceSchemaChecks = {
+	'S': {
+		"rotation": {
+			'H': { "empty": [(0, 0), (0, 1)], "bounds": [] },
+			'V': { "empty": [(2, 1), (0, 2)], "bounds": [(2, 2)] }
+		}, "movement": {
+			'H': {
+				'L': { "empty": [(-1, 2), (0, 1)], "bounds": [(-1, 2)] },
+				'R': { "empty": [(3, 1), (2, 2)], "bounds": [(3, 2)] },
+				'D': { "empty": [(0, 3), (1, 3), (2, 2)], "bounds": [(0, 3)] }
+			}, 'V': {
+				'L': { "empty": [(-1, 0), (-1, 1), (0, 2)], "bounds": [(-1, 2)] },
+				'R': { "empty": [(2, 1), (2, 2), (1, 0)], "bounds": [(2, 2)] },
+				'D': { "empty": [(1, 3), (0, 2)], "bounds": [(1, 3)] }
+			}
+		}
+	}
+}
 """
 Class for active block data
 
@@ -111,13 +129,20 @@ class Piece:
 		self.draw(board)
 	def canRotate(self, direction, board):
 		if self.pID == 'S':
-			if self.orient == 'H' and isCellEmpty(self.y, self.x, board) and \
-				isCellEmpty(self.y + 1, self.x, board):
-				return True
-			elif self.orient == 'V' and isCellEmpty(self.y + 1, self.x + 2, board) and \
-				isCellEmpty(self.y + 2, self.x, board) and \
-				isCellInBounds(self.y + 2, self.x + 2):
-				return True
+			for cell in pieceSchemaChecks['S']["rotation"][self.orient]["empty"]:
+				if not isCellEmpty(self.y + cell[1], self.x + cell[0], board):
+					return False
+			for cell in pieceSchemaChecks['S']["rotation"][self.orient]["bounds"]:
+				if not isCellInBounds(self.y + cell[1], self.x + cell[0]):
+					return False
+			return True
+		#	if self.orient == 'H' and isCellEmpty(self.y, self.x, board) and \
+		#		isCellEmpty(self.y + 1, self.x, board):
+		#		return True
+		#	elif self.orient == 'V' and isCellEmpty(self.y + 1, self.x + 2, board) and \
+		#		isCellEmpty(self.y + 2, self.x, board) and \
+		#		isCellInBounds(self.y + 2, self.x + 2):
+		#		return True
 		elif self.pID == 'Z':
 			if self.orient == 'H' and isCellEmpty(self.y, self.x + 1, board) and \
 				isCellEmpty(self.y + 2, self.x, board):
