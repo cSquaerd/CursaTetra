@@ -29,8 +29,8 @@ pieceSchemaChecks = {
 		}
 	}, 'Z': {
 		"rotation": {
-			'H': { "empty": [], "bounds": [] },
-			'V': { "empty": [], "bounds": [] }
+			'H': { "empty": [(1, 0), (0, 2)], "bounds": [] },
+			'V': { "empty": [(1, 2), (2, 2)], "bounds": [(2, 2)] }
 		}, "movement": {
 			'H': {
 				'L': { "empty": [], "bounds": [] },
@@ -45,20 +45,20 @@ pieceSchemaChecks = {
 	}, 'L': {
 		"rotation": {
 			'H': {
-				"CW": { "empty": [], "bounds": [] },
-				"CCW": { "empty": [], "bounds": [] }
+				"CW": { "empty": [(0, 1), (0, 2), (2, 1)], "bounds": [(0, 2)] },
+				"CCW": { "empty": [(0, 1), (2, 0), (2, 1)], "bounds": [(0, 2)] }
 			},
 			'V': {
-				"CW": { "empty": [], "bounds": [] },
-				"CCW": { "empty": [], "bounds": [] }
+				"CW": { "empty": [(0, 0), (1, 0), (1, 2)], "bounds": [] },
+				"CCW": { "empty": [(1, 0), (1, 2), (2, 2)], "bounds": [] }
 			},
 			'HP': {
-				"CW": { "empty": [], "bounds": [] },
-				"CCW": { "empty": [], "bounds": [] }
+				"CW": { "empty": [(0, 1), (2, 0), (2, 1)], "bounds": [(2, 2)] },
+				"CCW": { "empty": [(0, 1), (0, 2), (2, 1)], "bounds": [(2, 2)] }
 			},
 			'VP': {
-				"CW": { "empty": [], "bounds": [] },
-				"CCW": { "empty": [], "bounds": [] }
+				"CW": { "empty": [(1, 0), (1, 2), (2, 2)], "bounds": [] },
+				"CCW": { "empty": [(0, 0), (1, 0), (1, 2)], "bounds": [] }
 			}
 		}, "movement": {
 			'H': {
@@ -82,20 +82,20 @@ pieceSchemaChecks = {
 	}, 'R': {
 		"rotation": {
 			'H': {
-				"CW": { "empty": [], "bounds": [] },
-				"CCW": { "empty": [], "bounds": [] }
+				"CW": { "empty": [(0, 1), (0, 0), (2, 1)], "bounds": [(2, 2)] },
+				"CCW": { "empty": [(0, 1), (2, 2), (2, 1)], "bounds": [(2, 2)] }
 			},
 			'V': {
-				"CW": { "empty": [], "bounds": [] },
-				"CCW": { "empty": [], "bounds": [] }
+				"CW": { "empty": [(1, 0), (2, 0), (1, 2)], "bounds": [] },
+				"CCW": { "empty": [(1, 0), (1, 2), (0, 2)], "bounds": [] }
 			},
 			'HP': {
-				"CW": { "empty": [], "bounds": [] },
-				"CCW": { "empty": [], "bounds": [] }
+				"CW": { "empty": [(0, 1), (2, 2), (2, 1)], "bounds": [(0, 2)] },
+				"CCW": { "empty": [(0, 0), (0, 1), (2, 1)], "bounds": [(0, 2)] }
 			},
 			'VP': {
-				"CW": { "empty": [], "bounds": [] },
-				"CCW": { "empty": [], "bounds": [] }
+				"CW": { "empty": [(1, 0), (0, 2), (1, 2)], "bounds": [] },
+				"CCW": { "empty": [(1, 0), (2, 0), (1, 2)], "bounds": [] }
 			}
 		}, "movement": {
 			'H': {
@@ -118,8 +118,8 @@ pieceSchemaChecks = {
 		}
 	}, 'I': {
 		"rotation": {
-			'H': { "empty": [], "bounds": [] },
-			'V': { "empty": [], "bounds": [] }
+			'H': { "empty": [(0, 2), (2, 2), (3, 2)], "bounds": [(0, 3), (3, 3)] },
+			'V': { "empty": [(1, 0), (1, 1), (1, 3)], "bounds": [(1, 3)] }
 		}, "movement": {
 			'H': {
 				'L': { "empty": [], "bounds": [] },
@@ -133,10 +133,10 @@ pieceSchemaChecks = {
 		}
 	}, 'T': {
 		"rotation": {
-			'H': { "empty": [], "bounds": [] },
-			'V': { "empty": [], "bounds": [] },
-			'HP': { "empty": [], "bounds": [] },
-			'VP': { "empty": [], "bounds": [] }
+			'H': { "empty": [(1, 0)], "bounds": [] },
+			'V': { "empty": [(2, 1)], "bounds": [(2, 2)] },
+			'HP': { "empty": [(1, 2)], "bounds": [] },
+			'VP': { "empty": [(0, 1)], "bounds": [(0, 2)] }
 		}, "movement": {
 			'H': {
 				'L': { "empty": [], "bounds": [] },
@@ -265,14 +265,24 @@ class Piece:
 		self.drawGhost(board)
 		self.draw(board)
 	def canRotate(self, direction, board):
-		if self.pID == 'S':
-			for cell in pieceSchemaChecks['S']["rotation"][self.orient]["empty"]:
+		if self.pID in ('L', 'R'):
+			for cell in pieceSchemaChecks[self.pID]["rotation"][self.orient][direction]["empty"]:
 				if not isCellEmpty(self.y + cell[1], self.x + cell[0], board):
 					return False
-			for cell in pieceSchemaChecks['S']["rotation"][self.orient]["bounds"]:
+			for cell in pieceSchemaChecks[self.pID]["rotation"][self.orient][direction]["bounds"]:
 				if not isCellInBounds(self.y + cell[1], self.x + cell[0]):
 					return False
 			return True
+		elif self.pID in ('S', 'Z', 'I', 'T'):
+			for cell in pieceSchemaChecks[self.pID]["rotation"][self.orient]["empty"]:
+				if not isCellEmpty(self.y + cell[1], self.x + cell[0], board):
+					return False
+			for cell in pieceSchemaChecks[self.pID]["rotation"][self.orient]["bounds"]:
+				if not isCellInBounds(self.y + cell[1], self.x + cell[0]):
+					return False
+			return True
+		else:
+			return False
 		#	if self.orient == 'H' and isCellEmpty(self.y, self.x, board) and \
 		#		isCellEmpty(self.y + 1, self.x, board):
 		#		return True
@@ -280,112 +290,112 @@ class Piece:
 		#		isCellEmpty(self.y + 2, self.x, board) and \
 		#		isCellInBounds(self.y + 2, self.x + 2):
 		#		return True
-		elif self.pID == 'Z':
-			if self.orient == 'H' and isCellEmpty(self.y, self.x + 1, board) and \
-				isCellEmpty(self.y + 2, self.x, board):
-				return True
-			elif self.orient == 'V' and isCellEmpty(self.y + 2, self.x + 1, board) and \
-				isCellEmpty(self.y + 2, self.x + 2, board) and \
-				isCellInBounds(self.y + 2, self.x + 2):
-				return True
-		elif self.pID == 'L':
-			if self.orient == 'H':
-				if direction == 'CW' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x, board) and \
-					isCellEmpty(self.y + 1, self.x + 2, board):
-					return True
-				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y, self.x + 2, board) and \
-					isCellEmpty(self.y + 1, self.x + 2, board):
-					return True
-			elif self.orient == 'V':
-				if direction == 'CW' and isCellEmpty(self.y, self.x, board) and \
-					isCellEmpty(self.y, self.x + 1, board) and \
-					isCellEmpty(self.y + 2, self.x + 1, board):
-					return True
-				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1, board) and \
-					isCellEmpty(self.y + 2, self.x + 1, board) and \
-					isCellEmpty(self.y + 2, self.x + 2, board):
-					return True
-			elif self.orient == 'HP':
-				if direction == 'CW' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y, self.x + 2, board) and \
-					isCellEmpty(self.y + 1, self.x + 2, board):
-					return True
-				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x, board) and \
-					isCellEmpty(self.y + 1, self.x + 2, board):
-					return True
-			elif self.orient == 'VP':
-				if direction == 'CW' and isCellEmpty(self.y, self.x + 1, board) and \
-					isCellEmpty(self.y + 2, self.x + 1, board) and \
-					isCellEmpty(self.y + 2, self.x + 2, board):
-					return True
-				elif direction == 'CCW' and isCellEmpty(self.y, self.x, board) and \
-					isCellEmpty(self.y, self.x + 1, board) and \
-					isCellEmpty(self.y + 2, self.x + 1, board):
-					return True
-		elif self.pID == 'R':
-			if self.orient == 'H':
-				if direction == 'CW' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y, self.x, board) and \
-					isCellEmpty(self.y + 1, self.x + 2, board):
-					return True
-				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x + 2) and \
-					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x + 2, board) and \
-					isCellEmpty(self.y + 1, self.x + 2, board):
-					return True
-			elif self.orient == 'V':
-				if direction == 'CW' and isCellEmpty(self.y, self.x + 1, board) and \
-					isCellEmpty(self.y, self.x + 2, board) and \
-					isCellEmpty(self.y + 2, self.x + 1, board):
-					return True
-				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1, board) and \
-					isCellEmpty(self.y + 2, self.x + 1, board) and \
-					isCellEmpty(self.y + 2, self.x, board):
-					return True
-			elif self.orient == 'HP':
-				if direction == 'CW' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x + 2, board) and \
-					isCellEmpty(self.y + 1, self.x + 2, board):
-					return True
-				elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x) and \
-					isCellEmpty(self.y, self.x, board) and isCellEmpty(self.y + 1, self.x, board) and \
-					isCellEmpty(self.y + 1, self.x + 2, board):
-					return True
-			elif self.orient == 'VP':
-				if direction == 'CW' and isCellEmpty(self.y, self.x + 1, board) and \
-					isCellEmpty(self.y + 2, self.x, board) and \
-					isCellEmpty(self.y + 2, self.x + 1, board):
-					return True
-				elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1, board) and \
-					isCellEmpty(self.y, self.x + 2, board) and \
-					isCellEmpty(self.y + 2, self.x + 1, board):
-					return True
-		elif self.pID == 'I':
-			if self.orient == 'H' and isCellInBounds(self.y + 3, self.x + 3) and \
-				isCellInBounds(self.y + 3, self.x) and \
-				isCellEmpty(self.y + 2, self.x, board) and \
-				isCellEmpty(self.y + 2, self.x + 2, board) and \
-				isCellEmpty(self.y + 2, self.x + 3, board):
-				return True
-			elif self.orient == 'V' and isCellInBounds(self.y + 3, self.x + 1) and \
-				isCellEmpty(self.y, self.x + 1, board) and \
-				isCellEmpty(self.y + 1, self.x + 1, board) and \
-				isCellEmpty(self.y + 3, self.x + 1, board):
-				return True
-		elif self.pID == 'T':
-			if self.orient == 'H' and isCellEmpty(self.y, self.x + 1, board):
-				return True
-			elif self.orient == 'V' and isCellEmpty(self.y + 1, self.x + 2, board) and \
-				isCellInBounds(self.y + 2, self.x + 2):
-				return True
-			elif self.orient == 'HP' and isCellEmpty(self.y + 2, self.x + 1, board):
-				return True
-			elif self.orient == 'VP' and isCellEmpty(self.y + 1, self.x, board) and \
-				isCellInBounds(self.y + 2, self.x):
-				return True
-		return False
+		#elif self.pID == 'Z':
+		#	if self.orient == 'H' and isCellEmpty(self.y, self.x + 1, board) and \
+		#		isCellEmpty(self.y + 2, self.x, board):
+		#		return True
+		#	elif self.orient == 'V' and isCellEmpty(self.y + 2, self.x + 1, board) and \
+		#		isCellEmpty(self.y + 2, self.x + 2, board) and \
+		#		isCellInBounds(self.y + 2, self.x + 2):
+		#		return True
+		#elif self.pID == 'L':
+		#	if self.orient == 'H':
+		#		if direction == 'CW' and isCellInBounds(self.y + 2, self.x) and \
+		#			isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x, board) and \
+		#			isCellEmpty(self.y + 1, self.x + 2, board):
+		#			return True
+		#		elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x) and \
+		#			isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y, self.x + 2, board) and \
+		#			isCellEmpty(self.y + 1, self.x + 2, board):
+		#			return True
+		#	elif self.orient == 'V':
+		#		if direction == 'CW' and isCellEmpty(self.y, self.x, board) and \
+		#			isCellEmpty(self.y, self.x + 1, board) and \
+		#			isCellEmpty(self.y + 2, self.x + 1, board):
+		#			return True
+		#		elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1, board) and \
+		#			isCellEmpty(self.y + 2, self.x + 1, board) and \
+		#			isCellEmpty(self.y + 2, self.x + 2, board):
+		#			return True
+		#	elif self.orient == 'HP':
+		#		if direction == 'CW' and isCellInBounds(self.y + 2, self.x + 2) and \
+		#			isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y, self.x + 2, board) and \
+		#			isCellEmpty(self.y + 1, self.x + 2, board):
+		#			return True
+		#		elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x + 2) and \
+		#			isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x, board) and \
+		#			isCellEmpty(self.y + 1, self.x + 2, board):
+		#			return True
+		#	elif self.orient == 'VP':
+		#		if direction == 'CW' and isCellEmpty(self.y, self.x + 1, board) and \
+		#			isCellEmpty(self.y + 2, self.x + 1, board) and \
+		#			isCellEmpty(self.y + 2, self.x + 2, board):
+		#			return True
+		#		elif direction == 'CCW' and isCellEmpty(self.y, self.x, board) and \
+		#			isCellEmpty(self.y, self.x + 1, board) and \
+		#			isCellEmpty(self.y + 2, self.x + 1, board):
+		#			return True
+		#elif self.pID == 'R':
+		#	if self.orient == 'H':
+		#		if direction == 'CW' and isCellInBounds(self.y + 2, self.x + 2) and \
+		#			isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y, self.x, board) and \
+		#			isCellEmpty(self.y + 1, self.x + 2, board):
+		#			return True
+		#		elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x + 2) and \
+		#			isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x + 2, board) and \
+		#			isCellEmpty(self.y + 1, self.x + 2, board):
+		#			return True
+		#	elif self.orient == 'V':
+		#		if direction == 'CW' and isCellEmpty(self.y, self.x + 1, board) and \
+		#			isCellEmpty(self.y, self.x + 2, board) and \
+		#			isCellEmpty(self.y + 2, self.x + 1, board):
+		#			return True
+		#		elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1, board) and \
+		#			isCellEmpty(self.y + 2, self.x + 1, board) and \
+		#			isCellEmpty(self.y + 2, self.x, board):
+		#			return True
+		#	elif self.orient == 'HP':
+		#		if direction == 'CW' and isCellInBounds(self.y + 2, self.x) and \
+		#			isCellEmpty(self.y + 1, self.x, board) and isCellEmpty(self.y + 2, self.x + 2, board) and \
+		#			isCellEmpty(self.y + 1, self.x + 2, board):
+		#			return True
+		#		elif direction == 'CCW' and isCellInBounds(self.y + 2, self.x) and \
+		#			isCellEmpty(self.y, self.x, board) and isCellEmpty(self.y + 1, self.x, board) and \
+		#			isCellEmpty(self.y + 1, self.x + 2, board):
+		#			return True
+		#	elif self.orient == 'VP':
+		#		if direction == 'CW' and isCellEmpty(self.y, self.x + 1, board) and \
+		#			isCellEmpty(self.y + 2, self.x, board) and \
+		#			isCellEmpty(self.y + 2, self.x + 1, board):
+		#			return True
+		#		elif direction == 'CCW' and isCellEmpty(self.y, self.x + 1, board) and \
+		#			isCellEmpty(self.y, self.x + 2, board) and \
+		#			isCellEmpty(self.y + 2, self.x + 1, board):
+		#			return True
+		#elif self.pID == 'I':
+		#	if self.orient == 'H' and isCellInBounds(self.y + 3, self.x + 3) and \
+		#		isCellInBounds(self.y + 3, self.x) and \
+		#		isCellEmpty(self.y + 2, self.x, board) and \
+		#		isCellEmpty(self.y + 2, self.x + 2, board) and \
+		#		isCellEmpty(self.y + 2, self.x + 3, board):
+		#		return True
+		#	elif self.orient == 'V' and isCellInBounds(self.y + 3, self.x + 1) and \
+		#		isCellEmpty(self.y, self.x + 1, board) and \
+		#		isCellEmpty(self.y + 1, self.x + 1, board) and \
+		#		isCellEmpty(self.y + 3, self.x + 1, board):
+		#		return True
+		#elif self.pID == 'T':
+		#	if self.orient == 'H' and isCellEmpty(self.y, self.x + 1, board):
+		#		return True
+		#	elif self.orient == 'V' and isCellEmpty(self.y + 1, self.x + 2, board) and \
+		#		isCellInBounds(self.y + 2, self.x + 2):
+		#		return True
+		#	elif self.orient == 'HP' and isCellEmpty(self.y + 2, self.x + 1, board):
+		#		return True
+		#	elif self.orient == 'VP' and isCellEmpty(self.y + 1, self.x, board) and \
+		#		isCellInBounds(self.y + 2, self.x):
+		#		return True
+		#return False
 	def canMove(self, direction, board):
 		if self.pID == 'C':
 			if direction == 'L' and isCellInBounds(self.y + 1, self.x - 1) and \
