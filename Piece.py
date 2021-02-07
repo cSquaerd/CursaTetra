@@ -7,9 +7,9 @@ pieceSchemaChecks = {
 	'C': {
 		"movement": {
 			'': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(-1, 0), (-1, 1)], "bounds": [(-1, 1)] },
+				'R': { "empty": [(2, 0), (2, 1)], "bounds": [(2, 1)] },
+				'D': { "empty": [(0, 2), (1, 2)], "bounds": [(0, 2)] }
 			}
 		}
 	}, 'S': {
@@ -33,13 +33,13 @@ pieceSchemaChecks = {
 			'V': { "empty": [(1, 2), (2, 2)], "bounds": [(2, 2)] }
 		}, "movement": {
 			'H': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(-1, 1), (0, 2)], "bounds": [(-1, 2)] },
+				'R': { "empty": [(3, 2), (2, 1)], "bounds": [(3, 2)] },
+				'D': { "empty": [(0, 2), (1, 3), (2, 3)], "bounds": [(0, 3)] }
 			}, 'V': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(-1, 1), (-1, 2), (0, 0)], "bounds": [(-1, 2)] },
+				'R': { "empty": [(2, 0), (2, 1), (1, 2)], "bounds": [(2, 2)] },
+				'D': { "empty": [(0, 3), (1, 2)], "bounds": [(0, 3)] }
 			}
 		}
 	}, 'L': {
@@ -47,36 +47,33 @@ pieceSchemaChecks = {
 			'H': {
 				"CW": { "empty": [(0, 1), (0, 2), (2, 1)], "bounds": [(0, 2)] },
 				"CCW": { "empty": [(0, 1), (2, 0), (2, 1)], "bounds": [(0, 2)] }
-			},
-			'V': {
+			}, 'V': {
 				"CW": { "empty": [(0, 0), (1, 0), (1, 2)], "bounds": [] },
 				"CCW": { "empty": [(1, 0), (1, 2), (2, 2)], "bounds": [] }
-			},
-			'HP': {
+			}, 'HP': {
 				"CW": { "empty": [(0, 1), (2, 0), (2, 1)], "bounds": [(2, 2)] },
 				"CCW": { "empty": [(0, 1), (0, 2), (2, 1)], "bounds": [(2, 2)] }
-			},
-			'VP': {
+			}, 'VP': {
 				"CW": { "empty": [(1, 0), (1, 2), (2, 2)], "bounds": [] },
 				"CCW": { "empty": [(0, 0), (1, 0), (1, 2)], "bounds": [] }
 			}
 		}, "movement": {
 			'H': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(0, 0), (0, 1), (0, 2)], "bounds": [(0, 2)] },
+				'R': { "empty": [(2, 0), (2, 1), (3, 2)], "bounds": [(3, 2)] },
+				'D': { "empty": [(1, 3), (2, 3)], "bounds": [(1, 3)] }
 			}, 'V': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(-1, 1), (-1, 2)], "bounds": [(-1, 2)] },
+				'R': { "empty": [(1, 2), (3, 1)], "bounds": [(3, 2)] },
+				'D': { "empty": [(0, 3), (1, 2), (2, 2)], "bounds": [(0, 3)] }
 			}, 'HP': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(-1, 0), (0, 1), (0, 2)], "bounds": [(-1, 2)] },
+				'R': { "empty": [(2, 0), (2, 1), (2, 2)], "bounds": [(2, 2)] },
+				'D': { "empty": [(0, 1), (1, 3)], "bounds": [(1, 3)] }
 			}, 'VP': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(-1, 1), (1, 0)], "bounds": [(-1, 1)] },
+				'R': { "empty": [(3, 0), (3, 1)], "bounds": [(3, 1)] },
+				'D': { "empty": [(0, 2), (1, 2), (2, 2)], "bounds": [(0, 2)] }
 			}
 		}
 	}, 'R': {
@@ -84,36 +81,33 @@ pieceSchemaChecks = {
 			'H': {
 				"CW": { "empty": [(0, 1), (0, 0), (2, 1)], "bounds": [(2, 2)] },
 				"CCW": { "empty": [(0, 1), (2, 2), (2, 1)], "bounds": [(2, 2)] }
-			},
-			'V': {
+			}, 'V': {
 				"CW": { "empty": [(1, 0), (2, 0), (1, 2)], "bounds": [] },
 				"CCW": { "empty": [(1, 0), (1, 2), (0, 2)], "bounds": [] }
-			},
-			'HP': {
+			}, 'HP': {
 				"CW": { "empty": [(0, 1), (2, 2), (2, 1)], "bounds": [(0, 2)] },
 				"CCW": { "empty": [(0, 0), (0, 1), (2, 1)], "bounds": [(0, 2)] }
-			},
-			'VP': {
+			}, 'VP': {
 				"CW": { "empty": [(1, 0), (0, 2), (1, 2)], "bounds": [] },
 				"CCW": { "empty": [(1, 0), (2, 0), (1, 2)], "bounds": [] }
 			}
 		}, "movement": {
 			'H': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(-1, 2), (0, 1), (0, 0)], "bounds": [(-1, 2)] },
+				'R': { "empty": [(2, 0), (2, 1), (2, 2)], "bounds": [(2, 2)] },
+				'D': { "empty": [(0, 3), (1, 3)], "bounds": [(0, 3)] }
 			}, 'V': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(-1, 0), (-1, 1)], "bounds": [(-1, 1)] },
+				'R': { "empty": [(1, 0), (3, 1)], "bounds": [(3, 1)] },
+				'D': { "empty": [(0, 2), (1, 2), (2, 2)], "bounds": [(0, 2)] }
 			}, 'HP': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(0, 0), (0, 1), (0, 2)], "bounds": [(0, 2)] },
+				'R': { "empty": [(3, 0), (2, 1), (2, 2)], "bounds": [(3, 0)] },
+				'D': { "empty": [(1, 3), (2, 1)], "bounds": [(1, 3)] }
 			}, 'VP': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(-1, 1), (1, 2)], "bounds": [(-1, 2)] },
+				'R': { "empty": [(3, 1), (3, 2)], "bounds": [(3, 2)] },
+				'D': { "empty": [(0, 2), (1, 2), (2, 3)], "bounds": [(2, 3)] }
 			}
 		}
 	}, 'I': {
@@ -122,13 +116,13 @@ pieceSchemaChecks = {
 			'V': { "empty": [(1, 0), (1, 1), (1, 3)], "bounds": [(1, 3)] }
 		}, "movement": {
 			'H': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(0, 0), (0, 1), (0, 2), (0, 3)], "bounds": [(0, 3)] },
+				'R': { "empty": [(2, 0), (2, 1), (2, 2), (2, 3)], "bounds": [(2, 3)] },
+				'D': { "empty": [(1, 4)], "bounds": [(1, 4)] }
 			}, 'V': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(-1, 2)], "bounds": [(-1, 2)] },
+				'R': { "empty": [(4, 2)], "bounds": [(4, 2)] },
+				'D': { "empty": [(0, 3), (1, 3), (2, 3), (3, 3)], "bounds": [(0, 3)] }
 			}
 		}
 	}, 'T': {
@@ -139,21 +133,21 @@ pieceSchemaChecks = {
 			'VP': { "empty": [(0, 1)], "bounds": [(0, 2)] }
 		}, "movement": {
 			'H': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(-1, 1), (0, 2)], "bounds": [(-1, 2)] },
+				'R': { "empty": [(3, 1), (2, 2)], "bounds": [(3, 2)] },
+				'D': { "empty": [(0, 2), (1, 3), (2, 2)], "bounds": [(0, 3)] }
 			}, 'V': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(0, 0), (-1, 1), (0, 2)], "bounds": [(-1, 2)] },
+				'R': { "empty": [(2, 0), (2, 1), (2, 2)], "bounds": [(2, 2)] },
+				'D': { "empty": [(0, 2), (1, 3)], "bounds": [0, 3] }
 			}, 'HP': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(0, 0), (-1, 1)], "bounds": [(-1, 1)] },
+				'R': { "empty": [(2, 0), (3, 1)], "bounds": [(3, 1)] },
+				'D': { "empty": [(0, 2), (1, 2), (2, 2)], "bounds": [(0, 2)] }
 			}, 'VP': {
-				'L': { "empty": [], "bounds": [] },
-				'R': { "empty": [], "bounds": [] },
-				'D': { "empty": [], "bounds": [] }
+				'L': { "empty": [(0, 0), (0, 1), (0, 2)], "bounds": [(0, 2)] },
+				'R': { "empty": [(2, 0), (3, 1), (2, 2)], "bounds": [(3, 2)] },
+				'D': { "empty": [(1, 3), (2, 2)], "bounds": [(1, 3)] }
 			}
 		}
 	}
