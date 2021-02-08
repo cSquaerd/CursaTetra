@@ -68,13 +68,13 @@ def ctMain():
 	lineClearScores = (0, 40, 100, 300, 1200)
 	lineClearDiffShifts = (10, 20, 30, 45, 60, 75, 95, 115, 140, 165)
 	pieceInfo = { \
-		'C': {'y': 1, 'x': 5, "orient" : '', "yn": 3, "xn": 5}, \
-		'S': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
-		'Z': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
-		'L': {'y': 0, 'x': 4, "orient" : 'V', "yn": 2, "xn": 5}, \
-		'R': {'y': 0, 'x': 4, "orient" : 'VP', "yn": 2, "xn": 5}, \
-		'I': {'y': -1, 'x': 4, "orient" : 'V', "yn": 1, "xn": 3}, \
-		'T': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
+		'C': {'y': 1, 'x': 5, "orient" : '', "yn": 1, "xn": 11}, \
+		'S': {'y': 0, 'x': 4, "orient" : 'H', "yn": 0, "xn": 9}, \
+		'Z': {'y': 0, 'x': 4, "orient" : 'H', "yn": 0, "xn": 9}, \
+		'L': {'y': 0, 'x': 4, "orient" : 'V', "yn": 0, "xn": 9}, \
+		'R': {'y': 0, 'x': 4, "orient" : 'VP', "yn": 0, "xn": 9}, \
+		'I': {'y': -1, 'x': 4, "orient" : 'V', "yn": -1, "xn": 9}, \
+		'T': {'y': 0, 'x': 4, "orient" : 'H', "yn": 0, "xn": 9}, \
 	}
 	letters = tuple(range(0x41, 0x41 + 26)) + tuple(range(0x61, 0x61 + 26))
 	# SECTION: CONTROL VARIABLES AND BOOLEANS
@@ -417,7 +417,7 @@ def ctMain():
 			#	writeBoardLabel('C', ','.join(recentPieces), wBoard)
 			nextPID = pieceBag[bagIndex % 7]
 			# Clear the next piece window and draw the next piece
-			changeTexture(2, 1, 5, 12, ' ', crs.ACS_CKBOARD, wNextP)
+			changeTexture(1, 7, 2, 17, ' ', crs.ACS_CKBOARD, wNextP)
 			drawPiece( \
 				pieceInfo[nextPID]["yn"], pieceInfo[nextPID]["xn"], \
 				pieceInfo[nextPID]["orient"], nextPID, wNextP, [crs.ACS_CKBOARD] \
@@ -615,7 +615,7 @@ wCntrl = crs.newwin(14, 23, 10, 2)
 wBoard = crs.newwin(24, 22, 0, 27)
 wBoard.keypad(True)
 wBoard.nodelay(True)
-wNextP = crs.newwin(7, 15, 0, 53)
+wNextP = crs.newwin(7, 19, 0, 51)
 wStats = crs.newwin(17, 19, 7, 51)
 #Draw boarders of windows
 wTitle.border()
@@ -646,8 +646,14 @@ wCntrl.addstr(12, 1, "G     : TOGGLE GHOST")
 drawGrid(wBoard)
 drawBoardBorder(wBoard)
 writeBoardLabel('L', "PRESS SPACE TO START", wBoard)
-wNextP.addstr(1, 2, "NEXT PIECE:")
-wNextP.addstr(2, 2, 11 * '-')
+wNextP.addstr(1, 1, "NEXT")
+wNextP.addstr(2, 1, "PIECE")
+wNextP.hline(3, 1, crs.ACS_HLINE, 17)
+wNextP.addstr(4, 1, "HOLD")
+wNextP.addstr(5, 1, "PIECE")
+wNextP.vline(1, 7, crs.ACS_VLINE, 5)
+wNextP.addch(3, 7, crs.ACS_PLUS)
+#wNextP.addstr(2, 2, 11 * '-')
 wStats.addstr(1, 4, "STATISTICS:")
 wStats.addstr(2, 4, 11 * '-')
 wStats.addstr(3, 1, "::PIECES" + 9 * ':')
