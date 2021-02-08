@@ -49,7 +49,9 @@ def ctMain():
 		ord('P') : "ESC", \
 		ord('p') : "ESC", \
 		ord('Q') : 'Q', \
-		ord('q') : 'Q' \
+		ord('q') : 'Q', \
+		ord('h') : 'H', \
+		ord('H') : 'H'
 	}
 	arrowCodes = ('L', 'R', 'D', 'U')
 	rotateCodes = ("SPACE", "NULL")
@@ -111,6 +113,8 @@ def ctMain():
 	rnd.shuffle(pieceBag)
 	bagIndex = 0
 	nextPID = pieceBag[bagIndex % 7]
+	holdPID = ''
+	canHold = True
 	softDrops = 0
 	tSpun = False
 	checkScore = False
@@ -446,6 +450,7 @@ def ctMain():
 				pieceInPlay = False
 				pieceDropped = False
 				atBottom = False
+				canHold = True
 				# Game over check
 				if pieceJustSpawned:
 					for n in range(4):
@@ -568,6 +573,35 @@ def ctMain():
 					or not isCellEmpty(piece.y, piece.x + 2, wBoard) ):
 					tSpun = True
 				pieceJustSpawned = False
+		elif keypress == 'H' and pieceInPlay and canHold:
+			# Remove active piece from the board
+			piece.undraw(wBoard)
+			piece.undrawGhost(wBoard)
+			# Stow or swap the active piece into the hold slot
+			if holdPID == '':
+				holdPID = piece.pID
+				pieceInPlay = False
+				del piece
+			else:
+				oldPID = piece.pID
+				del piece
+				piece = Piece( \
+					pieceInfo[holdPID]['y'], \
+					pieceInfo[holdPID]['x'], \
+					holdPID, \
+					pieceInfo[holdPID]["orient"],
+					wBoard \
+				)
+				holdPID = oldPID
+			# Draw the new hold piece
+			changeTexture(4, 7, 5, 17, ' ', crs.ACS_CKBOARD, wNextP)
+			drawPiece( \
+				pieceInfo[holdPID]["yn"] + 3, pieceInfo[holdPID]["xn"], \
+				pieceInfo[holdPID]["orient"], holdPID, wNextP, [crs.ACS_CKBOARD] \
+			)
+			wNextP.refresh()
+			# Disallow holding until the swapped piece is finished
+			canHold = False
 		elif keypress == "ESC":
 			paused = True
 			clearBoardLabel(wBoard)
