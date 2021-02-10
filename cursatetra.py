@@ -10,6 +10,7 @@ from ct_label import *
 from ct_cell import *
 from Piece import *
 resizedTooSmall = False
+missingSettings = False
 # SECTION: VERSION CHECK
 if sys.version_info[0] < 3:
 	print("This game requires Python 3. Please install it and/or run this file with it.")
@@ -49,7 +50,9 @@ def ctMain():
 		ord('P') : "ESC", \
 		ord('p') : "ESC", \
 		ord('Q') : 'Q', \
-		ord('q') : 'Q' \
+		ord('q') : 'Q', \
+		ord('h') : 'H', \
+		ord('H') : 'H'
 	}
 	arrowCodes = ('L', 'R', 'D', 'U')
 	rotateCodes = ("SPACE", "NULL")
@@ -68,13 +71,13 @@ def ctMain():
 	lineClearScores = (0, 40, 100, 300, 1200)
 	lineClearDiffShifts = (10, 20, 30, 45, 60, 75, 95, 115, 140, 165)
 	pieceInfo = { \
-		'C': {'y': 1, 'x': 5, "orient" : '', "yn": 3, "xn": 5}, \
-		'S': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
-		'Z': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
-		'L': {'y': 0, 'x': 4, "orient" : 'V', "yn": 2, "xn": 5}, \
-		'R': {'y': 0, 'x': 4, "orient" : 'VP', "yn": 2, "xn": 5}, \
-		'I': {'y': -1, 'x': 4, "orient" : 'V', "yn": 1, "xn": 3}, \
-		'T': {'y': 0, 'x': 4, "orient" : 'H', "yn": 2, "xn": 5}, \
+		'C': {'y': 1, 'x': 5, "orient" : '', "yn": 1, "xn": 11}, \
+		'S': {'y': 0, 'x': 4, "orient" : 'H', "yn": 0, "xn": 9}, \
+		'Z': {'y': 0, 'x': 4, "orient" : 'H', "yn": 0, "xn": 9}, \
+		'L': {'y': 0, 'x': 4, "orient" : 'V', "yn": 0, "xn": 9}, \
+		'R': {'y': 0, 'x': 4, "orient" : 'VP', "yn": 0, "xn": 9}, \
+		'I': {'y': -1, 'x': 4, "orient" : 'V', "yn": -1, "xn": 9}, \
+		'T': {'y': 0, 'x': 4, "orient" : 'H', "yn": 0, "xn": 9}, \
 	}
 	letters = tuple(range(0x41, 0x41 + 26)) + tuple(range(0x61, 0x61 + 26))
 	# SECTION: CONTROL VARIABLES AND BOOLEANS
@@ -99,6 +102,7 @@ def ctMain():
 	playing = False
 	paused = False
 	global resizedTooSmall
+	global missingSettings
 	pieceInPlay = False
 	pieceToDrop = False
 	pieceDropped = False
@@ -111,12 +115,31 @@ def ctMain():
 	rnd.shuffle(pieceBag)
 	bagIndex = 0
 	nextPID = pieceBag[bagIndex % 7]
+	holdPID = ''
+	canHold = True
 	softDrops = 0
 	tSpun = False
 	checkScore = False
+	settingsFileName = "settings.json"
+	allowGhostToggle = True
+	allowHoldFeature = True
+	preferredDifficulty = 0
+	preferredRandomizer = 'B'
 	scoreFileName = ".ctHiScrs.json"
 	scoreFileWrite = False
 	global doGhost
+	# SECTION: SETTINGS PREP
+	try:
+		settingsFile = open(settingsFileName, 'r')
+		settings = json.loads(settingsFile.read())
+		settingsFile.close()
+		allowGhostToggle = settings["allowGhostToggle"]
+		allowHoldFeature = settings["allowHoldFeature"]
+		preferredDifficulty = settings["preferredDifficulty"]
+		preferredRandomizer = settings["preferredRandomizer"]
+	except FileNotFoundError:
+		active = False
+		missingSettings = True
 	# SECTION: HIGH SCORE PREP
 	try:
 		# Assume the high score file exists
@@ -276,16 +299,38 @@ def ctMain():
 			# Select randomizer and difficulty
 			while not sure:
 				undrawGrid(wBoard)
-				wBoard.addstr(1, 1, "PRESS \'B\' FOR 7-BAG")
-				wBoard.addstr(2, 1, "\'R\' FOR SHUFFLE,")
-				wBoard.addstr(3, 1, "OR \'G\' FOR TGM")
-				wBoard.addstr(4, 1, "RANDOMIZER:  ")
-				wBoard.refresh()
-				r = 0
-				while r not in ( \
-					ord('B'), ord('b'), ord('R'), ord('r'), ord('G'), ord('g') \
-				):
-					r = wBoard.getch()
+				wBoard.addstr(1, 1, "DO YOU WANT TO USE")
+				wBoard.addstr(2, 1, "YOUR PREFERRED")
+				wBoard.addstr(3, 1, "DIFFICULTY, " + str(preferredDifficulty) + ", &")
+				wBoard.addstr(4, 1, "RANDOMIZER, " + preferredRandomizer + "? [Y/N]")
+				yn = 0
+				while yn not in yesnoCodes:
+					yn = wBoard.getch()
+				if yn in noCodes:
+					undrawGrid(wBoard)
+					wBoard.addstr(1, 1, "PRESS \'B\' FOR 7-BAG")
+					wBoard.addstr(2, 1, "\'R\' FOR SHUFFLE,")
+					wBoard.addstr(3, 1, "OR \'G\' FOR TGM")
+					wBoard.addstr(4, 1, "RANDOMIZER:  ")
+					wBoard.refresh()
+					r = 0
+					while r not in ( \
+						ord('B'), ord('b'), ord('R'), ord('r'), ord('G'), ord('g') \
+					):
+						r = wBoard.getch()
+					wBoard.addstr(5, 1, "PRESS A NUMBER 0-9")
+					wBoard.addstr(6, 1, "TO SET DIFFICULTY:")
+					wBoard.refresh()
+					# The ASCII number-key codes in hexidecimal
+					# Have the number as the first digit
+					k = 0
+					while k < 0x30 or k > 0x39:
+						k = wBoard.getch()
+					difficulty = k - 0x30
+				elif yn in yesCodes:
+					wBoard.addch(4, 17, 'Y', crs.A_REVERSE)
+					r = ord(preferredRandomizer)
+					difficulty = preferredDifficulty
 				if chr(r).upper() == 'R':
 					randomizer = "SHUFFLE"
 				elif chr(r).upper() == 'B':
@@ -294,29 +339,25 @@ def ctMain():
 					randomizer = "TGM"
 					recentPieces = []
 					nextPID = rnd.choice(('L', 'R', 'T', 'I'))
-				wBoard.addstr(5, 1, "PRESS A NUMBER 0-9")
-				wBoard.addstr(6, 1, "TO SET DIFFICULTY:")
-				wBoard.refresh()
-				# The ASCII number-key codes in hexidecimal
-				# Have the number as the first digit
-				k = 0
-				while k < 0x30 or k > 0x39:
-					k = wBoard.getch()
-				difficulty = k - 0x30
 				# Show difficulty
-				wBoard.addstr(7, 1, "YOU CHOSE DIFF. " + str(difficulty))
-				wBoard.addstr(8, 1, "AND RANDOMIZER " + chr(r).upper())
+				wBoard.addstr(8, 1, "YOU CHOSE DIFF. " + str(difficulty))
+				wBoard.addstr(9, 1, "AND RANDOMIZER " + chr(r).upper())
 				# Initialize the ghost piece (or don't)
-				wBoard.addstr(9, 1, "DO YOU WANT TO USE")
-				wBoard.addstr(10, 1, "THE GHOST PIECE?")
-				wBoard.addstr(11, 1, "[Y/N]")
+				wBoard.addstr(11, 1, "DO YOU WANT TO USE")
+				wBoard.addstr(12, 1, "THE GHOST PIECE?")
+				wBoard.addstr(13, 1, "[Y/N]")
 				wBoard.refresh()
 				k = 0
 				while k not in yesnoCodes:
 					k = wBoard.getch()
 				doGhost[0] = k in yesCodes
+				if k in yesCodes:
+					wBoard.addch(13, 2, 'Y', crs.A_REVERSE)
+				else:
+					wBoard.addch(13, 4, 'N', crs.A_REVERSE)
 				# Confirm settings
-				wBoard.addstr(12, 1, "ARE YOU ALL SET? Y/N")
+				wBoard.addstr(15, 1, "ARE YOU ALL SET?")
+				wBoard.addstr(16, 1, "[Y/N]")
 				wBoard.refresh()
 				k = 0
 				while k not in yesnoCodes:
@@ -324,7 +365,8 @@ def ctMain():
 				# Proceed to game start
 				if k in yesCodes:
 					sure = True
-					wBoard.addstr(13, 1, "OKAY, GET READY!")
+					wBoard.addch(16, 2, 'Y', crs.A_REVERSE)
+					wBoard.addstr(18, 1, "OKAY, GET READY!")
 					wBoard.refresh()
 					crs.napms(500)
 				# Retry difficulty selection
@@ -371,7 +413,7 @@ def ctMain():
 				continue
 			elif keypress == "ENTER":
 				continue
-			elif keypress == 'G':
+			elif keypress == 'G' and allowGhostToggle:
 				if doGhost[0]:
 					piece.undrawGhost(wBoard)
 				doGhost[0] = not doGhost[0]
@@ -380,10 +422,13 @@ def ctMain():
 				continue
 			# If neither the enter nor q key are pressed, it must be ESC,
 			# Which means unpause
-			clearBoardLabel(wBoard)
-			writeBoardLabel('C', "LEVEL " + str(difficulty), wBoard)
-			wBoard.nodelay(True)
-			paused = False
+			# (not true anymore since G can be ignored with settings)
+			elif keypress == "ESC":
+				clearBoardLabel(wBoard)
+				writeBoardLabel('C', "LEVEL " + str(difficulty), wBoard)
+				wBoard.nodelay(True)
+				paused = False
+				continue
 			continue
 		# SUBSECTION: PIECE GENERATION
 		if not pieceInPlay:
@@ -417,7 +462,7 @@ def ctMain():
 			#	writeBoardLabel('C', ','.join(recentPieces), wBoard)
 			nextPID = pieceBag[bagIndex % 7]
 			# Clear the next piece window and draw the next piece
-			changeTexture(2, 1, 5, 12, ' ', crs.ACS_CKBOARD, wNextP)
+			changeTexture(1, 7, 2, 17, ' ', crs.ACS_CKBOARD, wNextP)
 			drawPiece( \
 				pieceInfo[nextPID]["yn"], pieceInfo[nextPID]["xn"], \
 				pieceInfo[nextPID]["orient"], nextPID, wNextP, [crs.ACS_CKBOARD] \
@@ -446,13 +491,19 @@ def ctMain():
 				pieceInPlay = False
 				pieceDropped = False
 				atBottom = False
+				canHold = True
 				# Game over check
 				if pieceJustSpawned:
 					for n in range(4):
 						crs.flash()
 						crs.napms(125)
+					holdPID = ''
+					changeTexture(4, 7, 5, 17, ' ', crs.ACS_CKBOARD, wNextP)
+					wNextP.refresh()
 					clearBoardLabel(wBoard)
 					writeBoardLabel('C', "GAME OVER!", wBoard)
+					wBoard.addstr(19, 1, "PRESS SPACE TO START")
+					wBoard.addstr(20, 1, "    A NEW GAME      ")
 					crs.napms(2000)
 					playing = False
 					checkScore = True
@@ -568,6 +619,37 @@ def ctMain():
 					or not isCellEmpty(piece.y, piece.x + 2, wBoard) ):
 					tSpun = True
 				pieceJustSpawned = False
+		elif keypress == 'H' and allowHoldFeature and pieceInPlay and canHold:
+			# Remove active piece from the board
+			piece.undraw(wBoard)
+			piece.undrawGhost(wBoard)
+			# Stow or swap the active piece into the hold slot
+			if holdPID == '':
+				holdPID = piece.pID
+				pieceInPlay = False
+				del piece
+			else:
+				oldPID = piece.pID
+				del piece
+				piece = Piece( \
+					pieceInfo[holdPID]['y'], \
+					pieceInfo[holdPID]['x'], \
+					holdPID, \
+					pieceInfo[holdPID]["orient"],
+					wBoard \
+				)
+				holdPID = oldPID
+				pieceJustSpawned = True
+				pieceDropTime = time.time()
+			# Draw the new hold piece
+			changeTexture(4, 7, 5, 17, ' ', crs.ACS_CKBOARD, wNextP)
+			drawPiece( \
+				pieceInfo[holdPID]["yn"] + 3, pieceInfo[holdPID]["xn"], \
+				pieceInfo[holdPID]["orient"], holdPID, wNextP, [crs.ACS_CKBOARD] \
+			)
+			wNextP.refresh()
+			# Disallow holding until the swapped piece is finished
+			canHold = False
 		elif keypress == "ESC":
 			paused = True
 			clearBoardLabel(wBoard)
@@ -615,7 +697,7 @@ wCntrl = crs.newwin(14, 23, 10, 2)
 wBoard = crs.newwin(24, 22, 0, 27)
 wBoard.keypad(True)
 wBoard.nodelay(True)
-wNextP = crs.newwin(7, 15, 0, 53)
+wNextP = crs.newwin(7, 19, 0, 51)
 wStats = crs.newwin(17, 19, 7, 51)
 #Draw boarders of windows
 wTitle.border()
@@ -632,22 +714,32 @@ wTitle.addstr(4, 2, "Ded. A. Pajitnov")
 wScore.addstr(1, 1, "SCORE:")
 wScore.addstr(2, 1, "LINES:")
 wCntrl.addstr(1, 6, "CONTROLS:")
-wCntrl.addstr(2, 1, "L/R ARROWS: MOVE")
-wCntrl.addstr(3, 1, "DOWN ARROW: DROP 1")
-wCntrl.addstr(4, 1, "UP ARROWx2: DROP ALL")
-wCntrl.addstr(5, 1, "SPACE BAR : ROT. CW")
-wCntrl.addstr(6, 1, "          : OR START")
-wCntrl.addstr(7, 1, "CTRL+SPACE: ROT. CCW")
-wCntrl.addstr(8, 1, "ESC or P  : PAUSE OR")
-wCntrl.addstr(9, 1, "          : RESUME")
+wCntrl.addstr(2, 1, " ,  ,  : MOVE PIECE")
+wCntrl.addch(2, 1, crs.ACS_LARROW)
+wCntrl.addch(2, 4, crs.ACS_RARROW)
+wCntrl.addch(2, 7, crs.ACS_DARROW)
+wCntrl.addstr(3, 1, "    x2 : DROP PIECE")
+wCntrl.addch(3, 3, crs.ACS_UARROW)
+wCntrl.addstr(4, 1, " SPACE : ROTATE CW")
+wCntrl.addstr(5, 1, " CTRL+ : ROTATE CCW")
+wCntrl.addstr(6, 1, " SPACE :")
+wCntrl.addstr(7, 1, "     H : HOLD PIECE")
+wCntrl.addstr(8, 1, " ESC,P : PAUSE OR")
+wCntrl.addstr(9, 1, "       : RESUME")
 wCntrl.addstr(10, 6, "IF PAUSED:")
-wCntrl.addstr(11, 1, "Q     : QUIT GAME")
-wCntrl.addstr(12, 1, "G     : TOGGLE GHOST")
+wCntrl.addstr(11, 1, "     Q : QUIT GAME")
+wCntrl.addstr(12, 1, "     G : TOGGLE GHOST")
 drawGrid(wBoard)
 drawBoardBorder(wBoard)
 writeBoardLabel('L', "PRESS SPACE TO START", wBoard)
-wNextP.addstr(1, 2, "NEXT PIECE:")
-wNextP.addstr(2, 2, 11 * '-')
+wNextP.addstr(1, 1, "NEXT")
+wNextP.addstr(2, 1, "PIECE")
+wNextP.hline(3, 1, crs.ACS_HLINE, 17)
+wNextP.addstr(4, 1, "HOLD")
+wNextP.addstr(5, 1, "PIECE")
+wNextP.vline(1, 7, crs.ACS_VLINE, 5)
+wNextP.addch(3, 7, crs.ACS_PLUS)
+#wNextP.addstr(2, 2, 11 * '-')
 wStats.addstr(1, 4, "STATISTICS:")
 wStats.addstr(2, 4, 11 * '-')
 wStats.addstr(3, 1, "::PIECES" + 9 * ':')
@@ -733,3 +825,8 @@ if resizedTooSmall:
 	print("This program is designed to shut down if the terminal is too small,")
 	print("as it is a pain to implement resizing for such a specific screen area.")
 	print("Please prevent small resizes from happening in the future.")
+elif missingSettings:
+	print("The settings.json file is missing from your local directory/folder.")
+	print("You can find a reference copy of it on the github repository, at:")
+	print("\thttps://github.com/cSquaerd/CursaTetra.git")
+	print("Please download it and place in the directory/folder where you are currently.")
