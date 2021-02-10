@@ -456,6 +456,9 @@ def ctMain():
 					for n in range(4):
 						crs.flash()
 						crs.napms(125)
+					holdPID = ''
+					changeTexture(4, 7, 5, 17, ' ', crs.ACS_CKBOARD, wNextP)
+					wNextP.refresh()
 					clearBoardLabel(wBoard)
 					writeBoardLabel('C', "GAME OVER!", wBoard)
 					crs.napms(2000)
@@ -593,6 +596,8 @@ def ctMain():
 					wBoard \
 				)
 				holdPID = oldPID
+				pieceJustSpawned = True
+				pieceDropTime = time.time()
 			# Draw the new hold piece
 			changeTexture(4, 7, 5, 17, ' ', crs.ACS_CKBOARD, wNextP)
 			drawPiece( \
