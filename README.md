@@ -11,7 +11,9 @@ This game is dedicated to Alexey Pajitnov, original author of Tetris. This versi
 	* A random.randint() shuffle (a.k.a. "true") randomizer
 	* A T.G.M.-inspired randomizer
 * A "ghost piece" to help guide your aim
+* A holding feature to save crucial pieces for when needed
 * A high score file (JSON format)
+* A settings file with preferred difficulty entries (JSON format)
 * T-Spin detection and score reward
 * The traditional 20-block high playing board
 
@@ -20,17 +22,17 @@ The goal is simple: rotate and move pieces as they fall, line up ten blocks in a
 (Banner picture depicts the game running in Cool Retro Term, found [here](https://github.com/Swordfish90/cool-retro-term))
 
 ## How to run
-
 * From the directory/folder where you have all the `.py` files, run `python cursatetra.py`
 
 ## Experimental Features
 * Compatibility with `windows-curses` (Just needed extra entries in the cellValues dictionary because the color attributes are encoded differently in `windows-curses`)
 
 ## Bugs (Present)
-* Disabling the ghost piece feature when the piece fully overlaps the ghost piece's position will delete (?) the piece
+* None that I can find (emphasis on that last part)
 
 ## Bugs (Fixed)
 * *[Introduced after upgrading to Python 3.8]* Invoking the `undraw()` method on a piece, specifically during an invocation of `move()` on said piece, would cause the piece's color data to remain behind, causing the blank space to not register as such. This was game breaking. Was fixed by ensuring that a Curses `color_pair` is passed to the calls of `addch()` in the `drawPiece()` method. In particular, `color_pair` 0 is passed for when cells are to be made blank via invoking `undraw()`
+* Disabling the ghost piece feature when the piece fully overlaps the ghost piece's position will delete (?) the piece. Fixed by making a default settings value such that the toggle key is disabled (can be re-enabled by editing `settings.json`
 
 ## Piece development documentation
 ### Piece orientations
