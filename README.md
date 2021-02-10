@@ -1,5 +1,5 @@
 # CursaTetra
-![alt text](readmeBanner.png)
+![Banner Image](readmeBanner.png)
 ## A terminal-bounded block-based puzzle game written in Python/Curses
 
 This game is dedicated to Alexey Pajitnov, original author of Tetris. This version features:
@@ -23,6 +23,8 @@ The goal is simple: rotate and move pieces as they fall, line up ten blocks in a
 
 ## How to run
 * From the directory/folder where you have all the `.py` files, run `python cursatetra.py`
+
+![Gameplay GIF](readmeBanner.gif)
 
 ## Experimental Features
 * Compatibility with `windows-curses` (Just needed extra entries in the cellValues dictionary because the color attributes are encoded differently in `windows-curses`)
