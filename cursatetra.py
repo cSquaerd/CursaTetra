@@ -502,8 +502,8 @@ def ctMain():
 					wNextP.refresh()
 					clearBoardLabel(wBoard)
 					writeBoardLabel('C', "GAME OVER!", wBoard)
-					wBoard.addstr(19, 1, "PRESS SPACE TO START ")
-					wBoard.addstr(20, 1, "    A NEW GAME       ")
+					wBoard.addstr(19, 1, "PRESS SPACE TO START")
+					wBoard.addstr(20, 1, "    A NEW GAME      ")
 					crs.napms(2000)
 					playing = False
 					checkScore = True
