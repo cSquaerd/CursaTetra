@@ -10,6 +10,7 @@ from ct_label import *
 from ct_cell import *
 from Piece import *
 resizedTooSmall = False
+missingSettings = False
 # SECTION: VERSION CHECK
 if sys.version_info[0] < 3:
 	print("This game requires Python 3. Please install it and/or run this file with it.")
@@ -101,6 +102,7 @@ def ctMain():
 	playing = False
 	paused = False
 	global resizedTooSmall
+	global missingSettings
 	pieceInPlay = False
 	pieceToDrop = False
 	pieceDropped = False
@@ -118,9 +120,26 @@ def ctMain():
 	softDrops = 0
 	tSpun = False
 	checkScore = False
+	settingsFileName = "settings.json"
+	allowGhostToggle = True
+	allowHoldFeature = True
+	preferredDifficulty = 0
+	preferredRandomizer = 'B'
 	scoreFileName = ".ctHiScrs.json"
 	scoreFileWrite = False
 	global doGhost
+	# SECTION: SETTINGS PREP
+	try:
+		settingsFile = open(settingsFileName, 'r')
+		settings = json.loads(settingsFile.read())
+		settingsFile.close()
+		allowGhostToggle = settings["allowGhostToggle"]
+		allowHoldFeature = settings["allowHoldFeature"]
+		preferredDifficulty = settings["preferredDifficulty"]
+		preferredRandomizer = settings["preferredRandomizer"]
+	except FileNotFoundError:
+		active = False
+		missingSettings = True
 	# SECTION: HIGH SCORE PREP
 	try:
 		# Assume the high score file exists
@@ -280,16 +299,38 @@ def ctMain():
 			# Select randomizer and difficulty
 			while not sure:
 				undrawGrid(wBoard)
-				wBoard.addstr(1, 1, "PRESS \'B\' FOR 7-BAG")
-				wBoard.addstr(2, 1, "\'R\' FOR SHUFFLE,")
-				wBoard.addstr(3, 1, "OR \'G\' FOR TGM")
-				wBoard.addstr(4, 1, "RANDOMIZER:  ")
-				wBoard.refresh()
-				r = 0
-				while r not in ( \
-					ord('B'), ord('b'), ord('R'), ord('r'), ord('G'), ord('g') \
-				):
-					r = wBoard.getch()
+				wBoard.addstr(1, 1, "DO YOU WANT TO USE")
+				wBoard.addstr(2, 1, "YOUR PREFERRED")
+				wBoard.addstr(3, 1, "DIFFICULTY, " + str(preferredDifficulty) + ", &")
+				wBoard.addstr(4, 1, "RANDOMIZER, " + preferredRandomizer + "? [Y/N]")
+				yn = 0
+				while yn not in yesnoCodes:
+					yn = wBoard.getch()
+				if yn in noCodes:
+					undrawGrid(wBoard)
+					wBoard.addstr(1, 1, "PRESS \'B\' FOR 7-BAG")
+					wBoard.addstr(2, 1, "\'R\' FOR SHUFFLE,")
+					wBoard.addstr(3, 1, "OR \'G\' FOR TGM")
+					wBoard.addstr(4, 1, "RANDOMIZER:  ")
+					wBoard.refresh()
+					r = 0
+					while r not in ( \
+						ord('B'), ord('b'), ord('R'), ord('r'), ord('G'), ord('g') \
+					):
+						r = wBoard.getch()
+					wBoard.addstr(5, 1, "PRESS A NUMBER 0-9")
+					wBoard.addstr(6, 1, "TO SET DIFFICULTY:")
+					wBoard.refresh()
+					# The ASCII number-key codes in hexidecimal
+					# Have the number as the first digit
+					k = 0
+					while k < 0x30 or k > 0x39:
+						k = wBoard.getch()
+					difficulty = k - 0x30
+				elif yn in yesCodes:
+					wBoard.addch(4, 17, 'Y', crs.A_REVERSE)
+					r = ord(preferredRandomizer)
+					difficulty = preferredDifficulty
 				if chr(r).upper() == 'R':
 					randomizer = "SHUFFLE"
 				elif chr(r).upper() == 'B':
@@ -298,29 +339,25 @@ def ctMain():
 					randomizer = "TGM"
 					recentPieces = []
 					nextPID = rnd.choice(('L', 'R', 'T', 'I'))
-				wBoard.addstr(5, 1, "PRESS A NUMBER 0-9")
-				wBoard.addstr(6, 1, "TO SET DIFFICULTY:")
-				wBoard.refresh()
-				# The ASCII number-key codes in hexidecimal
-				# Have the number as the first digit
-				k = 0
-				while k < 0x30 or k > 0x39:
-					k = wBoard.getch()
-				difficulty = k - 0x30
 				# Show difficulty
-				wBoard.addstr(7, 1, "YOU CHOSE DIFF. " + str(difficulty))
-				wBoard.addstr(8, 1, "AND RANDOMIZER " + chr(r).upper())
+				wBoard.addstr(8, 1, "YOU CHOSE DIFF. " + str(difficulty))
+				wBoard.addstr(9, 1, "AND RANDOMIZER " + chr(r).upper())
 				# Initialize the ghost piece (or don't)
-				wBoard.addstr(9, 1, "DO YOU WANT TO USE")
-				wBoard.addstr(10, 1, "THE GHOST PIECE?")
-				wBoard.addstr(11, 1, "[Y/N]")
+				wBoard.addstr(11, 1, "DO YOU WANT TO USE")
+				wBoard.addstr(12, 1, "THE GHOST PIECE?")
+				wBoard.addstr(13, 1, "[Y/N]")
 				wBoard.refresh()
 				k = 0
 				while k not in yesnoCodes:
 					k = wBoard.getch()
 				doGhost[0] = k in yesCodes
+				if k in yesCodes:
+					wBoard.addch(13, 2, 'Y', crs.A_REVERSE)
+				else:
+					wBoard.addch(13, 4, 'N', crs.A_REVERSE)
 				# Confirm settings
-				wBoard.addstr(12, 1, "ARE YOU ALL SET? Y/N")
+				wBoard.addstr(15, 1, "ARE YOU ALL SET?")
+				wBoard.addstr(16, 1, "[Y/N]")
 				wBoard.refresh()
 				k = 0
 				while k not in yesnoCodes:
@@ -328,7 +365,8 @@ def ctMain():
 				# Proceed to game start
 				if k in yesCodes:
 					sure = True
-					wBoard.addstr(13, 1, "OKAY, GET READY!")
+					wBoard.addch(16, 2, 'Y', crs.A_REVERSE)
+					wBoard.addstr(18, 1, "OKAY, GET READY!")
 					wBoard.refresh()
 					crs.napms(500)
 				# Retry difficulty selection
@@ -375,7 +413,7 @@ def ctMain():
 				continue
 			elif keypress == "ENTER":
 				continue
-			elif keypress == 'G':
+			elif keypress == 'G' and allowGhostToggle:
 				if doGhost[0]:
 					piece.undrawGhost(wBoard)
 				doGhost[0] = not doGhost[0]
@@ -384,10 +422,13 @@ def ctMain():
 				continue
 			# If neither the enter nor q key are pressed, it must be ESC,
 			# Which means unpause
-			clearBoardLabel(wBoard)
-			writeBoardLabel('C', "LEVEL " + str(difficulty), wBoard)
-			wBoard.nodelay(True)
-			paused = False
+			# (not true anymore since G can be ignored with settings)
+			elif keypress == "ESC":
+				clearBoardLabel(wBoard)
+				writeBoardLabel('C', "LEVEL " + str(difficulty), wBoard)
+				wBoard.nodelay(True)
+				paused = False
+				continue
 			continue
 		# SUBSECTION: PIECE GENERATION
 		if not pieceInPlay:
@@ -578,7 +619,7 @@ def ctMain():
 					or not isCellEmpty(piece.y, piece.x + 2, wBoard) ):
 					tSpun = True
 				pieceJustSpawned = False
-		elif keypress == 'H' and pieceInPlay and canHold:
+		elif keypress == 'H' and allowHoldFeature and pieceInPlay and canHold:
 			# Remove active piece from the board
 			piece.undraw(wBoard)
 			piece.undrawGhost(wBoard)
@@ -784,3 +825,8 @@ if resizedTooSmall:
 	print("This program is designed to shut down if the terminal is too small,")
 	print("as it is a pain to implement resizing for such a specific screen area.")
 	print("Please prevent small resizes from happening in the future.")
+elif missingSettings:
+	print("The settings.json file is missing from your local directory/folder.")
+	print("You can find a reference copy of it on the github repository, at:")
+	print("\thttps://github.com/cSquaerd/CursaTetra.git")
+	print("Please download it and place in the directory/folder where you are currently.")
